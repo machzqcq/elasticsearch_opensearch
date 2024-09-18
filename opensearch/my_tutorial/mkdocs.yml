@@ -1,0 +1,13 @@
+site_name: My Documentation Site
+theme:
+  name: mkdocs
+nav:
+- 1. intro:
+  - 1.1 intro: 1. intro/1.1 intro.md
+  - 1.2 opensearch_concepts: 1. intro/1.2 opensearch_concepts.md
+- 2. use_cases:
+  - 2.1 use_cases_by_industry: 2. use_cases/2.1 use_cases_by_industry.md
+  - 2.2 use_cases_by_job_function: 2. use_cases/2.2 use_cases_by_job_function.md
+  - 2.3 traditional_vs_ai: 2. use_cases/2.3 traditional_vs_ai.md
+  - 2.4 competitive_analysis: 2. use_cases/2.4 competitive_analysis.md
+  - 2.5 elasticsearch_vs_opensearch: 2. use_cases/2.5 elasticsearch_vs_opensearch.md

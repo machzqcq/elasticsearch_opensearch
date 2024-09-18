@@ -1,0 +1,31 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.1
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
+      - path.repo=/var/lib/elasticsearch/snapshots
+    ports:
+      - 9200:9200
+    volumes:
+      - ../load_data/snapshots:/var/lib/elasticsearch/snapshots
+
+  restore:
+    image: mikesir87/ubuntu-with-curl
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./restore-snapshot-es.sh:/restore-snapshot-es.sh
+      - ../load_data/snapshots:/snapshots
+    command: ["sh", "/restore-snapshot-es.sh"]
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:7.10.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch

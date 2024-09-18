@@ -1,0 +1,39 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.1
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
+      - path.repo=/var/lib/elasticsearch/snapshots
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - ./snapshots:/var/lib/elasticsearch/snapshots:rw
+
+  setup:
+    image: curlimages/curl
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./scripts:/scripts
+      - ./mappings:/mappings
+      - ./json_data:/json_data
+    command: ["/bin/sh", "/scripts/script.sh"]
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:7.10.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+volumes:
+  elasticsearch-data:

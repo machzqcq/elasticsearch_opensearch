@@ -1,0 +1,4 @@
+elasticsearch==7.10.1
+pandas==1.5.3
+pyarrow==17.0.0
+ipython==7.25.0
