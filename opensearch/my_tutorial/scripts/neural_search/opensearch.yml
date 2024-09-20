@@ -1,0 +1,34 @@
+# https://opensearch.org/docs/latest/ml-commons-plugin/cluster-settings/
+# Node roles configuration
+node.roles: [ ml ]  # Assigns the 'ml' role to this node
+
+# ML Commons plugin settings
+plugins.ml_commons.only_run_on_ml_node: true  # Ensures ML tasks only run on nodes with the 'ml' role
+plugins.ml_commons.task_dispatch_policy: round_robin  # Sets the task dispatch policy to round-robin
+plugins.ml_commons.max_ml_task_per_node: 10  # Maximum number of ML tasks that can run on a single node
+plugins.ml_commons.max_model_on_node: 10  # Maximum number of models that can be deployed on a single node
+plugins.ml_commons.sync_up_job_interval_in_seconds: 3  # Interval in seconds for syncing up jobs
+plugins.ml_commons.monitoring_request_count: 100  # Number of requests after which monitoring data is collected
+plugins.ml_commons.max_register_model_tasks_per_node: 10  # Maximum number of model registration tasks per node
+plugins.ml_commons.max_deploy_model_tasks_per_node: 10  # Maximum number of model deployment tasks per node
+plugins.ml_commons.allow_registering_model_via_url: false  # Disallow registering models via URL
+plugins.ml_commons.allow_registering_model_via_local_file: false  # Disallow registering models via local file
+plugins.ml_commons.trusted_url_regex: <model-repository-url>  # Regex pattern for trusted model repository URLs
+plugins.ml_commons.ml_task_timeout_in_seconds: 600  # Timeout in seconds for ML tasks
+plugins.ml_commons.native_memory_threshold: 90  # Threshold for native memory usage as a percentage
+plugins.ml_commons.jvm_heap_memory_threshold: 85  # Threshold for JVM heap memory usage as a percentage
+plugins.ml_commons.disk_free_space_threshold: 5G  # Minimum free disk space required for ML tasks
+plugins.ml_commons.exclude_nodes._name: node1, node2  # Nodes to exclude from ML task assignment
+plugins.ml_commons.allow_custom_deployment_plan: false  # Disallow custom deployment plans for models
+plugins.ml_commons.model_auto_deploy.enable: false  # Disable automatic model deployment
+plugins.ml_commons.model_auto_redeploy.enable: true  # Enable automatic model redeployment
+plugins.ml_commons.model_auto_redeploy.lifetime_retry_times: 3  # Number of retry attempts for automatic redeployment
+plugins.ml_commons.model_auto_redeploy_success_ratio: 0.8  # Success ratio required for automatic redeployment
+plugins.ml_commons.enable_inhouse_python_model: false  # Disable in-house Python model support
+plugins.ml_commons.connector_access_control_enabled: true  # Enable access control for connectors
+plugins.ml_commons.local_model.enabled: true  # Enable local model support
+plugins.ml_commons.task_dispatcher.eligible_node_role.remote_model: ["ml"]  # Eligible node roles for remote model tasks
+plugins.ml_commons.remote_inference.enabled: true  # Enable remote inference
+plugins.ml_commons.agent_framework_enabled: true  # Enable agent framework
+plugins.ml_commons.memory_feature_enabled: true  # Enable memory feature
+plugins.ml_commons.rag_pipeline_feature_enabled: true  # Enable RAG pipeline feature
