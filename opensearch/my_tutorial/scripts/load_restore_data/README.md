@@ -1,3 +1,4 @@
 # Restore Gotchas
 - Opensearch is very strict on restore index (requires ssl and admin certs etc) - https://opensearch.org/docs/latest/tuning-your-cluster/availability-and-recovery/snapshots/snapshot-restore/#security-considerations
 - Check the flag IS_AUTH at the top of python code
+- The folder `snapshots_interns_all` contains a backup of all interns_sample.parquet + vectors for company, job_title and job_content_text. Start the cluster with `1. docker-compose-opensearch-single-snapshots_interns_all.yml` which maps snapshots_interns_all folder to /usr/share/opensearch/snapshots and run `4. restore_interns_snapshot.py`. The data will be available
