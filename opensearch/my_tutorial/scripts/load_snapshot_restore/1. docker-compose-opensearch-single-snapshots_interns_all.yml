@@ -21,7 +21,7 @@ services:
         hard: 65536
     volumes:
       - opensearch-data:/usr/share/opensearch/data # Creates volume called opensearch-data and mounts it to the container
-      - ./snapshots_interns_all:/usr/share/opensearch/snapshots # Mounts the snapshots directory to the container
+      - ../../data/snapshots_interns_all:/usr/share/opensearch/snapshots # Mounts the snapshots directory to the container
     ports:
       - 9200:9200 # REST API
       - 9600:9600 # Performance Analyzer

@@ -21,7 +21,7 @@ services:
         hard: 65536
     volumes:
       - opensearch-data:/usr/share/opensearch/data # Creates volume called opensearch-data and mounts it to the container
-      - ./snapshots:/usr/share/opensearch/snapshots # Mounts the snapshots directory to the container
+      - ../../data/snapshots:/usr/share/opensearch/snapshots # Mounts the snapshots directory to the container
     ports:
       - 9200:9200 # REST API
       - 9600:9600 # Performance Analyzer
@@ -38,6 +38,18 @@ services:
     environment:
       OPENSEARCH_HOSTS: '["http://opensearch:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"  # Disables security for OpenSearch Dashboards
+    networks:
+      - opensearch-net
+
+  setup:
+    image: curlimages/curl
+    depends_on:
+      - opensearch
+    volumes:
+      - ./ecommerce_load_script.sh:/scripts/ecommerce_load_script.sh
+      - ../../data/ecommerce.json:/json_data/ecommerce.json
+      - ../../data/ecommerce-field_mappings.json:/mappings/ecommerce-field_mappings.json
+    command: ["/bin/sh", "/scripts/ecommerce_load_script.sh"]
     networks:
       - opensearch-net
 
