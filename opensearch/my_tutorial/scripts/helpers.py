@@ -1,5 +1,6 @@
 from opensearchpy import OpenSearch, helpers
 from sentence_transformers import SentenceTransformer
+import pandas as pd
 
 
 def opensearch_client(host, port, auth=None, ssl=False):
@@ -68,23 +69,34 @@ def opensearch_bulk_async_with_embeddings(client, index_name, df, mapping=None, 
 
 def add_embeddings_from_source_to_destination(df, source, destination, embedding_model_name):
     model = SentenceTransformer(embedding_model_name)
-    df.loc[:, destination] = df[source].apply(lambda x: model.encode(x).tolist())
+    df.loc[:, destination] = df[source].apply(lambda x: model.encode(str(x)).tolist() if x else None)
     return df
 
-def return_index_mapping_with_vectors(vectorize_fields):
+def return_index_mapping_with_vectors(vectorize_fields,mapping=None):
     # Create OpenSearch mapping for each field with corresponding embedding vector
-    mappings = {
-        "settings": {
+    if mapping:
+        print(f"Using existing mapping: {mapping}")
+        mappings = mapping
+        mappings["settings"] = {
             "index": {
-                "knn": True
-            }
-        },
-        "mappings": {
-            "properties": {
-                field: {"type": "text"} for field in vectorize_fields
+            "knn": True
             }
         }
-    }
+        for field in vectorize_fields:
+            mappings["mappings"]["properties"][field] = {"type": "text"}
+    else:
+        mappings = {
+            "settings": {
+                "index": {
+                    "knn": True
+                }
+            },
+            "mappings": {
+                "properties": {
+                    field: {"type": "text"} for field in vectorize_fields
+                }
+            }
+        }
 
     # Add KNN vector fields to the mapping
     for field in vectorize_fields:

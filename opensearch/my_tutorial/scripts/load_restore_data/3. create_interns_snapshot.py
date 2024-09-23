@@ -37,7 +37,7 @@ client.snapshot.create_repository(repository_name, body=repository_body)
 # Create a snapshot
 snapshot_name = "interns_snapshot"
 snapshot_body = {
-    "indices": "interns",  # Specify indices to include, or use "_all" for all indices
+    "indices": "_all",  # Specify indices to include, or use "_all" for all indices OR -.opensearch*,-.opendistro*,-.kibana*, interns
     "ignore_unavailable": True,
     "include_global_state": False
 }
