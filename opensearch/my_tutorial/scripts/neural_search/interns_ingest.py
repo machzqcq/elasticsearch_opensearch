@@ -2,6 +2,11 @@
 from opensearchpy import OpenSearch
 from opensearch_py_ml.ml_commons import MLCommonClient
 import time
+import pandas as pd
+import sys
+sys.path.append('../')
+from helpers import opensearch_bulk_async, dataframe_to_actions
+from opensearchpy import OpenSearch, helpers
 
 # Initialize OpenSearch client
 client = OpenSearch(
@@ -37,31 +42,35 @@ print("Model deployed successfully")
 
 # Step 3: Create ingest pipeline
 pipeline_body = {
-    "description": "Text embedding pipeline",
+    "description": "interns embedding pipeline",
     "processors": [
         {
             "text_embedding": {
                 "model_id": model_id,
                 "field_map": {
-                    "text_field": "embedding_vector"
+                    "COMPANY": "company_embedding_vector",
+                    "JOB_TITLE": "job_title_embedding_vector",
+                    "JOB_CONTENT_TEXT": "job_content_text_embedding_vector"
                 }
             }
         }
     ]
 }
-client.ingest.put_pipeline(id="my_embedding_pipeline", body=pipeline_body)
+client.ingest.put_pipeline(id="interns_embedding_pipeline", body=pipeline_body)
 print("Ingest pipeline created")
 
 # Step 4: Create index
 index_body = {
     "settings": {
         "index.knn": True,
-        "default_pipeline": "my_embedding_pipeline"
+        "default_pipeline": "interns_embedding_pipeline"
     },
     "mappings": {
         "properties": {
-            "text_field": {"type": "text"},
-            "embedding_vector": {
+            "COMPANY": {"type": "text"},
+            "JOB_TITLE": {"type": "text"},
+            "JOB_CONTENT_TEXT": {"type": "text"},
+            "company_embedding_vector": {
                 "type": "knn_vector",
                 "dimension": 768,
                 "method": {
@@ -69,20 +78,38 @@ index_body = {
                     "space_type": "l2",
                     "engine": "lucene"
                 }
-            }
+            },
+            "job_title_embedding_vector": {
+                "type": "knn_vector",
+                "dimension": 768,
+                "method": {
+                    "name": "hnsw",
+                    "space_type": "l2",
+                    "engine": "lucene"
+                }
+        },
+        "job_content_text_embedding_vector": {
+            "type": "knn_vector",
+            "dimension": 768,
+            "method": {
+                "name": "hnsw",
+                "space_type": "l2",
+                "engine": "lucene"
+    }
         }
     }
+    }
 }
-client.indices.create(index="my_index", body=index_body)
+client.indices.create(index="interns", body=index_body)
 print("Index created")
 
 # Step 5: Load sample documents
-sample_docs = [
-    {"text_field": "This is a sample text for embedding"},
-    {"text_field": "Another example sentence for vector search"}
-]
+BASE_DIR = "../../data"
+df = pd.read_parquet(f"{BASE_DIR}/interns_sample.parquet")
 
-for doc in sample_docs:
-    client.index(index="my_index", body=doc)
+data = dataframe_to_actions(df.iloc[0:10], "interns")
+success, failed = helpers.bulk(client=client, actions=data)
+
+print(f"Successfully indexed {success} documents.")
 
 print("Sample documents loaded")

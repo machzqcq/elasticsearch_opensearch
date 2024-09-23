@@ -17,5 +17,8 @@
 - `docker compose -f docker-compose-opensearch-single-2.16.0.yml down` - to stop and remove all
 - `python3 interns_sample_load.py`
 
+# Ingest script as part of docker compose
+- Though we are able to execute every step in the shell script (setup_ml.sh), as part of docker file, model group ID is not getting generated, so all subsequent steps fail
+
 # Gotchas
 - With 2.16.0, though OPENSEARCH_INITIAL_ADMIN_PASSWORD is not required, if we mention that in enviroment, it needs to have a value in shell, otherwise services don't start properly

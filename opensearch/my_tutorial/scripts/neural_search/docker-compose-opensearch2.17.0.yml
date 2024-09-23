@@ -9,13 +9,14 @@ services:
       - discovery.seed_hosts=opensearch-node1,opensearch-node2 # Nodes to look for when discovering the cluster
       - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2 # Nodes eligibile to serve as cluster manager
       - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - OPENSEARCH_HOME=/usr/share/opensearch
       - "OPENSEARCH_JAVA_OPTS=-Xms4096m -Xmx4096m" # Set min and max JVM heap sizes to at least 50% of system RAM
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
       - "plugins.ml_commons.model_access_control_enabled=true"
       - "plugins.ml_commons.only_run_on_ml_node=false"
       - "plugins.ml_commons.native_memory_threshold=99"
       - "plugins.ml_commons.task_dispatch_policy=round_robin"
-      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:$OPENSEARCH_HOME/plugins/opensearch-knn/lib # Add the path to the lib directory
+      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:/usr/share/opensearch/plugins/opensearch-knn/lib # Add the path to the lib directory
     ulimits:
       memlock:
         soft: -1 # Set memlock to unlimited (no soft or hard limit)
@@ -39,13 +40,14 @@ services:
       - discovery.seed_hosts=opensearch-node1,opensearch-node2
       - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
       - bootstrap.memory_lock=true
+      - OPENSEARCH_HOME=/usr/share/opensearch
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
       - "node.roles: [ ml ]"
       - "plugins.ml_commons.only_run_on_ml_node=false"
       - "plugins.ml_commons.model_access_control_enabled=true"
       - "plugins.ml_commons.native_memory_threshold=99"
-      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:$OPENSEARCH_HOME/plugins/opensearch-knn/lib
+      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:/usr/share/opensearch/plugins/opensearch-knn/lib
     ulimits:
       memlock:
         soft: -1
