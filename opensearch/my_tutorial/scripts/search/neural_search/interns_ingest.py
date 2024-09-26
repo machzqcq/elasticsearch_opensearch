@@ -4,7 +4,7 @@ from opensearch_py_ml.ml_commons import MLCommonClient
 import time
 import pandas as pd
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 from helpers import opensearch_bulk_async, dataframe_to_actions
 from opensearchpy import OpenSearch, helpers
 
