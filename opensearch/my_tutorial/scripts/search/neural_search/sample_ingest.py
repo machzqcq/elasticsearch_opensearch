@@ -3,14 +3,26 @@ from opensearchpy import OpenSearch
 from opensearch_py_ml.ml_commons import MLCommonClient
 import time
 
-# Initialize OpenSearch client
-client = OpenSearch(
-    hosts=[{'host': '192.168.0.111', 'port': 9200}],
-    http_auth=('admin', 'Padmasini10'),  # Replace with your credentials
-    use_ssl=True,
-    verify_certs=False,
-    ssl_show_warn=False
-)
+IS_AUTH = False
+
+if IS_AUTH:
+    # Initialize the OpenSearch client
+    client = OpenSearch(
+        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        http_auth=('admin', 'Padmasini10'),  # Replace with your credentials
+        use_ssl=True,
+        verify_certs=False,
+        ssl_show_warn=False
+    )
+else:
+    # Initialize the OpenSearch client without authentication
+    client = OpenSearch(
+        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        use_ssl=False,
+        verify_certs=False,
+        ssl_assert_hostname = False,
+        ssl_show_warn=False
+    )
 
 # Initialize ML Commons client
 ml_client = MLCommonClient(client)
