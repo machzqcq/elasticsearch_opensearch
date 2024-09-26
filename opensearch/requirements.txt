@@ -7,3 +7,5 @@ deprecated==1.2.14
 sentence-transformers==3.1.1
 mkdocs==1.6.1
 mkdocs-material==9.5.37
+openai==1.49.0
+python-dotenv==1.0.1

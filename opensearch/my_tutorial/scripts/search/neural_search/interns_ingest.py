@@ -116,7 +116,7 @@ client.indices.create(index="interns", body=index_body)
 print("Index created")
 
 # Step 5: Load sample documents
-BASE_DIR = "../../data"
+BASE_DIR = "../../../data"
 df = pd.read_parquet(f"{BASE_DIR}/interns_sample.parquet")
 
 data = dataframe_to_actions(df.iloc[0:10], "interns")
