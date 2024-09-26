@@ -6,16 +6,8 @@ services:
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true # Disable JVM heap memory swapping
-      - "OPENSEARCH_JAVA_OPTS=-Xms4096m -Xmx4096m" # Set min and max JVM heap sizes to at least 50% of system RAM
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
-      - OPENSEARCH_HOME=/usr/share/opensearch
-      - "node.roles: [ ml ]"
-      - "plugins.ml_commons.model_access_control_enabled=true"
-      - "plugins.ml_commons.only_run_on_ml_node=false"
-      - "plugins.ml_commons.native_memory_threshold=99"
-      - "plugins.ml_commons.task_dispatch_policy=round_robin"
-      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:/usr/share/opensearch/plugins/opensearch-knn/lib
-
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Set min and max JVM heap sizes to at least 50% of system RAM
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD:-Padmasini10} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
     ulimits:
       memlock:
         soft: -1 # Set memlock to unlimited (no soft or hard limit)
@@ -39,7 +31,7 @@ services:
     expose:
       - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
     environment:
-      OPENSEARCH_HOSTS: '["https://opensearch:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+      - OPENSEARCH_HOSTS=["https://opensearch:9200"] # Define the OpenSearch nodes that OpenSearch Dashboards will query
     networks:
       - opensearch-net
 

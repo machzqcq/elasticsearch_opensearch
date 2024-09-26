@@ -1,13 +1,66 @@
 site_name: My Documentation Site
 theme:
-  name: mkdocs
+  name: material #readthedocs mkdocs #material
 nav:
 - 1. intro:
   - 1.1 intro: 1. intro/1.1 intro.md
   - 1.2 opensearch_concepts: 1. intro/1.2 opensearch_concepts.md
+  - 1.3 types_of_searches: 1. intro/1.3 types_of_searches.md
+  - 1.4 searches_jargon: 1. intro/1.4 searches_jargon.md
 - 2. use_cases:
   - 2.1 use_cases_by_industry: 2. use_cases/2.1 use_cases_by_industry.md
   - 2.2 use_cases_by_job_function: 2. use_cases/2.2 use_cases_by_job_function.md
   - 2.3 traditional_vs_ai: 2. use_cases/2.3 traditional_vs_ai.md
   - 2.4 competitive_analysis: 2. use_cases/2.4 competitive_analysis.md
   - 2.5 elasticsearch_vs_opensearch: 2. use_cases/2.5 elasticsearch_vs_opensearch.md
+- 3. installation_and_configuration:
+  - 1. os_virtual_container: 3. installation_and_configuration/1. os_virtual_container.md
+  - 2. opensearch_config: 3. installation_and_configuration/2. opensearch_config.md
+  - 3. opensearch_dashboards_config: 3. installation_and_configuration/3. opensearch_dashboards_config.md
+  - 4. upgrading: 3. installation_and_configuration/4. upgrading.md
+  - 5. plugins: 3. installation_and_configuration/5. plugins.md
+  - 6. migrate_to_opensearch: 3. installation_and_configuration/6. migrate_to_opensearch.md
+- 4. managing indexes:
+  - 1. index_templates: 4. Managing Indexes/1. index_templates.md
+  - 10. ism_error_prevention: 4. Managing Indexes/10. ism_error_prevention.md
+  - 11. notifications: 4. Managing Indexes/11. notifications.md
+  - 2. index_aliases: 4. Managing Indexes/2. index_aliases.md
+  - 3. data_streams: 4. Managing Indexes/3. data_streams.md
+  - 4. reindex_ops: 4. Managing Indexes/4. reindex_ops.md
+  - 5. index_state_management: 4. Managing Indexes/5. index_state_management.md
+  - 6. index_transforms: 4. Managing Indexes/6. index_transforms.md
+  - 7. index_rollups: 4. Managing Indexes/7. index_rollups.md
+  - 8. index_management_security: 4. Managing Indexes/8. index_management_security.md
+  - 9. refresh_search_analyzer: 4. Managing Indexes/9. refresh_search_analyzer.md
+- 5. index_pipelines:
+  - 1. overview: 5. index_pipelines/1. overview.md
+  - 2. create_pipeline: 5. index_pipelines/2. create_pipeline.md
+  - 3. simulate_pipeline: 5. index_pipelines/3. simulate_pipeline.md
+  - 4. get_pipeline: 5. index_pipelines/4. get_pipeline.md
+  - 5. delete_pipeline: 5. index_pipelines/5. delete_pipeline.md
+  - 6. handling_pipeline_failures: 5. index_pipelines/6. handling_pipeline_failures.md
+  - 7. ingest_processors: 5. index_pipelines/7. ingest_processors.md
+- 6. opensearch_dashboards:
+  - 1. overview: 6. opensearch_dashboards/1. overview.md
+- Ecommerce-field_mappings: ecommerce-field_mappings.md
+- Search:
+  - 1. overview: search/1. overview.md
+  - 2. collapse: search/2. collapse.md
+  - 3. search_data_overview: search/3. search_data_overview.md
+  - 3.1 paginate_results: search/3.1 paginate_results.md
+  - 3.2. sort: search/3.2. sort.md
+  - 3.3. highlight: search/3.3. highlight.md
+  - 3.4. autocomplete: search/3.4. autocomplete.md
+  - 3.5. did-you-mean: search/3.5. did-you-mean.md
+  - 3.6. retrieve_specific_fields: search/3.6. retrieve_specific_fields.md
+  - 3.7. inner_hits: search/3.7. inner_hits.md
+  - 3.8. search_shard_routing: search/3.8. search_shard_routing.md
+  - 3.9. keyword_search: search/3.9. keyword_search.md
+- Text_analysis:
+  - 1. overview: text_analysis/1. overview.md
+  - 2. language_analyzers: text_analysis/2. language_analyzers.md
+  - 3. index_analyzers: text_analysis/3. index_analyzers.md
+  - 3. search_analyzers: text_analysis/3. search_analyzers.md
+  - 4. tokenizers: text_analysis/4. tokenizers.md
+  - 5. token_filters: text_analysis/5. token_filters.md
+  - 6. normalizers: text_analysis/6. normalizers.md
