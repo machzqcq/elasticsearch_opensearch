@@ -1,6 +1,9 @@
 from opensearchpy import OpenSearch, helpers
 from sentence_transformers import SentenceTransformer
 import pandas as pd
+import os
+import json
+import hashlib
 
 
 def opensearch_client(host, port, auth=None, ssl=False):
@@ -120,3 +123,69 @@ def dataframe_to_actions(df, index_name):
             "_id": i,
             "_source": row.to_dict()
         }
+
+
+"""
+# Example usage
+folder_path = '/path/to/your/folder'
+model_group_id = 'your_model_group_id'
+model_name = 'huggingface/sentence-transformers/msmarco-distilbert-base-tas-b'
+model_version = '1.0.1'
+description = 'This is a port of the DistilBert TAS-B Model to sentence-transformers model: It maps sentences & paragraphs to a 768 dimensional dense vector space and is optimized for the task of semantic search.'
+function_name = 'TEXT_EMBEDDING'
+model_format = 'TORCH_SCRIPT'
+url = 'https://artifacts.opensearch.org/models/ml-models/huggingface/sentence-transformers/msmarco-distilbert-base-tas-b/1.0.1/torch_script/sentence-transformers_msmarco-distilbert-base-tas-b-1.0.1-torch_script.zip'
+
+opensearch_body = generate_opensearch_body_json(folder_path, model_group_id, model_name, model_version, description, function_name, model_format, url)
+print(json.dumps(opensearch_body, indent=4))
+"""
+def generate_opensearch_body_json(folder_path, model_group_id, model_name, model_version, description, function_name, model_format, url):
+    # Read the config.json file
+    config_file = os.path.join(folder_path, 'config.json')
+    with open(config_file, 'r') as f:
+        config_data = json.load(f)
+    
+    # Read the tokenizer.json file
+    tokenizer_file = os.path.join(folder_path, 'tokenizer.json')
+    with open(tokenizer_file, 'r') as f:
+        tokenizer_data = json.load(f)
+    
+    # Identify the .pt file
+    pt_file = None
+    for file in os.listdir(folder_path):
+        if file.endswith('.pt'):
+            pt_file = os.path.join(folder_path, file)
+            break
+    
+    if not pt_file:
+        raise FileNotFoundError("No .pt file found in the specified folder.")
+    
+    # Calculate the size and hash of the .pt file
+    model_content_size_in_bytes = os.path.getsize(pt_file)
+    with open(pt_file, 'rb') as f:
+        model_content_hash_value = hashlib.sha256(f.read()).hexdigest()
+    
+    # Construct the model_config
+    model_config = {
+        "model_type": config_data.get("model_type", "distilbert"),
+        "embedding_dimension": config_data.get("dim", 768),
+        "framework_type": "sentence_transformers",
+        "all_config": json.dumps(config_data)
+    }
+    
+    # Construct the final JSON body
+    opensearch_body = {
+        "name": model_name,
+        "version": model_version,
+        "model_group_id": model_group_id,
+        "description": description,
+        "function_name": function_name,
+        "model_format": model_format,
+        "model_content_size_in_bytes": model_content_size_in_bytes,
+        "model_content_hash_value": model_content_hash_value,
+        "model_config": model_config,
+        "created_time": int(os.path.getmtime(pt_file) * 1000),  # Convert to milliseconds
+        "url": url
+    }
+    
+    return opensearch_body
