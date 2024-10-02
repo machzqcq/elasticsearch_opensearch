@@ -38,4 +38,5 @@ mappings = return_index_mapping_with_vectors(vectorize_fields=vectorize_fields)
 # Print the mappings to verify
 # print(json.dumps(mappings, indent=2))
 
-success, _ = opensearch_bulk_async_with_embeddings(client, index_name="interns", delete_index=True, df=df.iloc[0:5], mapping=mappings, embedding_model="msmarco-distilbert-base-v2", embedding_source_destination_map=embedding_source_destination_map)
+success, _ = opensearch_bulk_async_with_embeddings(client, index_name="interns", delete_index=True, 
+                                                   df=df.iloc[0:5], mapping=mappings, embedding_model="msmarco-distilbert-base-v2", embedding_source_destination_map=embedding_source_destination_map)
