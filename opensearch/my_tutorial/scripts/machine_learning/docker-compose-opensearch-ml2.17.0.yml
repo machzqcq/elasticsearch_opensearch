@@ -14,8 +14,9 @@ services:
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD:-Padmasini10} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
       - "plugins.ml_commons.model_access_control_enabled=true"
       - "plugins.ml_commons.only_run_on_ml_node=false"
-      - "plugins.ml_commons.native_memory_threshold=100" #100 = no limit
+      - "plugins.ml_commons.native_memory_threshold=99" #100 = no limit
       - "plugins.ml_commons.task_dispatch_policy=round_robin"
+      - path.repo=/usr/share/opensearch/snapshots
       - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:/usr/share/opensearch/plugins/opensearch-knn/lib # Add the path to the lib directory
     ulimits:
       memlock:
@@ -26,12 +27,13 @@ services:
         hard: 65536
     volumes:
       - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
-
+      - ../../data/snapshots_interns_all:/usr/share/opensearch/snapshots # Mounts the snapshots directory to the container
     ports:
       - 9200:9200 # REST API
       - 9600:9600 # Performance Analyzer
     networks:
       - opensearch-net # All of the containers will join the same Docker bridge network
+
   opensearch-node2:
     image: opensearchproject/opensearch:2.17.0 # This should be the same image used for opensearch-node1 to avoid issues
     container_name: opensearch-node2
@@ -47,7 +49,8 @@ services:
       - "node.roles: [ ml ]"
       - "plugins.ml_commons.only_run_on_ml_node=true"
       - "plugins.ml_commons.model_access_control_enabled=true"
-      - "plugins.ml_commons.native_memory_threshold=100"
+      - "plugins.ml_commons.native_memory_threshold=99"
+      - path.repo=/usr/share/opensearch/snapshots
       - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:/usr/share/opensearch/plugins/opensearch-knn/lib
     ulimits:
       memlock:
@@ -58,6 +61,7 @@ services:
         hard: 65536
     volumes:
       - opensearch-data2:/usr/share/opensearch/data
+      - ../../data/snapshots_interns_all:/usr/share/opensearch/snapshots # Mounts the snapshots directory to the container
     networks:
       - opensearch-net
 
@@ -73,6 +77,8 @@ services:
       - "OPENSEARCH_DASHBOARDS_ML_COMMONS_ENABLED=true"
       - "OPENSEARCH_DASHBOARDS_ML_COMMONS_MODEL_DOWNLOAD_ENABLED=true"
       - "OPENSEARCH_DASHBOARDS_ML_COMMONS_TRUSTED_URL_REGEX=^https:\\/\\/(.*)"
+      - assistant.chat.enabled=true
+      - observability.query_assist.enabled=true
     networks:
       - opensearch-net
 
