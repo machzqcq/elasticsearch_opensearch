@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 import pandas as pd
 import os
 import json
-import hashlib
+import hashlib, base64
 
 
 def opensearch_client(host, port, auth=None, ssl=False):
@@ -300,3 +300,7 @@ def get_sentence_transformer_models():
 
     model_names = [model.modelId for model in models]
     return model_names
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
