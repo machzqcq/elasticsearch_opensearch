@@ -1,3 +1,4 @@
+
 PUT _cluster/settings
 {
   "persistent": {
@@ -14,7 +15,7 @@ POST /_plugins/_ml/models/_register?deploy=true
   "model_format": "TORCH_SCRIPT"
 }
 
-GET /_plugins/_ml/tasks/3UanTZIBH2qLnqOGx7av
+GET /_plugins/_ml/tasks/bBLwY5IBe067QSVzv_h4
 
 
 PUT /_ingest/pipeline/test-pipeline-local-model
@@ -23,7 +24,7 @@ PUT /_ingest/pipeline/test-pipeline-local-model
   "processors": [
     {
       "text_embedding": {
-        "model_id": "JoOnTZIB0ZlO6yHYy_Oy",
+        "model_id": "cBLwY5IBe067QSVzxPjH",
         "field_map": {
           "text": "embedding"
         }
@@ -112,15 +113,15 @@ POST /_plugins/_ml/models/_register?deploy=true
 {
     "name": "openAI-gpt-3.5-turbo",
     "function_name": "remote",
-    "model_group_id": "JUa0TZIBH2qLnqOGgrfx",
+    "model_group_id": "jxLzY5IBe067QSVzNPiM",
     "description": "test model",
-    "connector_id": "LEa1TZIBH2qLnqOG-rfb"
+    "connector_id": "kxLzY5IBe067QSVz2fhr"
 }
 
-GET /_plugins/_ml/tasks/OUa5TZIBH2qLnqOGObft
+GET /_plugins/_ml/tasks/lxL0Y5IBe067QSVzGPht
 
 
-POST /_plugins/_ml/models/Oka5TZIBH2qLnqOGOrdr/_predict
+POST /_plugins/_ml/models/mBL0Y5IBe067QSVzGPjU/_predict
 {
   "parameters": {
     "messages": [
@@ -138,14 +139,18 @@ POST /_plugins/_ml/models/Oka5TZIBH2qLnqOGOrdr/_predict
 
 POST /_plugins/_ml/agents/_register
 {
-  "name": "Test_Agent_For_RAG",
-  "type": "flow",
-  "description": "this is a test agent",
-  "tools": [
-    {
+    "name": "population data analysis agent",
+    "type": "conversational_flow",
+    "description": "This is a demo agent for population data analysis",
+    "app_type": "rag",
+    "memory": {
+        "type": "conversation_index"
+    },
+    "tools": [
+            {
       "type": "VectorDBTool",
       "parameters": {
-        "model_id": "JoOnTZIB0ZlO6yHYy_Oy",
+        "model_id": "cBLwY5IBe067QSVzxPjH",
         "index": "my_test_data",
         "embedding_field": "embedding",
         "source_field": [
@@ -158,7 +163,7 @@ POST /_plugins/_ml/agents/_register
       "type": "MLModelTool",
       "description": "A general tool to answer any question",
       "parameters": {
-        "model_id": "Oka5TZIBH2qLnqOGOrdr",
+        "model_id": "mBL0Y5IBe067QSVzGPjU",
         "messages": [
           {
             "role": "system",
@@ -171,14 +176,35 @@ POST /_plugins/_ml/agents/_register
         ]
       }
     }
-  ]
+    ]
 }
 
-GET /_plugins/_ml/agents/ckbITZIBH2qLnqOGMLeX
 
-POST /_plugins/_ml/agents/ckbITZIBH2qLnqOGMLeX/_execute
+POST /_plugins/_ml/agents/phL2Y5IBe067QSVzl_i2/_execute
 {
   "parameters": {
-    "question": "what's the population increase of Seattle from 2021 to 2023"
+    "question": "what's the population increase of Seattle from 2021 to 2023?"
   }
+}
+
+
+# Get memory details
+GET /_plugins/_ml/memory/BZz3Y5IBm7CPcmmqm-oK
+
+# Get all 
+GET /_plugins/_ml/memory/BZz3Y5IBm7CPcmmqm-oK/messages
+
+# Message details - parent_message_id
+GET /_plugins/_ml/memory/message/Bpz3Y5IBm7CPcmmqneqb
+
+# Trace - for debugging
+GET /_plugins/_ml/memory/message/Bpz3Y5IBm7CPcmmqneqb/traces
+
+# Continue conversation
+POST /_plugins/_ml/agents/phL2Y5IBe067QSVzl_i2/_execute
+{
+  "parameters": {
+    "question": "then compare with Seattle population of 2023"
+  },
+  "memory_id": "URJ2ZJIBe067QSVzkvrf"
 }

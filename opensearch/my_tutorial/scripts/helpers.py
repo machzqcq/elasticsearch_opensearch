@@ -304,3 +304,55 @@ def get_sentence_transformer_models():
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
+    
+
+def restore_interns_all_snapshot(client):
+
+    # Define the repository and snapshot name
+    repository_name = 'my_backup_repo'
+    snapshot_name = 'interns_snapshot'
+    index_name = "interns"
+
+    # Create the repository
+    repository_settings = {
+        "type": "fs",
+        "settings": {
+            "location": "/usr/share/opensearch/snapshots"
+        }
+    }
+
+    # Restore the snapshot
+    restore_body = {
+        "indices": index_name,  # Restore all indices, you can specify specific indices if needed
+        "ignore_unavailable": True,
+        "include_global_state": False
+    }
+
+    client.snapshot.create_repository(repository_name, body=repository_settings)
+
+    # Delete if index already exists
+    try:
+        client.indices.delete(index='interns')
+    except Exception as e:
+        print("Index not found:", e)
+
+    # Restore the snapshot
+    try:
+        response = client.snapshot.restore(
+            repository=repository_name,
+            snapshot=snapshot_name,
+            body=restore_body,
+            wait_for_completion=True
+        )
+        print("Snapshot restored successfully:", response)
+    except Exception as e:
+        print("Error restoring snapshot:", e)
+
+    return True
+
+def create_interns_vectors(client, df, vectorize_fields, embedding_model, embedding_source_destination_map):
+    mappings = return_index_mapping_with_vectors(vectorize_fields=vectorize_fields)
+    success, _ = opensearch_bulk_async_with_embeddings(client, index_name="interns", delete_index=True, 
+                                                    df=df, mapping=mappings, embedding_model=embedding_model, 
+                                                    embedding_source_destination_map=embedding_source_destination_map)
+    return success

@@ -1,7 +1,7 @@
 from opensearchpy import OpenSearch
 
 # Initialize the OpenSearch client
-IS_AUTH = False
+IS_AUTH = True
 
 if IS_AUTH:
     # Initialize the OpenSearch client
