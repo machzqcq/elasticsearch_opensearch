@@ -350,9 +350,197 @@ def restore_interns_all_snapshot(client):
 
     return True
 
-def create_interns_vectors(client, df, vectorize_fields, embedding_model, embedding_source_destination_map):
-    mappings = return_index_mapping_with_vectors(vectorize_fields=vectorize_fields)
-    success, _ = opensearch_bulk_async_with_embeddings(client, index_name="interns", delete_index=True, 
-                                                    df=df, mapping=mappings, embedding_model=embedding_model, 
-                                                    embedding_source_destination_map=embedding_source_destination_map)
-    return success
+
+# Create OpenAI connector
+def create_openai_connector(client, openai_key):
+    connector_body = {
+        "name": "OpenAI GPT-3.5 Connector",
+        "description": "Connector to OpenAI GPT-3.5 model",
+        "version": 1,
+        "protocol": "http",
+        "parameters": {
+            "endpoint": "api.openai.com",
+            "model": "gpt-3.5-turbo"
+        },
+        "credential": {
+            "openai_key": openai_key
+        },
+        "actions": [
+            {
+                "action_type": "predict",
+                "method": "POST",
+                "url": "https://${parameters.endpoint}/v1/chat/completions",
+                "headers": {
+                    "Authorization": "Bearer ${credential.openai_key}",
+                    "Content-Type": "application/json"
+                },
+                "request_body": "{ \"model\": \"${parameters.model}\", \"messages\": [{\"role\":\"system\",\"content\":\"${parameters.system_instruction}\"},{\"role\":\"user\",\"content\":\"${parameters.prompt}\"}] }"
+            }
+        ]
+    }
+    
+    response = client.transport.perform_request('POST', '/_plugins/_ml/connectors/_create', body=connector_body)
+    return response['connector_id']
+
+# Register the model
+def register_openai_model(client, connector_id):
+    model_body = {
+        "name": "OpenAI GPT-3.5 Model",
+        "function_name": "remote",
+        "description": "OpenAI GPT-3.5 model for text generation",
+        "connector_id": connector_id
+    }
+    
+    response = client.transport.perform_request('POST', '/_plugins/_ml/models/_register', body=model_body)
+    return response['model_id']
+
+# Deploy the model
+import time
+def deploy_openai_model(client, model_id):
+    register_openai_model = client.transport.perform_request('POST', f'/_plugins/_ml/models/{model_id}/_deploy')
+    # wait for the model to be deployed
+    register_openai_task_id = register_openai_model['task_id']
+    # Monitor task status
+    while True:
+        task_status = client.transport.perform_request('GET', f'/_plugins/_ml/tasks/{register_openai_task_id}')
+        if task_status['state'] == 'COMPLETED':
+            # Extract model_id from the response
+            openai_model_id = task_status['model_id']
+            break
+        time.sleep(5)
+
+    print(f"Open ai model ID: {openai_model_id} deployed successfully")
+    return openai_model_id
+
+# Create a conversational agent
+def create_conversational_agent(client, model_id, embedding_model_id):
+    agent_body = {
+        "name": "OpenAI RAG Chatbot",
+        "type": "conversational",
+        "description": "RAG chatbot using OpenAI GPT-3.5",
+        "app_type": "chat_with_rag",
+        "llm": {
+            "model_id": model_id,
+            "parameters": {
+                "max_iteration": 3,
+                "response_filter": "$.choices[0].message.content",
+                "system_instruction": "You are an assistant which is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics.",
+                "prompt": "Assistant can ask Human to use tools to look up information that may be helpful in answering the users original question.\n${parameters.tool_descriptions}\n\n${parameters.chat_history}\n\n${parameters.prompt.format_instruction}\n\nHuman: ${parameters.question}\n\n${parameters.scratchpad}\n\nHuman: follow RESPONSE FORMAT INSTRUCTIONS\n\nAssistant:",
+            }
+        },
+        "memory": {
+            "type": "conversation_index"
+        },
+        "tools": [
+            {
+                "type": "VisualizationTool",
+                "parameters": {
+                    "index": ".kibana"
+                },
+                "include_output_in_agent_response": True
+            },
+            {
+                "type": "VectorDBTool",
+                "name": "population_knowledge_base",
+                "parameters": {
+                    "model_id": embedding_model_id,
+                    "index": "test_population_data",
+                    "embedding_field": "population_description_embedding",
+                    "source_field": ["population_description"],
+                    "input": "${parameters.input}"
+                }
+            },
+            {
+                "type": "VectorDBTool",
+                "name": "stock_price_knowledge_base",
+                "parameters": {
+                    "model_id": embedding_model_id,
+                    "index": "test_stock_price_data",
+                    "embedding_field": "stock_price_history_embedding",
+                    "source_field": ["stock_price_history"],
+                    "input": "${parameters.input}"
+                }
+            },
+            {
+                "type": "CatIndexTool",
+                "description": "Use this tool to get OpenSearch index information: (health, status, index, uuid, primary count, replica count, docs.count, docs.deleted, store.size, primary.store.size). \nIt takes 2 optional arguments named `index` which is a comma-delimited list of one or more indices to get information from (default is an empty list meaning all indices), and `local` which means whether to return information from the local node only instead of the cluster manager node (default is false)."
+            },
+            {
+                "type": "SearchAnomalyDetectorsTool"
+            },
+            {
+                "type": "SearchAnomalyResultsTool"
+            },
+            {
+                "type": "SearchMonitorsTool"
+            },
+            {
+                "type": "SearchAlertsTool"
+            },
+        ]
+    }
+    
+    response = client.transport.perform_request('POST', '/_plugins/_ml/agents/_register', body=agent_body)
+    return response['agent_id']
+
+# Execute the agent
+def execute_agent(client, agent_id, question, memory_id=None):
+    execute_body = {
+        "parameters": {
+            "question": question
+        }
+    }
+    if memory_id:
+        execute_body["memory_id"] = memory_id
+    
+    response = client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body=execute_body)
+    return response
+
+# Execute the agent
+def execute_agent_tools(client, agent_id, question, selected_tools):
+    execute_body = {
+        "parameters": {
+            "question": question,
+            "verbose": True,
+            "selected_tools": selected_tools
+        }
+    }
+    
+    response = client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body=execute_body)
+    return response
+
+# Create a conversational agent
+def create_root_agent(client, agent_id, model_id):
+    agent_body = {
+    "name": "Chatbot agent",
+    "type": "flow",
+    "description": "this is a test chatbot agent",
+    "tools": [
+        {
+        "type": "AgentTool",
+        "name": "LLMResponseGenerator",
+        "parameters": {
+            "agent_id": agent_id 
+        },
+        "include_output_in_agent_response": True
+        },
+        {
+        "type": "MLModelTool",
+        "name": "QuestionSuggestor",
+        "description": "A general tool to answer any question",
+        "parameters": {
+            "model_id": model_id,  
+            "prompt": "Human:  You are an AI that only speaks JSON. Do not write normal text. Output should follow example JSON format: \n\n {\"response\": [\"question1\", \"question2\"]}\n\n. \n\nHuman:You will be given a chat history between OpenSearch Assistant and a Human.\nUse the context provided to generate follow up questions the Human would ask to the Assistant.\nThe Assistant can answer general questions about logs, traces and metrics.\nAssistant can access a set of tools listed below to answer questions given by the Human:\nQuestion suggestions generator tool\nHere's the chat history between the human and the Assistant.\n${parameters.LLMResponseGenerator.output}\nUse the following steps to generate follow up questions Human may ask after the response of the Assistant:\nStep 1. Use the chat history to understand what human is trying to search and explore.\nStep 2. Understand what capabilities the assistant has with the set of tools it has access to.\nStep 3. Use the above context and generate follow up questions.Step4:You are an AI that only speaks JSON. Do not write normal text. Output should follow example JSON format: \n\n {\"response\": [\"question1\", \"question2\"]} \n \n----------------\n\nAssistant:"
+        },
+        "include_output_in_agent_response": True
+        }
+    ],
+    "memory": {
+        "type": "conversation_index"
+    }
+    }
+    
+    response = client.transport.perform_request('POST', '/_plugins/_ml/agents/_register', body=agent_body)
+    return response['agent_id']
+
+

@@ -77,8 +77,8 @@ services:
       - "OPENSEARCH_DASHBOARDS_ML_COMMONS_ENABLED=true"
       - "OPENSEARCH_DASHBOARDS_ML_COMMONS_MODEL_DOWNLOAD_ENABLED=true"
       - "OPENSEARCH_DASHBOARDS_ML_COMMONS_TRUSTED_URL_REGEX=^https:\\/\\/(.*)"
-      - assistant.chat.enabled=true
-      - observability.query_assist.enabled=true
+      - "assistant.chat.enabled=true" # Enable the chat assistant - This doesn't work. Have to manually edit opensearch-dashboards.yml in config 
+      - "observability.query_assist.enabled=true"
     networks:
       - opensearch-net
 
