@@ -1,6 +1,10 @@
 # Fine tuning ST models
 In STS, we have sentence pairs annotated together with a score indicating the similarity. In the original STSbenchmark dataset, the scores range from 0 to 5. We have normalized these scores to range between 0 and 1 in stsb, as that is required for CosineSimilarityLoss
 
+## Libraries
+- `pip3 install -U transformers`
+- `pip3 install -U accelerate`
+- `pip3 install datasets`
 
 ## Build your own training dataset
 
