@@ -27,6 +27,10 @@ def process_mermaid_files(source_dir, target_dir, image_format):
 # Example usage
 source_directory = 'mermaid_diagrams'
 target_directory = 'mermaid_images'
+
+# Ensure the source and target directories exist
+os.makedirs(source_directory, exist_ok=True)
+os.makedirs(target_directory, exist_ok=True)
 image_format = 'png'  # Change to 'svg' if you want to generate SVG images
 
 process_mermaid_files(source_directory, target_directory, image_format)

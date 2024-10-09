@@ -44,4 +44,8 @@ def process_markdown_files(source_dir, target_dir):
 # Example usage
 source_directory = 'docs'
 target_directory = 'mermaid_diagrams'
+
+# Ensure the source and target directories exist
+os.makedirs(source_directory, exist_ok=True)
+os.makedirs(target_directory, exist_ok=True)
 process_markdown_files(source_directory, target_directory)
