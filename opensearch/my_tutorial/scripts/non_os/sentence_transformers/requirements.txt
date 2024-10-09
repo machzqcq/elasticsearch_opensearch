@@ -1,0 +1,5 @@
+transformers
+accelerate
+sentence-transformers
+ranx
+qdrant-client
