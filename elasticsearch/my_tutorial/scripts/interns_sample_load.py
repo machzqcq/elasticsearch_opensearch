@@ -6,7 +6,7 @@ from helpers import csv_to_json, bulk_load_documents
 
 import pandas as pd
 
-BASE_DIR = "../../txtai/data"
+BASE_DIR = "../data"
 
 df = pd.read_parquet(f"{BASE_DIR}/interns_sample.parquet")
 
