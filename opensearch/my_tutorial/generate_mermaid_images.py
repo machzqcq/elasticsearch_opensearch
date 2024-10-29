@@ -7,7 +7,7 @@ def generate_image_from_mermaid(mermaid_file_path, output_image_path, image_form
     
     try:
         # Use mermaid-cli to generate the image
-        subprocess.run(['mmdc', '-i', mermaid_file_path, '-o', output_image_path, '-t', image_format], check=True)
+        subprocess.run(['mmdc', '-i', mermaid_file_path, '-o', output_image_path, '-e', image_format], check=True)
         print(f"Generated image {output_image_path}")
     except subprocess.CalledProcessError as e:
         print(f"Failed to generate image for {mermaid_file_path}: {e}")
