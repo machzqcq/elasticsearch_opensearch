@@ -1,0 +1,4 @@
+# Fake logs generators
+- `flog` - Clone the original [repo](https://github.com/mingrammer/flog/tree/main). Modify the Dockerfile to use alpine instead of scratch. Build the image `docker build -t myflog -f Dockerfile .`. Run the image `docker run -it myflog /bin/sh`. Follow the various log simulator commands from the README.md in the repo
+- Alternatively, I have pushed the above image to `macharlap/myflog` docker image. You can just pull using `docker pull macharlap/myflog` and then `docker run -it macharlap/myflog /bin/sh`
+- `generate_otel_logs.py` - Run the server `python3 generate_otel_logs.py` and then make logs using `curl http://localhost:5002/rolldice?user=anonymous`

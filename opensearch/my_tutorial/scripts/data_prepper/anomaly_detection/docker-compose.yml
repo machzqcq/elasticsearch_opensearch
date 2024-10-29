@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  data-prepper:
+    image: opensearchproject/data-prepper:2.10.1
+    ports:
+      - "2020:2020"  # HTTP input port
+      - "2021:2021"
+    volumes:
+      - ./anomaly_detector_pipeline.yaml:/usr/share/data-prepper/pipelines/anomaly_detector_pipeline.yaml  # Mount config
+      - ./data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
+    networks:
+      - opensearch-net
+
+  generator:
+    image: nyurik/alpine-python3-requests
+    depends_on:
+      - data-prepper
+    volumes:
+      - ./generator:/usr/src/app  # Mount generator directory
+    working_dir: /usr/src/app
+    command: ["python", "log_generator.py"]
+    networks:
+      - opensearch-net
+
+networks:
+  opensearch-net:
+    driver: bridge

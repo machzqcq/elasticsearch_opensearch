@@ -1,0 +1,16 @@
+pipeline:
+  source:
+    http:
+      ssl: false
+      port: 2020
+
+  processor:
+    - anomaly_detector:
+        identification_keys: ["source_ip"]
+        keys: ["count_source_ip"]
+        mode:
+          random_cut_forest:
+
+  sink:
+    - file:
+        path: /usr/share/data-prepper/pipelines/anomaly_output.json
