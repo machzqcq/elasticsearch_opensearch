@@ -6,13 +6,21 @@ def extract_headers(md_content):
     return headers
 
 def generate_mermaid_diagram_code(headers):
-    mermaid_code = "graph TD;\n"
+    mermaid_code = "graph LR;\n"
+    subgraph_count = (len(headers) + 3) // 4  # Calculate the total number of subgraphs
     for i, (level, header) in enumerate(headers):
+        if i % 4 == 0:
+            if i != 0:
+                mermaid_code += "    end\n"
+            mermaid_code += f"    subgraph Concepts{subgraph_count}\n \t direction LR\n"
+            subgraph_count -= 1
         node_id = f"node{i}"
-        mermaid_code += f"    {node_id}[{header}];\n"
-        if i > 0:
+        mermaid_code += f"        {node_id}[{header}];\n"
+        if i % 4 != 0:
             prev_node_id = f"node{i-1}"
-            mermaid_code += f"    {prev_node_id} --> {node_id};\n"
+            mermaid_code += f"        {prev_node_id} --> {node_id};\n"
+    if headers:
+        mermaid_code += "    end\n"
     return mermaid_code
 
 def process_markdown_files(source_dir, target_dir):
