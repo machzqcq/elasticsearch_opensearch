@@ -1,0 +1,12 @@
+ opensearchDashboards.branding:
+   logo:
+     defaultUrl: "http://www.symmetrics.fyi/images/symmetrics_logo_v2.svg"
+  #   darkModeUrl: ""
+  # mark:
+  #   defaultUrl: ""
+  #   darkModeUrl: ""
+  # loadingLogo:
+  #   defaultUrl: ""
+  #   darkModeUrl: ""
+  # faviconUrl: ""
+   applicationTitle: "My custom title"

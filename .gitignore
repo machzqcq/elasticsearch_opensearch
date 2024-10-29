@@ -1,6 +1,11 @@
 **/*.json
 **/*.csv
 **/*.zip
+**/*.parquet
+**/*.log
+**/*.html
+**/*.js
+**/*.css
 **/__pycache__
 **/venv
 **/.venv
@@ -11,4 +16,8 @@
 **/*.onnx
 **/*.safetensors
 **/vocab.txt
+**/docs_pdf_weasyprint
+**/mermaid_diagrams
+**/mermaid_images
+**/tokenizer
 
