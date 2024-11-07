@@ -1,12 +1,19 @@
 site_name: My Documentation Site
 theme:
-  name: material #readthedocs mkdocs #material
+  name: readthedocs
 nav:
 - 1. intro:
   - 1.1 intro: 1. intro/1.1 intro.md
   - 1.2 opensearch_concepts: 1. intro/1.2 opensearch_concepts.md
   - 1.3 types_of_searches: 1. intro/1.3 types_of_searches.md
   - 1.4 searches_jargon: 1. intro/1.4 searches_jargon.md
+- 10. data_prepper:
+  - 1. overview: 10. data_prepper/1. overview.md
+  - 2. pipelines: 10. data_prepper/2. pipelines.md
+  - 3. data_prepper_vs_logstash: 10. data_prepper/3. data_prepper_vs_logstash.md
+  - 4. sources: 10. data_prepper/4. sources.md
+  - 5. processors: 10. data_prepper/5. processors.md
+  - 6. sinks: 10. data_prepper/6. sinks.md
 - 2. use_cases:
   - 2.1 use_cases_by_industry: 2. use_cases/2.1 use_cases_by_industry.md
   - 2.2 use_cases_by_job_function: 2. use_cases/2.2 use_cases_by_job_function.md
@@ -40,27 +47,63 @@ nav:
   - 5. delete_pipeline: 5. index_pipelines/5. delete_pipeline.md
   - 6. handling_pipeline_failures: 5. index_pipelines/6. handling_pipeline_failures.md
   - 7. ingest_processors: 5. index_pipelines/7. ingest_processors.md
-- 6. opensearch_dashboards:
-  - 1. overview: 6. opensearch_dashboards/1. overview.md
+- 6. text_analysis:
+  - 1. overview: 6. text_analysis/1. overview.md
+  - 2. language_analyzers: 6. text_analysis/2. language_analyzers.md
+  - 3. index_analyzers: 6. text_analysis/3. index_analyzers.md
+  - 3. search_analyzers: 6. text_analysis/3. search_analyzers.md
+  - 4. tokenizers: 6. text_analysis/4. tokenizers.md
+  - 5. token_filters: 6. text_analysis/5. token_filters.md
+  - 6. normalizers: 6. text_analysis/6. normalizers.md
+- 7. traditional_and_ml_neural_search:
+  - 1. overview: 7. traditional_and_ml_neural_search/1. overview.md
+  - 2. collapse: 7. traditional_and_ml_neural_search/2. collapse.md
+  - 3. search_data_overview: 7. traditional_and_ml_neural_search/3. search_data_overview.md
+  - 3.1 paginate_results: 7. traditional_and_ml_neural_search/3.1 paginate_results.md
+  - 3.2. sort: 7. traditional_and_ml_neural_search/3.2. sort.md
+  - 3.3. highlight: 7. traditional_and_ml_neural_search/3.3. highlight.md
+  - 3.4. autocomplete: 7. traditional_and_ml_neural_search/3.4. autocomplete.md
+  - 3.5. did-you-mean: 7. traditional_and_ml_neural_search/3.5. did-you-mean.md
+  - 3.6. retrieve_specific_fields: 7. traditional_and_ml_neural_search/3.6. retrieve_specific_fields.md
+  - 3.7. inner_hits: 7. traditional_and_ml_neural_search/3.7. inner_hits.md
+  - 3.8. search_shard_routing: 7. traditional_and_ml_neural_search/3.8. search_shard_routing.md
+  - 3.9. keyword_search: 7. traditional_and_ml_neural_search/3.9. keyword_search.md
+  - 4. knn_search: 7. traditional_and_ml_neural_search/4. knn_search.md
+  - 4.1 knn_index: 7. traditional_and_ml_neural_search/4.1 knn_index.md
+  - 4.2 approximate_knn: 7. traditional_and_ml_neural_search/4.2 approximate_knn.md
+  - 4.3 disk_based_vector_search: 7. traditional_and_ml_neural_search/4.3 disk_based_vector_search.md
+  - 4.4 knn_search_filters: 7. traditional_and_ml_neural_search/4.4 knn_search_filters.md
+  - 4.5 knn_nested_fields: 7. traditional_and_ml_neural_search/4.5 knn_nested_fields.md
+  - 4.6 knn_painless_extensions: 7. traditional_and_ml_neural_search/4.6 knn_painless_extensions.md
+  - 4.7 knn_vector_quantization: 7. traditional_and_ml_neural_search/4.7 knn_vector_quantization.md
+  - 5. neural_search: 7. traditional_and_ml_neural_search/5. neural_search.md
+  - 5.1 neural_search_tutorial: 7. traditional_and_ml_neural_search/5.1 neural_search_tutorial.md
+- 8. machine_learning:
+  - 1. ml_commons_plugin_settings: 8. machine_learning/1. ml_commons_plugin_settings.md
+  - 2. integrating_ml_models: 8. machine_learning/2. integrating_ml_models.md
+  - 3. using_ml_models: 8. machine_learning/3. using_ml_models.md
+  - 3.1 custom_models: 8. machine_learning/3.1 custom_models.md
+  - 3.2 opensearch_provided_pretrained_models: 8. machine_learning/3.2 opensearch_provided_pretrained_models.md
+  - 4. externally_hosted_models: 8. machine_learning/4. externally_hosted_models.md
+  - 4.1 connector_blueprints: 8. machine_learning/4.1 connector_blueprints.md
+  - 4.2 guardrails: 8. machine_learning/4.2 guardrails.md
+  - 4.3 batch_ingestion: 8. machine_learning/4.3 batch_ingestion.md
+  - 5. agents_and_tools: 8. machine_learning/5. agents_and_tools.md
+  - 5.1 retrieval_augemented_generation: 8. machine_learning/5.1 retrieval_augemented_generation.md
+  - 5.2 tools: 8. machine_learning/5.2 tools.md
+  - 6. os_assistant_toolkit: 8. machine_learning/6. os_assistant_toolkit.md
+  - 7. supported_algorithms: 8. machine_learning/7. supported_algorithms.md
+  - 8. tutorials: 8. machine_learning/8. tutorials.md
+  - 8.1 reranking_search_results: 8. machine_learning/8.1 reranking_search_results.md
+  - 8.2 reranking_msmarco_encoder: 8. machine_learning/8.2 reranking_msmarco_encoder.md
+  - 8.3 rag_conversational_flow_agent: 8. machine_learning/8.3 rag_conversational_flow_agent.md
+  - 8.4 rag_chatbot: 8. machine_learning/8.4 rag_chatbot.md
+- 9. opensearch_dashboards:
+  - 1. overview: 9. opensearch_dashboards/1. overview.md
+  - 2. quickstart_guide: 9. opensearch_dashboards/2. quickstart_guide.md
+  - 3. analyzing_data: 9. opensearch_dashboards/3. analyzing_data.md
+  - 4. creating_dashboards: 9. opensearch_dashboards/4. creating_dashboards.md
+  - 5. custom_branding: 9. opensearch_dashboards/5. custom_branding.md
+  - 6. dql: 9. opensearch_dashboards/6. DQL.md
+  - 7. integrations: 9. opensearch_dashboards/7. integrations.md
 - Ecommerce-field_mappings: ecommerce-field_mappings.md
-- Search:
-  - 1. overview: search/1. overview.md
-  - 2. collapse: search/2. collapse.md
-  - 3. search_data_overview: search/3. search_data_overview.md
-  - 3.1 paginate_results: search/3.1 paginate_results.md
-  - 3.2. sort: search/3.2. sort.md
-  - 3.3. highlight: search/3.3. highlight.md
-  - 3.4. autocomplete: search/3.4. autocomplete.md
-  - 3.5. did-you-mean: search/3.5. did-you-mean.md
-  - 3.6. retrieve_specific_fields: search/3.6. retrieve_specific_fields.md
-  - 3.7. inner_hits: search/3.7. inner_hits.md
-  - 3.8. search_shard_routing: search/3.8. search_shard_routing.md
-  - 3.9. keyword_search: search/3.9. keyword_search.md
-- Text_analysis:
-  - 1. overview: text_analysis/1. overview.md
-  - 2. language_analyzers: text_analysis/2. language_analyzers.md
-  - 3. index_analyzers: text_analysis/3. index_analyzers.md
-  - 3. search_analyzers: text_analysis/3. search_analyzers.md
-  - 4. tokenizers: text_analysis/4. tokenizers.md
-  - 5. token_filters: text_analysis/5. token_filters.md
-  - 6. normalizers: text_analysis/6. normalizers.md

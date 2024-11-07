@@ -1,6 +1,8 @@
 import os
 import yaml
 
+THEMES = ["mkdocs", "readthedocs", "material"]
+
 def generate_nav_structure(base_path, current_path=""):
     nav = []
     for item in sorted(os.listdir(os.path.join(base_path, current_path))):
@@ -15,7 +17,7 @@ def generate_mkdocs_config(docs_path):
     config = {
         "site_name": "My Documentation Site",
         "theme": {
-            "name": "mkdocs"
+            "name": THEMES[1]
         },
         "nav": generate_nav_structure(docs_path)
     }
