@@ -23,8 +23,8 @@
 # Gotchas
 - With 2.16.0, though OPENSEARCH_INITIAL_ADMIN_PASSWORD is not required, if we mention that in enviroment, it needs to have a value in shell, otherwise services don't start properly
 
-# While running python3 sample_ingest.py
-## Context
+## While running python3 sample_ingest.py
+### Context
 - 2.17.0 with master (aka. opensearch-node1) has JAVA_OPTS=4096 for both min and max (master needs to have high heap)
 - CLUSTER ISSUES: cluster starts up fine, but kNN index creation and circuit breaker conditions in the cluster cause errors
 ![alt text](image.png)
