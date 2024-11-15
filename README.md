@@ -44,7 +44,7 @@ All documentation in various forms can be fully generated from this git repo (ex
 
 # HARDWARE, TOOLS & SOFTWARE
 - **HARDWARE**: Bare metal or virtual OS as long as you have at least 8GB RAM, 4 CPUs and 50GB storage (I executed on 16gb ram, 4 cpu)
-- **MAIN:** OPENSEARCH (of course) & ELASTICSEARCH (trial version)
+- **MAIN:** OPENSEARCH (of course) 2.17 & 2.16 & ELASTICSEARCH (trial version 8.15.0)
 - **OPERATING SYSTEM**: Linux (ubuntu 20.04 or 22.04)
 - **DOCKER**: Docker version 27.2.0, build 3ab4256
 - **PROGRAMMING LANGUAGES**: Python 3.8.10 and modules, shell, SQL/DQL (comes with opensearch)
