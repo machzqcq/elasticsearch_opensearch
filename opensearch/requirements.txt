@@ -1,7 +1,7 @@
 # Python 3.8.10 is used in the project
 opensearch-py==2.7.1
 opensearch-py-ml==1.1.0
-pandas==1.5.3
+pandas
 pyarrow==17.0.0
 ipython==7.25.0
 deprecated==1.2.14

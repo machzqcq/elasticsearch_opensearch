@@ -59,3 +59,6 @@ Entire course execution is mostly inside docker, so as long as you have docker r
   - `cat vscode-extensions.txt | xargs -n 1 code --install-extension`  - *nix bash
   - `Get-Content vscode-extensions.txt | ForEach-Object { code --install-extension $_ }` - windows powershell
   - `for /F "delims=" %i in (vscode-extensions.txt) do code --install-extension %i` - windows command prompt
+
+# GOTCHAS
+- On aws ec2 ubuntu instance, if you get error on `permission denied for /var/run/docker.sock`, then execute `sudo chmod 666 /var/run/docker.sock`
