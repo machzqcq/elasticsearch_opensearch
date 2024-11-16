@@ -27,3 +27,16 @@ def generate_mkdocs_config(docs_path):
 if __name__ == "__main__":
     docs_path = "docs"
     generate_mkdocs_config(docs_path)
+    index_content = "# Welcome to My Documentation Site\n\n"
+    for item in generate_nav_structure(docs_path):
+        for title, path in item.items():
+            if isinstance(path, list):
+                index_content += f"## {title}\n"
+                for sub_item in path:
+                    for sub_title, sub_path in sub_item.items():
+                        index_content += f"- [{sub_title}]({sub_path})\n"
+            else:
+                index_content += f"- [{title}]({path})\n"
+
+    with open(os.path.join(docs_path, "index.md"), "w") as f:
+        f.write(index_content)

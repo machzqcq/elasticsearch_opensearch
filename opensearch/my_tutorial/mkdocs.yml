@@ -3,6 +3,7 @@ theme:
   name: readthedocs
 nav:
 - 1. intro:
+  - 1.0 why_opensearch: 1. intro/1.0 why_opensearch.md
   - 1.1 intro: 1. intro/1.1 intro.md
   - 1.2 opensearch_concepts: 1. intro/1.2 opensearch_concepts.md
   - 1.3 types_of_searches: 1. intro/1.3 types_of_searches.md
