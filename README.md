@@ -4,7 +4,7 @@ This repo contains tutorials, code, documentation that drives my opensearch cour
 
 # PREREQUISITES FOR THE COURSE
 - **Human taking the course**: 
-  - Eagerness and excitement to learn and understand how `search` works from ground up
+  - Eagerness and excitement to learn and understand how `search` worked traditionally vs. `AI/Ml-driven search` from ground up
   - Push through to `successful execution of learning material` and constantly reach out until you understand what you need to
   - Motivated `intrinsically` to learn and use this course only as an extrinsic trigger  
   - Basics of being able to `navigate in a linux environment`
@@ -13,18 +13,18 @@ This repo contains tutorials, code, documentation that drives my opensearch cour
   - Basics of server/client tech
 - **Machine Resources**: See below
 
-# WHY ELASTICSEARCH NAME USED
+# WHY ELASTICSEARCH REFERENCES
 - The repo name contains `elasticsearch` because opensearch started as a fork of elasticsearch (> 7.x version) platform 
-- I believe that historical context enhances the perspective of the reader, look up for search terms on internet and correlate / contrast
-- As of today (November 2024), elasticsearch is by far the predominatly used search platform (compared to OS) - though my guess is OS will take over , especially as AI/ML gains more prominence
-- If you have ES experience / background, very high probability that you will be considered a top candidate for OS jobs
+- As of today (November 2024), elasticsearch is one of the most used enterprise search platform in its segment - though my guess OS will take significant market share , especially as AI/ML gains more prominence
+- If you have ES experience / background, very high probability that you will be considered a top candidate for OS jobs and projects that involve `migration from elasticsearch to opensearch`
 
 # MOTIVATION FOR THE COURSE
 - There are many ES courses online and it is a pretty mature platform in startups, mid-level or enterprise contexts. 
 - Just search for `List top 25 enterprise companies using elastichsearch` on google/perplexity (now search for top 25 using OS)
 - Also interesting that `Oracle` switched from ES > OS for their PeopleSoft's search capabilities
 - The clouds have already changed the software licensing incentives and model structures in the world. So why keep paying purely for software licenses (you anyways cannot get away paying for support, skills and large scale needs like data center infra, AI models)
-- You already give away the most precious asset (data) to the search platform, so why still pay additional for authN/authZ , UI and other pureplay software pieces - Reduce it !
+- You already give away the most precious asset (data) to the search platform, so why still pay additional for authN/authZ , UI and other commoditized software pieces - Reduce it !
+- `Opensearch` is relatively new and you can almost count the number of courses available out there. Since I have used both, and I believe there is a good market space for OS to capture, I wrote this course and sharing it.
 - Many more (follow the course) 
 
 # ORGANIZATION OF THE COURSE
@@ -44,10 +44,11 @@ All documentation in various forms can be fully generated from this git repo (ex
 
 # HARDWARE, TOOLS & SOFTWARE
 - **HARDWARE**: Bare metal or virtual OS as long as you have at least 8GB RAM, 4 CPUs and 50GB storage (I executed on 16gb ram, 4 cpu)
-- **MAIN:** OPENSEARCH (of course) 2.17 & 2.16 & ELASTICSEARCH (trial version 8.15.0)
-- **OPERATING SYSTEM**: Linux (ubuntu 20.04 or 22.04)
+- **MAIN** OPENSEARCH (of course) 2.17 & 2.16 & ELASTICSEARCH (trial version 8.15.0)
+- **SERVER OPERATING SYSTEM**: Linux (ubuntu 20.04 or 22.04). This is where we launch opensearch server and execute scripts
+- **CLIENT OPERATING SYSTEM**: This is where we launch the IDE and our primary interface for the course. This can be `windows` or `linux` or `mac`
 - **DOCKER**: Docker version 27.2.0, build 3ab4256
-- **PROGRAMMING LANGUAGES**: Python 3.8.10 and modules, shell, SQL/DQL (comes with opensearch)
+- **PROGRAMMING LANGUAGES**: Python 3.8.10 (or greater) and modules, shell, SQL/DQL (comes with opensearch)
 - **IDE**: VS CODE 1.95.3 (primarily) and extensions, Jupyter
 
 # WHY NOT WINDOWS
@@ -59,6 +60,7 @@ Entire course execution is mostly inside docker, so as long as you have docker r
   - `cat vscode-extensions.txt | xargs -n 1 code --install-extension`  - *nix bash
   - `Get-Content vscode-extensions.txt | ForEach-Object { code --install-extension $_ }` - windows powershell
   - `for /F "delims=" %i in (vscode-extensions.txt) do code --install-extension %i` - windows command prompt
+  - **Or search for the extensions one-by-one and install** 
 
 # GOTCHAS
 - On aws ec2 ubuntu instance, if you get error on `permission denied for /var/run/docker.sock`, then execute `sudo chmod 666 /var/run/docker.sock`
