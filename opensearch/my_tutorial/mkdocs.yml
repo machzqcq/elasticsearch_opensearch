@@ -1,4 +1,4 @@
-site_name: My Documentation Site
+site_name: OPENSEARCH TUTORIAL
 theme:
   name: readthedocs
 nav:
@@ -108,3 +108,4 @@ nav:
   - 6. dql: 9. opensearch_dashboards/6. DQL.md
   - 7. integrations: 9. opensearch_dashboards/7. integrations.md
 - Ecommerce-field_mappings: ecommerce-field_mappings.md
+- Index: index.md

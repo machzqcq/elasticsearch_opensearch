@@ -1,5 +1,6 @@
-# Welcome to My Documentation Site
+# Welcome to OPENSEARCH TUTORIAL
 
+ (AUTHOR: PRADEEP@AUTOMATIONPRACTICE.COM)
 ## 1. intro
 - [1.0 why_opensearch](1. intro/1.0 why_opensearch.md)
 - [1.1 intro](1. intro/1.1 intro.md)
@@ -106,3 +107,4 @@
 - [6. dql](9. opensearch_dashboards/6. DQL.md)
 - [7. integrations](9. opensearch_dashboards/7. integrations.md)
 - [Ecommerce-field_mappings](ecommerce-field_mappings.md)
+- [Index](index.md)

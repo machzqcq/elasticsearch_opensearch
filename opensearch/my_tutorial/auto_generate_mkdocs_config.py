@@ -15,7 +15,7 @@ def generate_nav_structure(base_path, current_path=""):
 
 def generate_mkdocs_config(docs_path):
     config = {
-        "site_name": "My Documentation Site",
+        "site_name": "OPENSEARCH TUTORIAL",
         "theme": {
             "name": THEMES[1]
         },
@@ -27,7 +27,7 @@ def generate_mkdocs_config(docs_path):
 if __name__ == "__main__":
     docs_path = "docs"
     generate_mkdocs_config(docs_path)
-    index_content = "# Welcome to My Documentation Site\n\n"
+    index_content = "# Welcome to OPENSEARCH TUTORIAL\n\n (AUTHOR: PRADEEP@AUTOMATIONPRACTICE.COM)\n"
     for item in generate_nav_structure(docs_path):
         for title, path in item.items():
             if isinstance(path, list):
