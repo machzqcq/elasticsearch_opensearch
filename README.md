@@ -64,3 +64,4 @@ Entire course execution is mostly inside docker, so as long as you have docker r
 
 # GOTCHAS
 - On aws ec2 ubuntu instance, if you get error on `permission denied for /var/run/docker.sock`, then execute `sudo chmod 666 /var/run/docker.sock`
+- When running a notebook first time, vscode might ask to install ipykernel package: Go ahead and install ![alt text](image-3.png)

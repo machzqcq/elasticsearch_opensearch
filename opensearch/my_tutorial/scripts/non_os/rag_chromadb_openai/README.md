@@ -1,14 +1,20 @@
-
 # RAG process
+Langchain example - https://python.langchain.com/docs/tutorials/rag/
 
-## Key Components
-- User Query
-- Retriever
-- Knowledge Base/Vector Database
-- Context/Retrieved Information
-- Prompt Engineering
-- Large Language Model
-- Generated Response
+## Indexing
+
+- **Load**: First we need to load our data. This is done with Document Loaders.
+- **Split**: Text splitters break large Documents into smaller chunks. This is useful both for indexing data and passing it into a model, as large chunks are harder to search over and won't fit in a model's finite context window.
+- **Store**: We need somewhere to store and index our splits, so that they can be searched over later. This is often done using a VectorStore and Embeddings model.  
+![alt text](rag_indexing.png)
+
+## Retrieval and generation
+
+- **Retrieve**: Given a user input, relevant splits are retrieved from storage using a Retriever.
+- **Generate**: A ChatModel / LLM produces an answer using a prompt that includes both the question with the retrieved data  
+
+![alt text](rag_retrieval_generation.png)
+
 
 ## Process Flow
 - User Query enters the system
@@ -19,6 +25,8 @@
 - Prompt sent to Large Language Model
 - LLM generates response using prompt
 - Generated response returned to user
+
+
 
 ## Overall Steps
 - Install required libraries
