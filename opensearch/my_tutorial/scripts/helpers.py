@@ -441,13 +441,14 @@ def create_conversational_agent(client, model_id, embedding_model_id):
             },
             {
                 "type": "VectorDBTool",
-                "name": "population_knowledge_base",
+                "name": "population_data_knowledge_base",
                 "parameters": {
                     "model_id": embedding_model_id,
-                    "index": "test_population_data",
+                    "index": "population_data_knowledge_base",
                     "embedding_field": "population_description_embedding",
                     "source_field": ["population_description"],
-                    "input": "${parameters.input}"
+                    "input": "${parameters.input}",
+                    "question": "${parameters.question}"
                 }
             },
             {
@@ -458,7 +459,8 @@ def create_conversational_agent(client, model_id, embedding_model_id):
                     "index": "test_stock_price_data",
                     "embedding_field": "stock_price_history_embedding",
                     "source_field": ["stock_price_history"],
-                    "input": "${parameters.input}"
+                    "input": "${parameters.input}",
+                    "question": "${parameters.question}"
                 }
             },
             {

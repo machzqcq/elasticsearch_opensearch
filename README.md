@@ -51,6 +51,10 @@ All documentation in various forms can be fully generated from this git repo (ex
 - **PROGRAMMING LANGUAGES**: Python 3.8.10 (or greater) and modules, shell, SQL/DQL (comes with opensearch)
 - **IDE**: VS CODE 1.95.3 (primarily) and extensions, Jupyter
 
+# STUDENT ENVIRONMENT
+There are many ways to align infrastructure to do this course, however the below diagram is what we will be confirming to:  
+![environment](./environment.svg)
+
 # WHY NOT WINDOWS
 Entire course execution is mostly inside docker, so as long as you have docker runtime it doesn't matter - windows can also work totally. I have executed about 50% of scripts on windows, but you are welcome to reach out by emailing me directly [here](pradeep@automationpractice.com) if you run into real issues.
 
