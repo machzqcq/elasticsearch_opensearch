@@ -4,6 +4,9 @@ opensearch-py-ml==1.1.0
 pandas
 pyarrow==17.0.0
 ipython==7.25.0
+ipywidgets==8.1.5
+treelib==1.7.0
+wordcloud==1.9.4
 deprecated==1.2.14
 sentence-transformers==3.1.1
 mkdocs==1.6.1
