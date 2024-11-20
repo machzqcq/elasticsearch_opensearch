@@ -4,7 +4,7 @@ from helpers import opensearch_client, opensearch_bulk_sync, opensearch_bulk_asy
 
 host = '192.168.0.111'
 port = 9200
-auth = ('admin', 'Padmasini10') # For testing only. Don't store credentials in code.
+auth = ('admin', 'Developer123') # For testing only. Don't store credentials in code.
 
 client = opensearch_client(host, port, auth=auth, ssl=True)
 

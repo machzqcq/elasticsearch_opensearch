@@ -22,7 +22,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 # OpenSearch connection setup
 client = OpenSearch(
     hosts=[{'host': '192.168.0.111', 'port': 9200}],
-    http_auth=('admin', 'Padmasini10'),  # Replace with your credentials
+    http_auth=('admin', 'Developer123'),  # Replace with your credentials
     use_ssl=True,
     verify_certs=False,
     connection_class=RequestsHttpConnection

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Wait for OpenSearch to be ready
-until curl -k -s https://opensearch-node1:9200 -u admin:Padmasini10 > /dev/null; do
+until curl -k -s https://opensearch-node1:9200 -u admin:Developer123 > /dev/null; do
     echo "Waiting for OpenSearch to start..."
     sleep 5
 done
@@ -10,7 +10,7 @@ echo "OpenSearch is up and running!"
 
 # Register model group
 echo "Registering model group..."
-MODEL_GROUP_ID=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/model_groups/_register" -H 'Content-Type: application/json' -u admin:Padmasini10 -d'
+MODEL_GROUP_ID=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/model_groups/_register" -H 'Content-Type: application/json' -u admin:Developer123 -d'
 {
   "name": "my_model_group",
   "description": "My model group for text embedding",
@@ -25,7 +25,7 @@ sleep 5
 
 # Register the model
 echo "Registering the model..."
-RESPONSE=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/models/_register" -H 'Content-Type: application/json' -u admin:Padmasini10 -d'{
+RESPONSE=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/models/_register" -H 'Content-Type: application/json' -u admin:Developer123 -d'{
     "name": "huggingface/sentence-transformers/msmarco-distilbert-base-tas-b",
     "version": "1.0.1",
     "model_group_id": "'"$MODEL_GROUP_ID"'",
@@ -41,8 +41,8 @@ echo "Task ID: $REGISTER_TASK_ID"
 
 # Wait for the model registration to complete
 echo "Waiting for model registration to complete..."
-until [[ "$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$REGISTER_TASK_ID" -H 'Content-Type: application/json' -u admin:Padmasini10 | jq -r '.state')" == "COMPLETED" ]]; do
-    STATE=$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$REGISTER_TASK_ID" -H 'Content-Type: application/json' -u admin:Padmasini10 | jq -r '.state')
+until [[ "$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$REGISTER_TASK_ID" -H 'Content-Type: application/json' -u admin:Developer123 | jq -r '.state')" == "COMPLETED" ]]; do
+    STATE=$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$REGISTER_TASK_ID" -H 'Content-Type: application/json' -u admin:Developer123 | jq -r '.state')
     echo "Model Group ID: $MODEL_GROUP_ID"
     echo "Model ID: $MODEL_ID"
     echo "Register Task ID: $REGISTER_TASK_ID"
@@ -55,14 +55,14 @@ echo "Model registration completed!"
 
 # Deploy the model
 echo "Deploying the model..."
-DEPLOY_RESPONSE=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/models/$MODEL_ID/_deploy" -H 'Content-Type: application/json' -u "admin:Padmasini10")
+DEPLOY_RESPONSE=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/models/$MODEL_ID/_deploy" -H 'Content-Type: application/json' -u "admin:Developer123")
 DEPLOY_TASK_ID=$(echo $DEPLOY_RESPONSE | jq -r '.task_id')
 
 echo "Deploy Task ID: $DEPLOY_TASK_ID"
 
 # Wait for the model deployment to complete
 echo "Waiting for model deployment to complete..."
-until [[ "$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$DEPLOY_TASK_ID" -H 'Content-Type: application/json' -u "admin:Padmasini10" | jq -r '.state')" == "DEPLOYED" ]]; do
+until [[ "$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$DEPLOY_TASK_ID" -H 'Content-Type: application/json' -u "admin:Developer123" | jq -r '.state')" == "DEPLOYED" ]]; do
     echo "Model deployment in progress..."
     sleep 5
 done
@@ -71,7 +71,7 @@ echo "Model deployment completed!"
 
 # Create ingest pipeline
 echo "Creating ingest pipeline..."
-curl -k -X PUT "https://opensearch-node1:9200/_ingest/pipeline/my_embedding_pipeline" -H 'Content-Type: application/json' -u "admin:Padmasini10" -d'{
+curl -k -X PUT "https://opensearch-node1:9200/_ingest/pipeline/my_embedding_pipeline" -H 'Content-Type: application/json' -u "admin:Developer123" -d'{
   "description": "Text embedding pipeline",
   "processors": [
     {
@@ -87,7 +87,7 @@ curl -k -X PUT "https://opensearch-node1:9200/_ingest/pipeline/my_embedding_pipe
 
 # Create kNN index
 echo "Creating kNN index..."
-curl -k -X PUT "https://opensearch-node1:9200/my_index" -H 'Content-Type: application/json' -u "admin:Padmasini10" -d'{
+curl -k -X PUT "https://opensearch-node1:9200/my_index" -H 'Content-Type: application/json' -u "admin:Developer123" -d'{
   "settings": {
     "index.knn": true,
     "default_pipeline": "my_embedding_pipeline"
@@ -110,7 +110,7 @@ curl -k -X PUT "https://opensearch-node1:9200/my_index" -H 'Content-Type: applic
 
 # Index sample data
 echo "Indexing sample data..."
-curl -k -X POST "https://opensearch-node1:9200/my_index/_doc" -H 'Content-Type: application/json' -u "admin:Padmasini10" -d'{
+curl -k -X POST "https://opensearch-node1:9200/my_index/_doc" -H 'Content-Type: application/json' -u "admin:Developer123" -d'{
   "text_field": "This is a sample text for embedding"
 }'
 
