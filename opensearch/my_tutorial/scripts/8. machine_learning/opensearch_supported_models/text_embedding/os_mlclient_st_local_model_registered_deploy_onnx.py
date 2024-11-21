@@ -16,7 +16,7 @@ CLUSTER_URL = {'host': '192.168.0.111', 'port': 9200}
 
 def get_os_client(cluster_url = CLUSTER_URL,
                   username='admin',
-                  password='Developer123'):
+                  password='Developer@123'):
     '''
     Get OpenSearch client
     :param cluster_url: cluster URL like https://ml-te-netwo-1s12ba42br23v-ff1736fa7db98ff2.elb.us-west-2.amazonaws.com:443

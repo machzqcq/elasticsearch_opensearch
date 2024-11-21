@@ -11,7 +11,7 @@
 
 # Load interns parquet
 - `source venv/bin/activate` - if not done already
-- `export OPENSEARCH_INITIAL_ADMIN_PASSWORD=Developer123`
+- `export OPENSEARCH_INITIAL_ADMIN_PASSWORD=Developer@123`
 - `docker compose -f docker-compose-opensearch-single-2.16.0.yml up -d`
 - `docker compose -f docker-compose-opensearch-single-2.16.0.yml logs -f` to check if all is well
 - `docker compose -f docker-compose-opensearch-single-2.16.0.yml down` - to stop and remove all
