@@ -53,7 +53,7 @@ All documentation in various forms can be fully generated from this git repo (ex
 - **IDE**: VS CODE 1.95.3 (primarily) and extensions, Jupyter
 
 # STUDENT ENVIRONMENT
-There are many ways to align infrastructure to do this course, however the below diagram is what we will be confirming to:  
+There are many ways to align infrastructure to do this course, however the below diagram is what we will be conforming to:  
 ![environment](./environment.svg)
 
 # WHY NOT WINDOWS
