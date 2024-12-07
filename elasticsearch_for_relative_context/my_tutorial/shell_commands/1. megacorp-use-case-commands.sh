@@ -329,7 +329,7 @@ GET /megacorp_new/_search
 # Aggregations allow hierarchical rollups too. 
 # For example, let’s find the average age of employees who share a particular interest:
 
-GET /megacorp/_doc/_search
+GET /megacorp/_search
 {
     "aggs" : {
         "all_interests" : {
