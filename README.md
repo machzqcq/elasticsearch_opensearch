@@ -28,7 +28,7 @@ This repo contains tutorials, code, documentation that drives my opensearch cour
 
 # ORGANIZATION OF THE COURSE
 - Two high level folders: [opensearch](./opensearch/) & [elasticsearch_for_relative_context](./elasticsearch_for_relative_context/)
-- **Elasticsearch**: [`elasticsearch_for_relative_context](./elasticsearch_for_relative_context/) folder contains content related to elasticsearch. I provide this to draw parallels between ES and OS and how similar they are.
+- **Elasticsearch**: [elasticsearch_for_relative_context](./elasticsearch_for_relative_context/) folder contains content related to elasticsearch. I provide this to draw parallels between ES and OS and how similar they are.
 - **Tutorial**: In each of the main folder, there is subfolder [my_tutorial](./opensearch/my_tutorial/), that contains the majority of what I instruct. 
 - **Code**: All code is inside [scripts](./opensearch/my_tutorial/scripts/) subfolder and [notebook](./opensearch/my_tutorial/notebooks/) subfolder. Contains python, shell, docker compose files etc.
 - **Data**: subfolder [data](./opensearch/my_tutorial/data/) contains all datasets used for this course. The main sources are `ecommerce` dataset (provided by opensearch team), `interns_sample` dataset (real jobs dataset that I provide), `uscities` dataset for geospatial analysis etc. All data is provided as separate links
