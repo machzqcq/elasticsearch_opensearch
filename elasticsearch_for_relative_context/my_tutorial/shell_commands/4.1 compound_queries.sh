@@ -163,7 +163,7 @@ POST _search?include_named_queries_score
 #You can use the boosting query to demote certain documents without excluding them from the search results
 #Use case: Give higher scores to exact phrase matches while still allowing partial matches.
 
-# Use case :1 Give higher score to task_name (raise to 3) for the same match query. Observer with and without boost
+# Use case :1 Give higher score to task_name (raise to 3) for the same match query. Observe with and without boost
 GET /tasks/_search
 {
   "query": {

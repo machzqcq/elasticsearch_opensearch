@@ -6,7 +6,7 @@ host = '192.168.0.111'
 port = 9200
 auth = ('admin', 'Developer@123') # For testing only. Don't store credentials in code.
 
-client = opensearch_client(host, port, auth=auth, ssl=True)
+client = opensearch_client(host, port, auth=auth, ssl=False)
 
 BASE_DIR = "../data"
 df = pd.read_parquet(f"{BASE_DIR}/interns_sample.parquet")
