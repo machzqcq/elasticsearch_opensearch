@@ -2,12 +2,12 @@ import requests
 import base64, os
 import sys
 sys.path.append('../../../')
-from helpers import *
+# from helpers import *
 
 from dotenv import load_dotenv
 
 # 1. Load environment variables from .env file
-load_dotenv("../../../.env")
+load_dotenv("../../.env")
 
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
