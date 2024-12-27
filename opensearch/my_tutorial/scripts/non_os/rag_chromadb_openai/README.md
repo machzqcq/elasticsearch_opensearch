@@ -1,6 +1,19 @@
 # RAG process
 Langchain example - https://python.langchain.com/docs/tutorials/rag/
 
+# Need for RAG
+RAG (Retrieval-Augmented Generation) is necessary despite the capabilities of large language models (LLMs) because it addresses several critical limitations of LLMs:
+
+-  **Limitations**: LLMs can only store a fixed amount of information in their parameters. They lack access to dynamic, up-to-date, or domain-specific data that may not have been part of their training.
+
+- **Reducing Hallucination**: LLMs often "hallucinate" or generate plausible but inaccurate or made-up information. RAG grounds their responses in factual data from external sources, improving accuracy.
+
+- **Keeping Information Current**: Unlike LLMs, which have a fixed training cutoff, RAG systems can retrieve and use the latest information from external databases or APIs.
+
+- **Efficient Use of Resources**: Instead of retraining or fine-tuning LLMs on large datasets for every specific domain or update, RAG uses retrieval mechanisms to augment responses, saving time and computational resources.
+
+- **Scalability for Specialized Use Cases**: RAG enables LLMs to perform better in specialized domains (e.g., legal, healthcare) by leveraging targeted knowledge bases, making them more versatile for real-world applications.
+
 ## Indexing
 
 - **Load**: First we need to load our data. This is done with Document Loaders.
