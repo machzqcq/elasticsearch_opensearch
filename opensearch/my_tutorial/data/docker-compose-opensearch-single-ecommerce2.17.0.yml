@@ -47,8 +47,8 @@ services:
       - opensearch
     volumes:
       - ./ecommerce_load_script.sh:/scripts/ecommerce_load_script.sh
-      - ../../../data/ecommerce.json:/json_data/ecommerce.json
-      - ../../../data/ecommerce-field_mappings.json:/mappings/ecommerce-field_mappings.json
+      - ./ecommerce.json:/json_data/ecommerce.json
+      - ./ecommerce-field_mappings.json:/mappings/ecommerce-field_mappings.json
     command: ["/bin/sh", "/scripts/ecommerce_load_script.sh"]
     networks:
       - opensearch-net
