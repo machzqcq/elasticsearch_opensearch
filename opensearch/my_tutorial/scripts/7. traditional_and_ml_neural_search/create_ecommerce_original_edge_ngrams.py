@@ -4,7 +4,7 @@ from opensearchpy import OpenSearch
 import pandas as pd
 import json
 
-IS_AUTH = False
+IS_AUTH = True
 
 if IS_AUTH:
     # Initialize the OpenSearch client
