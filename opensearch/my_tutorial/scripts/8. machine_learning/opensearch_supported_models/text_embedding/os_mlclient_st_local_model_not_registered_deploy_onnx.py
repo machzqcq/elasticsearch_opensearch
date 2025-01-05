@@ -51,8 +51,8 @@ client.cluster.put_settings(body={
 # Connect to ml_common client with OpenSearch client
 ml_client = MLCommonClient(client)
 
-model_id = "sentence-transformers/all-MiniLM-L6-v2"
-folder_path = "sentence-transformer-onnx/all-MiniLM-L6-v2"
+model_id = "sentence-transformers/all-MiniLM-L6-v1"
+folder_path = "sentence-transformer-onnx/all-MiniLM-L6-v1"
 
 # Initialize the SentenceTransformerModel
 pre_trained_model = SentenceTransformerModel(model_id=model_id, overwrite=True)
