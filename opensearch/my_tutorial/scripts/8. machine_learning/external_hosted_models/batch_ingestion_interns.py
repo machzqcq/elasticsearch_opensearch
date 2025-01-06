@@ -7,7 +7,7 @@ from helpers import opensearch_bulk_async, dataframe_to_actions
 from opensearchpy import OpenSearch, helpers
 
 # 1. Load environment variables from .env file
-load_dotenv()
+load_dotenv("../../.env")
 
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')

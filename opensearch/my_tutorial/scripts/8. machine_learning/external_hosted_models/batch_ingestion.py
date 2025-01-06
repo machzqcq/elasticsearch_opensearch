@@ -3,7 +3,7 @@ import os, time
 from dotenv import load_dotenv
 
 # 1. Load environment variables from .env file
-load_dotenv()
+load_dotenv("../../.env")
 
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -43,7 +43,7 @@ model_group_body = {
     "name": "remote_model_group",
     "description": "A model group for external models"
 }
-response = client.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=model_group_body)
+response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=model_group_body)
 model_group_id = response['model_group_id']
 
 # 6. Create connector
@@ -73,7 +73,7 @@ connector_body = {
         }
     ]
 }
-response = client.perform_request('POST', '/_plugins/_ml/connectors/_create', body=connector_body)
+response = client.transport.perform_request('POST', '/_plugins/_ml/connectors/_create', body=connector_body)
 connector_id = response['connector_id']
 
 # 7. Register model
@@ -84,7 +84,7 @@ model_body = {
     "description": "test model",
     "connector_id": connector_id
 }
-response = client.perform_request('POST', '/_plugins/_ml/models/_register', body=model_body)
+response = client.transport.perform_request('POST', '/_plugins/_ml/models/_register', body=model_body)
 model_id = response['model_id']
 
 # 8. Deploy the model and wait for the status to become completed
@@ -161,6 +161,8 @@ bulk_body = [
     {"passage_text": "fantastic"}
 ]
 client.bulk(body=bulk_body, index="testindex", pipeline="nlp-ingest-pipeline")
+
+time.sleep(5) # to allow index persistence
 
 # 13. Search all documents
 search_body = {

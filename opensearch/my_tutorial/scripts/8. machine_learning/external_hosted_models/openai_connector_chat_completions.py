@@ -48,7 +48,7 @@ client.cluster.put_settings(body=cluster_settings)
 
 # 11. Register model group
 llm_model_group_body = {
-  "name": "openai_model_group",
+  "name": "openai_model_group1",
   "description": "A model group for open ai models"
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=llm_model_group_body)
