@@ -316,6 +316,5 @@ execute_response = client.transport.perform_request(
   'POST', 
   f'/_plugins/_ml/agents/{agent_id}/_execute', 
   body=execute_body,
-  params={'timeout': '30s'}
 )
 print("Agent executed:", execute_response)

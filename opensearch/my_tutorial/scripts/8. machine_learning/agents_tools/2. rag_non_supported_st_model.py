@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 warnings.filterwarnings("ignore", message="using SSL with verify_certs=False is insecure.")
 
 # 1. Load environment variables from .env file
-load_dotenv()
+load_dotenv("../../.env")
 
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
