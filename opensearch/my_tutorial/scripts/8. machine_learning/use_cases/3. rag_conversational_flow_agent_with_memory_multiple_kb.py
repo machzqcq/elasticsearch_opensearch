@@ -314,12 +314,12 @@ continue_conversation_response = os_client.transport.perform_request('POST', f'/
 print(continue_conversation_response)
 
 # Execute agent
-# question_specific_kb_response = os_client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body={
-#     "parameters": {
-#         "question": "what's the population increase of Seattle from 2021 to 2023?",
-#         "selected_tools": ["context1", "context2"]
-#     }
-# })
+question_specific_kb_response = os_client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body={
+    "parameters": {
+        "question": "what's the population increase of Seattle from 2021 to 2023?",
+        "selected_tools": ["context1", "context2"]
+    }
+})
 
-# print(question_specific_kb_response)
+print(question_specific_kb_response)
 

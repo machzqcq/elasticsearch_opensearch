@@ -112,7 +112,7 @@ helpers.bulk(os_client, actions=[
 
 # Register model group
 response_model_group = os_client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body={
-    "name": "openai_model_group",
+    "name": "openai_model_group1",
     "description": "A model group for open ai models"
 })
 

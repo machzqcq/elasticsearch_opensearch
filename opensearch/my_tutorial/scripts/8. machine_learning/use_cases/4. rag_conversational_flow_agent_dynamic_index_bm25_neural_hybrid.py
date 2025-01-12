@@ -326,60 +326,7 @@ bm25_response = os_client.transport.perform_request(
     },
 )
 
-print(bm25_response)
-
-
-## Expose only `question` parameter to the user query
-# agent_registration_response = os_client.transport.perform_request(
-#     "POST",
-#     "/_plugins/_ml/agents/_register",
-#     body={
-#         "name": "population data analysis agent",
-#         "type": "conversational_flow",
-#         "description": "This is a demo agent for population data analysis",
-#         "app_type": "rag",
-#         "memory": {"type": "conversation_index"},
-#         "tools": [
-#             {
-#                 "type": "SearchIndexTool",
-#                 "parameters": {
-#                     "input": '{"index": "${parameters.index}", "query": ${parameters.query} }',
-#                     "index": "my_test_data",
-#                     "query": {
-#                         "query": {"match": {"text": "${parameters.question}"}},
-#                         "size": 2,
-#                         "_source": "text",
-#                     },
-#                 },
-#             },
-#             {
-#                 "type": "MLModelTool",
-#                 "description": "A general tool to answer any question",
-#                 "parameters": {
-#                     "model_id": openai_model_id,
-#                     "messages": [
-#                         {
-#                             "role": "system",
-#                             "content": "You are a professional data analyst. You will always answer a question based on the given context first. If the answer is not directly shown in the context, you will analyze the data and find the answer. If you don't know the answer, just say you don't know.",
-#                         },
-#                         {
-#                             "role": "user",
-#                             "content": "Context:\n${parameters.SearchIndexTool.output:-}\n\nQuestion:${parameters.question}\n\n",
-#                         },
-#                     ],
-#                 },
-#             },
-#         ],
-#     },
-# )
-
-# POST /_plugins/_ml/agents/your_agent_id/_execute
-# {
-#     "parameters": {
-#         "question": "what's the population increase of Seattle from 2021 to 2023?"
-#     }
-# }
-
+print(f"Bm25 response --> {bm25_response}")
 
 # Run neural search
 
@@ -407,7 +354,7 @@ neural_response = os_client.transport.perform_request(
 },
 )
 
-print(neural_response)
+print(f"Neural response --> {neural_response}")
 
 # Hybrid Query
 
@@ -439,7 +386,7 @@ hybrid_normalizer = os_client.transport.perform_request(
   }
 )
 
-print(hybrid_normalizer)
+print(f"Hybrid normalizer --> {hybrid_normalizer}")
 
 # Run hybrid query
 hybrid_response = os_client.transport.perform_request(
@@ -483,7 +430,81 @@ hybrid_response = os_client.transport.perform_request(
 },
 )
 
-print(hybrid_response)
+print(f"Hybrid response --> {hybrid_response}")
+
+# Expose only `question` parameter to the user query
+agent_registration_response_dynamic = os_client.transport.perform_request(
+    "POST",
+    "/_plugins/_ml/agents/_register",
+    body={
+        "name": "population data analysis agent",
+        "type": "conversational_flow",
+        "description": "This is a demo agent for population data analysis",
+        "app_type": "rag",
+        "memory": {"type": "conversation_index"},
+        "tools": [
+            {
+                "type": "SearchIndexTool",
+                "parameters": {
+                    "input": '{"index": "${parameters.index}", "query": ${parameters.query} }',
+                    "index": "my_test_data",
+                    "query": {
+                        "query": {"match": {"text": "${parameters.question}"}},
+                        "size": 2,
+                        "_source": "text",
+                    },
+                },
+            },
+            {
+                "type": "MLModelTool",
+                "description": "A general tool to answer any question",
+                "parameters": {
+                    "model_id": openai_model_id,
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "You are a professional data analyst. You will always answer a question based on the given context first. If the answer is not directly shown in the context, you will analyze the data and find the answer. If you don't know the answer, just say you don't know.",
+                        },
+                        {
+                            "role": "user",
+                            "content": "Context:\n${parameters.SearchIndexTool.output:-}\n\nQuestion:${parameters.question}\n\n",
+                        },
+                    ],
+                },
+            },
+        ],
+    },
+)
+
+print(f"Agent registration response dynamic --> {agent_registration_response_dynamic}")
+agent_id1 = agent_registration_response_dynamic["agent_id"]
+
+neural_response_dynamic = os_client.transport.perform_request(
+    "POST",
+    f"/_plugins/_ml/agents/{agent_id1}/_execute",
+    body={
+    "parameters": {
+        "question": "what's the population increase of Seattle from 2021 to 2023??",
+        "index": "my_test_data",
+        "query": {
+            "query": {
+                "neural": {
+                    "embedding": {
+                        "query_text": "${parameters.question}",
+                        "model_id": embedding_model_id,
+                        "k": 10
+                    }
+                }
+            },
+            "size": 2,
+            "_source": ["text"]
+        }
+    }
+},
+)
+
+print(f"Neural response dynamic --> {neural_response_dynamic}")
+
 
 
 
