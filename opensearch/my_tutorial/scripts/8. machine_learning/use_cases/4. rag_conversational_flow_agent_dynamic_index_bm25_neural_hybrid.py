@@ -447,7 +447,6 @@ agent_registration_response_dynamic = os_client.transport.perform_request(
                 "type": "SearchIndexTool",
                 "parameters": {
                     "input": '{"index": "${parameters.index}", "query": ${parameters.query} }',
-                    "index": "my_test_data",
                     "query": {
                         "query": {"match": {"text": "${parameters.question}"}},
                         "size": 2,

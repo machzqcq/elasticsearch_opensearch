@@ -136,6 +136,8 @@ os_client.indices.create(
     },
 )
 
+time.sleep(4)
+
 # Bulk insert data
 # opensearch helpers bulk insert data
 
@@ -211,6 +213,8 @@ os_client.indices.create(
     },
 )
 
+time.sleep(4)
+
 # opensearch helpers bulk insert data
 
 helpers.bulk(
@@ -273,7 +277,7 @@ connector_response = os_client.transport.perform_request('POST', '/_plugins/_ml/
             "headers": {
                 "Authorization": "Bearer ${credential.openAI_key}"
             },
-            "request_body": "{ \"model\": \"${parameters.model}\", \"messages\": [{\"role\":\"system\",\"content\":\"${parameters.system_instruction}\"},{\"role\":\"user\",\"content\":\"${parameters.prompt}\"}] }"
+            "request_body": "{ \"model\": \"${parameters.model}\", \"messages\": [{\"role\":\"system\",\"content\":\"${parameters.system_instruction}\"},{\"role\":\"user\",\"content\":\"${parameters.question}\"}] }"
         }
     ]
 })
@@ -317,7 +321,8 @@ sample_predict_response = os_client.transport.perform_request('POST', f'/_plugin
                 "role": "user",
                 "content": "Hello!"
             }
-        ]
+        ],
+        "question": "How are you?"
     }
 })
 
@@ -339,8 +344,6 @@ agent_registration_response = os_client.transport.perform_request('POST', '/_plu
     "parameters": {
       "max_iteration": 3,
     "response_filter": "$.choices[0].message.content",
-      "system_instruction": "You are an assistant which is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics.",
-      "prompt": "Assistant can ask Human to use tools to look up information that may be helpful in answering the users original question.\n${parameters.tool_descriptions}\n\n${parameters.chat_history}\n\n${parameters.prompt.format_instruction}\n\nHuman: ${parameters.question}\n\n${parameters.scratchpad}\n\nHuman: follow RESPONSE FORMAT INSTRUCTIONS\n\nAssistant:",
     }
   },
     "memory": {
