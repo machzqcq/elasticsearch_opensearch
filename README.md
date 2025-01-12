@@ -20,7 +20,7 @@ This repo contains tutorials, code, documentation that drives my opensearch cour
 
 # MOTIVATION FOR THE COURSE
 - There are many ES courses online and it is a pretty mature platform in startups, mid-level or enterprise contexts. 
-- Just search for `List top 25 enterprise companies using elastichsearch` on google/perplexity (also search for `top 25 using OpenSearch`). In the search results, note that `Oracle` switched from ES > OS for their PeopleSoft's search capabilities
+- Just search for `List top 25 enterprise companies using elasticsearch` on google/perplexity (also search for `top 25 using OpenSearch`). In the search results, note that `Oracle` switched from ES > OS for their PeopleSoft's search capabilities
 - The clouds have already changed the software licensing incentives and model structures in the world. So why `continue paying for software licenses especially when you have an equivalent` or better open source equivalent (you anyways cannot get away paying for support, skills and large scale needs like data center infra, AI models)
 - You already give away the most precious asset (data) to the search platform, so why still pay additional for authN/authZ , UI and other commoditized software pieces - Reduce it !
 - `Opensearch` is relatively new and you can almost count the number of courses available out there. Since I have used both, and I believe there is a good market space for OS to capture, I authored this course and sharing it.
