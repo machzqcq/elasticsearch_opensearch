@@ -1,6 +1,6 @@
  opensearchDashboards.branding:
    logo:
-     defaultUrl: "http://www.symmetrics.fyi/images/symmetrics_logo_v2.svg"
+     defaultUrl: "https://www.symmetrics.fyi/images/symmetrics_logo_v2.svg"
   #   darkModeUrl: ""
   # mark:
   #   defaultUrl: ""

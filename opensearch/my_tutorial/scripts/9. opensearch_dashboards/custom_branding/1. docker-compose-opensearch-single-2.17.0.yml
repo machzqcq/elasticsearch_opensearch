@@ -34,6 +34,8 @@ services:
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"  # Disables security for OpenSearch Dashboards
     networks:
       - opensearch-net
+    volumes:
+      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml # Mount the OpenSearch Dashboards configuration file
 volumes:
   opensearch-data:
 
