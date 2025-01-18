@@ -309,5 +309,8 @@ try:
     root_agent_id = create_root_agent(client, agent_id, model_id)
     print(f"Root agent created with ID: {root_agent_id}")
 
+    ## Manually do the below in open-search cluster (node1 for e.g.)
+    # curl -k --cert ./kirk.pem --key ./kirk-key.pem -X PUT https://localhost:9200/.plugins-ml-config/_doc/os_chat -H 'Content-Type: application/json' -d'{ "type": "os_chat_root_agent", "configuration":{"agent_id":"WebRWpQBhhsY4kUAptfO"}}'
+
 except Exception as e:
     print(f"An error occurred: {str(e)}")

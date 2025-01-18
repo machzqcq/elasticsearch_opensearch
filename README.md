@@ -23,7 +23,9 @@ This repo contains tutorials, code, documentation that drives my opensearch cour
 - Just search for `List top 25 enterprise companies using elasticsearch` on google/perplexity (also search for `top 25 using OpenSearch`). In the search results, note that `Oracle` switched from ES > OS for their PeopleSoft's search capabilities
 - The clouds have already changed the software licensing incentives and model structures in the world. So why `continue paying for software licenses especially when you have an equivalent` or better open source equivalent (you anyways cannot get away paying for support, skills and large scale needs like data center infra, AI models)
 - You already give away the most precious asset (data) to the search platform, so why still pay additional for authN/authZ , UI and other commoditized software pieces - Reduce it !
-- `Opensearch` is relatively new and you can almost count the number of courses available out there. Since I have used both, and I believe there is a good market space for OS to capture, I authored this course and sharing it.
+- `Opensearch` is relatively new and you can almost count the number of courses available out there. Since I have used both (ES and OS)
+  - I believe there is a good market space for OS to positively disrupt, 
+  - 80% of your initial dev journey (until you prove a concept) doesn't need to have the trial license sword hanging on you
 - Many more (follow the course) 
 
 # ORGANIZATION OF THE COURSE
@@ -55,8 +57,10 @@ All documentation in various forms can be `auto-generated` from this git repo (e
 There are many ways to align infrastructure to do this course, however the below diagram is what we will be conforming to:  
 ![environment](./environment.svg)
 
-# WHY NOT WINDOWS
-Entire course execution is mostly inside docker, so as long as you have docker runtime it doesn't matter - windows can also work totally. I have executed about 50% of scripts on windows, but you are welcome to reach out by emailing me directly [here](pradeep@automationpractice.com) if you run into real issues.
+# WHY NOT WINDOWS SERVER
+Entire course execution is mostly inside docker, so as long as you have docker runtime it doesn't matter - windows can also work totally. I have executed about 50% of scripts on windows, but you are welcome to reach out by emailing me directly [here](pradeep@automationpractice.com) if you run into real issues.  
+
+> **Btw** - your client operating system can be any of [windows, max, *nix]
 
 # VS CODE EXTENSIONS
 - All the vscode extensions I used are in the [file](./vscode-extensions.txt)
