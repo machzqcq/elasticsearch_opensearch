@@ -22,8 +22,7 @@ Fluent Bit → Data Prepper → OpenSearch. This log ingestion flow is shown in 
 is mounted as a Docker volume through the `docker-compose.yaml`.
 
 
-3. An empty file named `test.log` has been created. This file is also mounted through the  `docker-compose.yaml`, and will be the file
-FluentBit is tailing to collect logs from.
+3. An empty file named `test.log` has been created. This file is also mounted through the  `docker-compose.yaml`, and will be the file FluentBit is tailing to collect logs from.
    
 
 4. Now that you understand a bit more about how FluentBit and OpenSearch are set up, run them with:
