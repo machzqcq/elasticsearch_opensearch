@@ -43,8 +43,8 @@ snapshot_body = {
 }
 
 # Check if the snapshot already exists
-snapshots = client.snapshot.get(repository_name, '_all')['snapshots']
-snapshot_exists = any(snap['snapshot'] == snapshot_name for snap in snapshots)
+# snapshots = client.snapshot.get(repository_name, '_all')['snapshots']
+# snapshot_exists = any(snap['snapshot'] == snapshot_name for snap in snapshots)
 
 # Delete the snapshot if it already exists
 # if snapshot_exists:
