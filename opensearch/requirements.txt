@@ -17,7 +17,8 @@ torch==2.4.1
 pyyaml==6.0.2
 accelerate==0.34.2
 sentence_transformers==3.1.1
-onnx==1.16.2
+onnx==1.16.
+chardet==5.2.0
 
 # for pdf print
 WeasyPrint==61.2
