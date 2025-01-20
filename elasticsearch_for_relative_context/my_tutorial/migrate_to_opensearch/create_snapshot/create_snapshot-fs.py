@@ -8,7 +8,7 @@ repository_name = "my_backup"
 repository_settings = {
     "type": "fs",
     "settings": {
-        "location": "/var/lib/elasticsearch/snapshots"  # Location to store snapshots
+        "location": "/usr/share/elasticsearch/snapshots"  # Location to store snapshots
     }
 }
 

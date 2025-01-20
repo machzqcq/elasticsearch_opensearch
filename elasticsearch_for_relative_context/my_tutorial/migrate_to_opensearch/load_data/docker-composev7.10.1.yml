@@ -41,7 +41,7 @@ services:
       - ./scripts:/scripts
       - ./mappings:/mappings
       - ./json_data:/json_data
-    command: ["/bin/sh", "/scripts/script.sh"]
+    command: ["/bin/sh", "/scripts/ecommerce_load_script.sh"]
 
 volumes:
   elasticsearch-data:

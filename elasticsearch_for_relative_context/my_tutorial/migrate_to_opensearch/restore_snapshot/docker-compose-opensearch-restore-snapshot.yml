@@ -1,13 +1,13 @@
 version: '3'
 services:
   opensearch: # This is also the hostname of the container within the Docker network (i.e. https://opensearch-node1/)
-    image: opensearchproject/opensearch:2.16.0
+    image: opensearchproject/opensearch:2.17.0
     container_name: opensearch-node1
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true # Disable JVM heap memory swapping
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx1024m" # Set min and max JVM heap sizes to at least 50% of system RAM
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD:-Developer@123} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
       - path.repo=/var/lib/opensearch/snapshots
       - plugins.security.disabled=true  # Disables security plugin for demo purposes
     ulimits:

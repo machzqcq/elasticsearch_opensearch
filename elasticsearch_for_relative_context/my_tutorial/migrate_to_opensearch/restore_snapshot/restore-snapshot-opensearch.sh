@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Wait for Elasticsearch to be ready
+# Wait for opensearch to be ready
 until curl -s http://opensearch:9200 >/dev/null; do
     echo "Waiting for opensearch..."
     sleep 5
