@@ -5,9 +5,7 @@ This repo contains tutorials, code, documentation that drives my opensearch cour
 # PREREQUISITES FOR THE COURSE
 - **Human taking the course**: 
   - Eagerness and excitement to learn and understand how `search` worked traditionally vs. `AI/Ml-driven search` from ground up
-  - Push through to `successful execution of learning material` and constantly reach out until you understand what you need to
-  - Motivated `intrinsically` to learn and use this course only as an extrinsic trigger  
-  - Basics of being able to `navigate in a linux environment`
+  - Basics of being able to `navigate in a linux environment` (e.g. ls, rm, cd)
   - Basics of `docker` / container technology (including docker compose)
   - `Basic python` coding
   - Basics of server/client tech
