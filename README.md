@@ -2,6 +2,10 @@
 ![alt text](image.png)  
 This repo contains tutorials, code, documentation that drives my opensearch course content. Throughout the course: `OS=opensearch` & `ES=elasticsearch`
 
+# UDEMY
+The udemy course is published here:
+[![alt text](image-4.png)](udemy.com/course/ai-ml-search-with-opensearch/)
+
 # PREREQUISITES FOR THE COURSE
 - **Human taking the course**: 
   - Eagerness and excitement to learn and understand how `search` worked traditionally vs. `AI/Ml-driven search` from ground up
