@@ -1,7 +1,7 @@
 # Steps
 - Ensure you have elasticsearch, kibana and python client versions 7.10.1
 - This might mean creating a new virtualenv just for this exercise
-- `python3 -m venv venv` - this was testing with system python==3.11.3
+- `python3 -m venv venv` - this was testing with system python==3.11.3 and python==3.8.10
 - `source venv/bin/activate`
 - if you see this error `AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead.` when executing `python3 interns_sample_load.py`, then `pip3 install "numpy<2"`
 - `cd ../../` (to elasticsearch folder) and `python3 interns_sample_load.py`
