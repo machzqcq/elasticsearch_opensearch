@@ -22,7 +22,10 @@ def generate_markdown_table(file_path):
             for row in section_rows:
                 row_text_element = row.query_selector('span')
                 if row_text_element:
-                    section_data.append(row_text_element.inner_text())
+                    row_text = row_text_element.inner_text()
+                    # Escape '|' character
+                    row_text = row_text.replace('|', '\\|')
+                    section_data.append(row_text)
             
             # Map section title to its row data
             data_dict[section_title] = section_data
@@ -37,6 +40,9 @@ def generate_markdown_table(file_path):
         
         # Convert dictionary keys (section titles) to headers
         headers = list(data_dict.keys())
+
+        # Escape '|' character in headers
+        headers = [header.replace('|', '\\|') for header in headers]
 
         # Convert to markdown table with explicit padding
         markdown_table = tabulate(
