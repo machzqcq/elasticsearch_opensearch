@@ -78,7 +78,7 @@ There are many ways to align infrastructure to do this course, however the below
 ![environment](./environment.svg)
 
 # WHY NOT WINDOWS SERVER
-Entire course execution is mostly inside docker, so as long as you have docker runtime it doesn't matter - windows can also work totally. I have executed about 50% of scripts on windows, but you are welcome to reach out by emailing me directly [here](pradeep@automationpractice.com) if you run into real issues.  
+Entire course execution is mostly inside docker, so as long as you have docker runtime it doesn't matter - windows can also work totally. I have executed about 50% of scripts with opensearch server running successfully on windows docker desktop (100% on ubuntu OS and hence I recommend opensearch server on ubuntu), but you are welcome to reach out by emailing me directly [here](pradeep@automationpractice.com) if you run into real issues with running opensearch server on windows OS 
 
 > **Btw** - your client operating system can be any of [windows, max, *nix]
 
