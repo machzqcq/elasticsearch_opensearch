@@ -4,7 +4,7 @@ This repo contains tutorials, code, documentation that drives my opensearch cour
 
 # UDEMY
 The udemy course is published here:
-[![alt text](image-4.png)](udemy.com/course/ai-ml-search-with-opensearch/)
+[![alt text](image-4.png)](https://www.udemy.com/course/ai-ml-search-with-opensearch/)
 
 # COURSE MODULES
 | 🛠️ **OpenSearch - Getting Started**                              | 💻 **Installation and System Requirements**                       | 🔍 **OpenSearch Concepts**                                       | 📖 **OpenSearch - Text Analysis**                           | 🔗 **OpenSearch - Traditional and AI/ML Search**                           | 🤖 **Machine Learning**                                                      | 🧩 **Agents and Tools**                                                      | 📊 **OpenSearch Dashboards \| Observability**                                    | 🗂️ **Data Prepper Intro**                                      | 🌐 **Real-Time Projects**                           |
