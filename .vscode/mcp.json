@@ -1,0 +1,15 @@
+{
+    "servers": {
+        "opensearch-mcp-server": {
+            "type": "stdio",
+            "command": "/home/ubuntu/.local/bin/uvx",
+            "args": ["opensearch-mcp-server"],
+            "env": {
+                "OPENSEARCH_HOSTS": "http://localhost:9200",
+                "OPENSEARCH_USERNAME": "admin",
+                "OPENSEARCH_PASSWORD": "Developer@123",
+                "OPENSEARCH_VERIFY_CERTS": "false"
+              }
+        }
+    }
+}
