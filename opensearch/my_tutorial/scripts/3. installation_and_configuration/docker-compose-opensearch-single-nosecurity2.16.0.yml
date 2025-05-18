@@ -9,6 +9,7 @@ services:
       - "OPENSEARCH_JAVA_OPTS=-Xms1024m -Xmx1024m" # Set min and max JVM heap sizes to at least 50% of system RAM
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD:-Developer@123} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
       - plugins.security.disabled=true  # Disables security plugin for demo purposes
+      - cluster.routing.allocation.disk.threshold_enabled=false # Disable disk threshold for demo purposes
     ulimits:
       memlock:
         soft: -1 # Set memlock to unlimited (no soft or hard limit)
