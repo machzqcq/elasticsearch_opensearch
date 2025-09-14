@@ -1,0 +1,40 @@
+[project]
+name = "ai_ml_search_with_opensearch"
+version = "0.1.0"
+description = "Project dependencies for OpenSearch-related scripts and notebooks."
+requires-python = "==3.10.12"
+dependencies = [
+    "opensearch-py==2.7.1",
+    "opensearch-py-ml==1.1.0",
+    "pandas",
+    "pyarrow==17.0.0",
+    "ipython==7.25.0",
+    "ipywidgets==8.1.5",
+    "treelib==1.7.0",
+    "wordcloud==1.9.4",
+    "deprecated==1.2.14",
+    "sentence-transformers==3.1.1",
+    "mkdocs==1.6.1",
+    "mkdocs-material==9.5.37",
+    "openai==1.49.0",
+    "python-dotenv==1.0.1",
+    "torch==2.4.1",
+    "pyyaml==6.0.2",
+    "accelerate==0.34.2",
+    "onnx==1.16.0",
+    "chardet==5.2.0",
+    "WeasyPrint==61.2",
+    "pydyf==0.8.0",
+    "pdfkit==1.0.0",
+    "Flask==3.0.3",
+    "opentelemetry-api==1.27.0",
+    "opentelemetry-sdk==1.27.0",
+    "opentelemetry-exporter-otlp==1.27.0",
+    "Faker==30.8.1",
+    "langchain==0.2.17",
+    "chromadb==0.5.18",
+    "langchain-openai==0.1.25",
+    "langchain-chroma==0.1.4",
+    "beautifulsoup4",
+    "plotly==5.24.1",
+]
