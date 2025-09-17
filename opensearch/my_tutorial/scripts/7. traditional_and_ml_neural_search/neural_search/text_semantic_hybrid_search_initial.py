@@ -5,9 +5,12 @@ sys.path.append('../../')
 from helpers import create_embedding_model
 from opensearchpy.helpers import bulk
 
+IS_AUTH = True # Set to False if security is disabled
+HOST = 'localhost'  # Replace with your OpenSearch host/ip, if running everything locally use 'localhost'
+
 # Initialize the OpenSearch client
 client = OpenSearch(
-    hosts=[{'host': '192.168.0.111', 'port': 9200}],
+    hosts=[{'host': HOST, 'port': 9200}],
     http_auth=('admin', 'Developer@123'),  # Replace with your credentials
     use_ssl=True,
     verify_certs=False,

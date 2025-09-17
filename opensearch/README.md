@@ -5,12 +5,19 @@
 - `curl -H "Content-Type: application/x-ndjson" -X PUT "https://192.168.0.111:9200/ecommerce/_bulk" -ku admin:<custom-admin-password> --data-binary "@ecommerce.json"`
 
 # Python
-- System python = 3.8.10 and created venv from it
-- `source venv/bin/activate` 
-- `pip3 install -r requirements.txt`
+- System python = 3.10.12
+- Using (uv)[https://github.com/astral-sh/uv] as python package manager (various reasons - read only. The biggest benefit for me was speed)
+- Install uv - `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- `cd opensearch` and run the command `uv sync` - Will create a .venv directory that contains your python client environment 
+- `source .venv/bin/activate` - to activate the current shell with python 3.10.12
+
+# Java
+- OpenJDK 21 or higher
+- Ubuntu install `sudo apt install openjdk-21-jdk`
+- Check java version `java -version`
 
 # Load interns parquet
-- `source venv/bin/activate` - if not done already
+- `source .venv/bin/activate` - if not done already
 - `export OPENSEARCH_INITIAL_ADMIN_PASSWORD=Developer@123`
 - `docker compose -f docker-compose-opensearch-single-2.16.0.yml up -d`
 - `docker compose -f docker-compose-opensearch-single-2.16.0.yml logs -f` to check if all is well

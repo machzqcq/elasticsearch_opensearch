@@ -1,3 +1,4 @@
+# In 2.x versions we had engine = nmslib which is deprecated. Now only faiss and lucene are supported.
 PUT my-knn-index-1
 {
   "settings": {
@@ -14,7 +15,7 @@ PUT my-knn-index-1
           "space_type": "l2",
           "method": {
             "name": "hnsw",
-            "engine": "nmslib",
+            "engine": "lucene",
             "parameters": {
               "ef_construction": 128,
               "m": 24

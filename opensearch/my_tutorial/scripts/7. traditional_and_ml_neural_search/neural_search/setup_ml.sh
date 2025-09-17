@@ -26,15 +26,26 @@ sleep 5
 # Register the model
 echo "Registering the model..."
 RESPONSE=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/models/_register" -H 'Content-Type: application/json' -u admin:Developer@123 -d'{
-    "name": "huggingface/sentence-transformers/msmarco-distilbert-base-tas-b",
-    "version": "1.0.1",
-    "model_group_id": "'"$MODEL_GROUP_ID"'",
-    "model_format": "TORCH_SCRIPT",
-    "description": "Sentence transformer model for embeddings"
+  "name": "huggingface/sentence-transformers/msmarco-distilbert-base-tas-b",
+  "version": "1.0.1",
+  "model_group_id": "'"$MODEL_GROUP_ID"'",
+  "model_format": "TORCH_SCRIPT",
+  "description": "Sentence transformer model for embeddings"
 }')
 echo $RESPONSE
-MODEL_ID=$(echo $RESPONSE | jq -r '.model_id')
 REGISTER_TASK_ID=$(echo $RESPONSE | jq -r '.task_id')
+
+# Wait for the model registration to complete
+echo "Waiting for model registration to complete..."
+until [[ "$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$REGISTER_TASK_ID" -H 'Content-Type: application/json' -u admin:Developer@123 | jq -r '.state')" == "COMPLETED" ]]; do
+  STATE=$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$REGISTER_TASK_ID" -H 'Content-Type: application/json' -u admin:Developer@123 | jq -r '.state')
+  echo "Current state: $STATE"
+  echo "Model registration in progress..."
+  sleep 5
+done
+
+# Retrieve the MODEL_ID after completion
+MODEL_ID=$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$REGISTER_TASK_ID" -H 'Content-Type: application/json' -u admin:Developer@123 | jq -r '.model_id')
 
 echo "Model ID: $MODEL_ID"
 echo "Task ID: $REGISTER_TASK_ID"
@@ -56,13 +67,14 @@ echo "Model registration completed!"
 # Deploy the model
 echo "Deploying the model..."
 DEPLOY_RESPONSE=$(curl -k -s -X POST "https://opensearch-node1:9200/_plugins/_ml/models/$MODEL_ID/_deploy" -H 'Content-Type: application/json' -u "admin:Developer@123")
+echo $DEPLOY_RESPONSE
 DEPLOY_TASK_ID=$(echo $DEPLOY_RESPONSE | jq -r '.task_id')
 
 echo "Deploy Task ID: $DEPLOY_TASK_ID"
 
 # Wait for the model deployment to complete
 echo "Waiting for model deployment to complete..."
-until [[ "$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$DEPLOY_TASK_ID" -H 'Content-Type: application/json' -u "admin:Developer@123" | jq -r '.state')" == "DEPLOYED" ]]; do
+until [[ "$(curl -k -s -X GET "https://opensearch-node1:9200/_plugins/_ml/tasks/$DEPLOY_TASK_ID" -H 'Content-Type: application/json' -u "admin:Developer@123" | jq -r '.state')" == "COMPLETED" ]]; do
     echo "Model deployment in progress..."
     sleep 5
 done

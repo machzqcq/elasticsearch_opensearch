@@ -4,12 +4,13 @@ from opensearchpy import OpenSearch
 import pandas as pd
 import json
 
-IS_AUTH = True
+IS_AUTH = True # Set to True if authentication is required
+HOST = 'localhost' # Replace with your OpenSearch hostname or IP address
 
 if IS_AUTH:
     # Initialize the OpenSearch client
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         http_auth=('admin', 'Developer@123'),  # Replace with your credentials
         use_ssl=True,
         verify_certs=False,
@@ -18,7 +19,7 @@ if IS_AUTH:
 else:
     # Initialize the OpenSearch client without authentication
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         use_ssl=False,
         verify_certs=False,
         ssl_assert_hostname = False,

@@ -8,12 +8,13 @@ sys.path.append('../../')
 from helpers import opensearch_bulk_async, dataframe_to_actions
 from opensearchpy import OpenSearch, helpers
 
-IS_AUTH = False
+IS_AUTH = True # Set to False if security is disabled
+HOST = 'localhost'  # Replace with your OpenSearch host, if running everything locally use 'localhost'
 
 if IS_AUTH:
     # Initialize the OpenSearch client
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         http_auth=('admin', 'Developer@123'),  # Replace with your credentials
         use_ssl=True,
         verify_certs=False,
@@ -22,7 +23,7 @@ if IS_AUTH:
 else:
     # Initialize the OpenSearch client without authentication
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         use_ssl=False,
         verify_certs=False,
         ssl_assert_hostname = False,

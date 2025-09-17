@@ -1,5 +1,5 @@
-# Start with OpenSearch 2.17.0 as the base image
-FROM opensearchproject/opensearch:2.17.0
+# Start with OpenSearch 3.2.0 as the base image
+FROM opensearchproject/opensearch:3.2.0
 
 USER root
 # Install required packages
