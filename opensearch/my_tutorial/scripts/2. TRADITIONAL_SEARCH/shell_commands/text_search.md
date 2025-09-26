@@ -1,4 +1,101 @@
-# OpenSearch Text Search Queries - Business Guide
+# OpenSearch Text Search Queries
+
+## Level 0 Overview - Main Query Categories
+
+```mermaid
+graph TD
+    A[OpenSearch Text Search Queries] --> B[Basic Search Operations]
+    A --> C[Text Matching Queries]
+    A --> D[Term-Level Queries]
+    A --> E[Boolean & Compound Queries]
+    A --> F[Search Enhancement Features]
+    A --> G[Autocomplete & Suggestions]
+    A --> H[Advanced Text Analysis]
+    A --> I[Performance & Sorting]
+    A --> J[Business Query Patterns]
+    
+    classDef basicOps fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef textMatch fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    classDef termLevel fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px,color:#000
+    classDef boolCompound fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+    classDef searchEnhance fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+    classDef autocomplete fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000
+    classDef advanced fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
+    classDef performance fill:#fff8e1,stroke:#ff6f00,stroke-width:2px,color:#000
+    classDef business fill:#fafafa,stroke:#424242,stroke-width:2px,color:#000
+    
+    class B basicOps
+    class C textMatch
+    class D termLevel
+    class E boolCompound
+    class F searchEnhance
+    class G autocomplete
+    class H advanced
+    class I performance
+    class J business
+```
+
+## Level 1 Detailed - Specific Query Types
+
+```mermaid
+graph TD
+    B[Basic Search Operations] --> B1[Match All Query]
+    B --> B2[Pagination]
+    B --> B3[Scroll Search]
+    B --> B4[Search After]
+    B --> B5[Point in Time PIT]
+    
+    C[Text Matching Queries] --> C1[Match Query]
+    C --> C2[Match Phrase Query]
+    C --> C3[Match Phrase Prefix]
+    C --> C4[Proximity Search with Slop]
+    
+    D[Term-Level Queries] --> D1[Term Query]
+    D --> D2[Terms Query]
+    D --> D3[Fuzzy Query]
+    
+    E[Boolean & Compound Queries] --> E1[Boolean Query Must/Should/Must Not]
+    E --> E2[Filter Context]
+    
+    F[Search Enhancement Features] --> F1[Highlighting]
+    F --> F2[Source Filtering]
+    
+    G[Autocomplete & Suggestions] --> G1[Edge N-grams for Autocomplete]
+    G --> G2[Search-as-You-Type]
+    G --> G3[Completion Suggester]
+    G --> G4[Term and Phrase Suggesters]
+    
+    H[Advanced Text Analysis] --> H1[Intervals Query]
+    H --> H2[Query String Query]
+    
+    I[Performance & Sorting] --> I1[Sorting]
+    I --> I2[Named Queries]
+    
+    J[Business Query Patterns] --> J1[E-commerce Product Search]
+    J --> J2[Customer Support Ticket Search]
+    J --> J3[Content Management Systems]
+    J --> J4[Business Intelligence & Analytics]
+    
+    classDef basicOps fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef textMatch fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    classDef termLevel fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px,color:#000
+    classDef boolCompound fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+    classDef searchEnhance fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+    classDef autocomplete fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000
+    classDef advanced fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
+    classDef performance fill:#fff8e1,stroke:#ff6f00,stroke-width:2px,color:#000
+    classDef business fill:#fafafa,stroke:#424242,stroke-width:2px,color:#000
+    
+    class B,B1,B2,B3,B4,B5 basicOps
+    class C,C1,C2,C3,C4 textMatch
+    class D,D1,D2,D3 termLevel
+    class E,E1,E2 boolCompound
+    class F,F1,F2 searchEnhance
+    class G,G1,G2,G3,G4 autocomplete
+    class H,H1,H2 advanced
+    class I,I1,I2 performance
+    class J,J1,J2,J3,J4 business
+```
 
 This document explains various OpenSearch text search queries in business-friendly terms, showing both technical explanations and real-world use cases.
 
