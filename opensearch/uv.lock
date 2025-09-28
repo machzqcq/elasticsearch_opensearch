@@ -39,6 +39,7 @@ dependencies = [
     { name = "langchain" },
     { name = "langchain-chroma" },
     { name = "langchain-openai" },
+    { name = "mdutils" },
     { name = "mkdocs" },
     { name = "mkdocs-material" },
     { name = "onnx" },
@@ -78,6 +79,7 @@ requires-dist = [
     { name = "langchain", specifier = "==0.3.27" },
     { name = "langchain-chroma", specifier = "==0.2.6" },
     { name = "langchain-openai", specifier = "==0.3.33" },
+    { name = "mdutils", specifier = "==1.8.0" },
     { name = "mkdocs", specifier = "==1.6.1" },
     { name = "mkdocs-material", specifier = "==9.5.37" },
     { name = "onnx", specifier = "==1.16.0" },
@@ -87,7 +89,7 @@ requires-dist = [
     { name = "opentelemetry-api", specifier = "==1.27.0" },
     { name = "opentelemetry-exporter-otlp", specifier = "==1.27.0" },
     { name = "opentelemetry-sdk", specifier = "==1.27.0" },
-    { name = "pandas" },
+    { name = "pandas", specifier = "==2.2.3" },
     { name = "pdfkit", specifier = "==1.0.0" },
     { name = "plotly", specifier = "==6.3.0" },
     { name = "pyarrow", specifier = "==17.0.0" },
@@ -1627,6 +1629,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba", size = 8729, upload-time = "2022-08-14T12:40:10.846Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
+]
+
+[[package]]
+name = "mdutils"
+version = "1.8.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/28/4b/df40d441a280f20fa173f224577fbbb2477851a73736080c89a61ff8a4dd/mdutils-1.8.0.tar.gz", hash = "sha256:091b605b4b550465a304f1c66d37647b6008b4a19e7b5154a7d39a148e903f6d", size = 23909, upload-time = "2025-07-10T19:09:41.194Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9c/6b/d4c6e92daf6123696797e9914e4a3d36e2ba24a2ff1aad00c2d6d2afb82d/mdutils-1.8.0-py3-none-any.whl", hash = "sha256:0d3cf9af4a958f3bbd184c1097985bb1d1f9489887e1f7329942ada14359c7ba", size = 21647, upload-time = "2025-07-10T19:09:40.063Z" },
 ]
 
 [[package]]

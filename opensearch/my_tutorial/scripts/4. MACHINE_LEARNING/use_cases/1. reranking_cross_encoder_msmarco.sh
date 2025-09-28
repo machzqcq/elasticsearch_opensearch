@@ -1,0 +1,85 @@
+# Register a new model group for cross encoder models
+POST /_plugins/_ml/model_groups/_register
+{
+  "name": "cross encoder model group",
+  "description": "A model group for cross encoder models",
+  "access_mode": "public"
+}
+
+# Register a new model in the previously created model group
+POST /_plugins/_ml/models/_register
+{
+  "name": "huggingface/cross-encoders/ms-marco-MiniLM-L-6-v2",
+  "version": "1.0.2",
+  "model_group_id": "CXu6Y5IBtif6Eh-wdLzN",
+  "model_format": "TORCH_SCRIPT"
+}
+
+# Check the status of the model registration task
+GET /_plugins/_ml/tasks/EHu7Y5IBtif6Eh-w0rwN
+
+# Deploy the registered model
+POST /_plugins/_ml/models/EXu7Y5IBtif6Eh-w07yJ/_deploy
+
+# Check the status of the model deployment task
+GET /_plugins/_ml/tasks/GHu8Y5IBtif6Eh-w_bw5
+
+# Index some sample data into the "my-test-data" index
+POST _bulk
+{ "index": { "_index": "my-test-data" } }
+{ "passage_text" : "Carson City is the capital city of the American state of Nevada." }
+{ "index": { "_index": "my-test-data" } }
+{ "passage_text" : "The Commonwealth of the Northern Mariana Islands is a group of islands in the Pacific Ocean. Its capital is Saipan." }
+{ "index": { "_index": "my-test-data" } }
+{ "passage_text" : "Washington, D.C. (also known as simply Washington or D.C., and officially as the District of Columbia) is the capital of the United States. It is a federal district." }
+{ "index": { "_index": "my-test-data" } }
+{ "passage_text" : "Capital punishment (the death penalty) has existed in the United States since beforethe United States was a country. As of 2017, capital punishment is legal in 30 of the 50 states." }
+
+# Create a search pipeline for reranking with the deployed Sagemaker cross-encoder model
+PUT /_search/pipeline/rerank_pipeline
+{
+    "description": "Pipeline for reranking with Sagemaker cross-encoder model",
+    "response_processors": [
+        {
+            "rerank": {
+                "ml_opensearch": {
+                    "model_id": "EXu7Y5IBtif6Eh-w07yJ"
+                },
+                "context": {
+                    "document_fields": ["passage_text"]
+                }
+            }
+        }
+    ]
+}
+
+# Perform a search with reranking using the created pipeline
+GET my-test-data/_search?search_pipeline=rerank_pipeline
+{
+  "query": {
+    "match_all": {}
+  },
+  "size": 4,
+  "ext": {
+    "rerank": {
+      "query_context": {
+         "query_text": "What is the capital of the United States?"
+      }
+    }
+  }
+}
+
+# Perform a search without reranking
+GET my-test-data/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "ext": {
+    "rerank": {
+      "query_context": {
+         "query_text": "What is the capital of the United States?"
+      }
+    }
+  }
+}
