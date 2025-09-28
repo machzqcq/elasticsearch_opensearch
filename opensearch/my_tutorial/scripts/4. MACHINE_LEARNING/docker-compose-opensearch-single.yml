@@ -6,7 +6,7 @@ services:
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true # Disable JVM heap memory swapping
-      - "OPENSEARCH_JAVA_OPTS=-Xms20000m -Xmx20000m" # Set min and max JVM heap sizes to at least 50% of system RAM
+      - "OPENSEARCH_JAVA_OPTS=-Xms16384m -Xmx16384m" # Set min and max JVM heap sizes to at least 50% of system RAM
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD:-Developer@123} # Sets the demo admin user password when using demo configuration (for OpenSearch 2.12 and later)
       - OPENSEARCH_HOME=/usr/share/opensearch
       - "node.roles: [ ml ]"
@@ -16,7 +16,7 @@ services:
       - "plugins.ml_commons.task_dispatch_policy=round_robin"
       # - DISABLE_SECURITY_PLUGIN=true  # Disables security plugin for demo purposes
       - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64:/usr/share/opensearch/plugins/opensearch-knn/lib
-
+      - path.repo=/usr/share/opensearch/snapshots
     ulimits:
       memlock:
         soft: -1 # Set memlock to unlimited (no soft or hard limit)
@@ -47,6 +47,7 @@ services:
 
 volumes:
   opensearch-data:
+  opensearch-snapshots:
 
 networks:
   opensearch-net:

@@ -11,10 +11,11 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 # 3. Connect to OpenSearch / Initialize the OpenSearch client
 IS_AUTH = True
 
+HOST = 'localhost'
 if IS_AUTH:
     # Initialize the OpenSearch client
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         http_auth=('admin', 'Developer@123'),  # Replace with your credentials
         use_ssl=True,
         verify_certs=False,
@@ -24,7 +25,7 @@ if IS_AUTH:
 else:
     # Initialize the OpenSearch client without authentication
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         use_ssl=False,
         verify_certs=False,
         ssl_assert_hostname = False,
@@ -85,6 +86,7 @@ except Exception as e:
 # 7. Wait for deployment to complete
 while True:
     status_response = client.transport.perform_request('GET', f'/_plugins/_ml/models/{embedding_model_id}')
+    print(f"Embedding model status: {status_response['model_state']}")
     if status_response['model_state'] == 'DEPLOYED':
         break
     time.sleep(5)
@@ -124,7 +126,6 @@ index_body = {
   },
   "settings": {
     "index": {
-      "knn.space_type": "cosinesimil",
       "default_pipeline": "test-pipeline-local-model",
       "knn": "true"
     }
@@ -153,8 +154,9 @@ client.bulk(body=bulk_body, index="my_test_data", pipeline="test-pipeline-local-
 print("Bulk indexing completed")
 
 # 11. Register model group
+model_group_name = f"openai_model_group_{int(time.time())}"
 llm_model_group_body = {
-  "name": "openai_model_group",
+  "name": model_group_name,
   "description": "A model group for open ai models"
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=llm_model_group_body)

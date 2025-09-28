@@ -16,7 +16,8 @@ load_dotenv("../../.env")
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
-CLUSTER_URL = {'host': '192.168.0.111', 'port': 9200}
+HOST = 'localhost' # Opensearch host
+CLUSTER_URL = {'host': HOST, 'port': 9200}
 
 def get_os_client(cluster_url = CLUSTER_URL,
                   username='admin',
@@ -30,7 +31,8 @@ def get_os_client(cluster_url = CLUSTER_URL,
         hosts=[cluster_url], #[cluster_url], # {'host': '192.168.0.111', 'port': 9200}
         http_auth=(username, password),
         verify_certs=False,
-        use_ssl=True
+        use_ssl=True,
+        timeout=50,
     )
     return client
 
@@ -65,6 +67,11 @@ folder_path = "sentence-transformer-onnx/msmarco-distilbert-base-v2"
 
 # Initialize the SentenceTransformerModel
 pre_trained_model = SentenceTransformerModel(model_id=embedding_model_name, overwrite=True)
+
+# Delete the directory if exists
+if os.path.exists("sentence_transformer_model_files"):
+    import shutil
+    shutil.rmtree("sentence_transformer_model_files")
 
 # Save the model to a directory
 model_path_onnx = pre_trained_model.save_as_onnx(model_id=embedding_model_name)
@@ -115,38 +122,41 @@ index_body = {
   },
   "settings": {
     "index": {
-      "knn.space_type": "cosinesimil",
       "default_pipeline": "test-pipeline-local-model",
       "knn": "true"
     }
   }
 }
-response = client.indices.create(index="my_test_data", body=index_body)
+
+index_name = f"my_test_data_{int(time.time())}"
+
+response = client.indices.create(index=index_name, body=index_body)
 print("Index created:", response)
 
 
 # 10. Bulk index documents
 bulk_body = [
-    {"index": {"_index": "my_test_data", "_id": "1"}},
+    {"index": {"_index": index_name, "_id": "1"}},
     {"text": "Chart and table of population level and growth rate for the Ogden-Layton metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Ogden-Layton in 2023 is 750,000, a 1.63% increase from 2022.\nThe metro area population of Ogden-Layton in 2022 was 738,000, a 1.79% increase from 2021.\nThe metro area population of Ogden-Layton in 2021 was 725,000, a 1.97% increase from 2020.\nThe metro area population of Ogden-Layton in 2020 was 711,000, a 2.16% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "2"}},
+    {"index": {"_index": index_name, "_id": "2"}},
     {"text": "Chart and table of population level and growth rate for the New York City metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of New York City in 2023 is 18,937,000, a 0.37% increase from 2022.\nThe metro area population of New York City in 2022 was 18,867,000, a 0.23% increase from 2021.\nThe metro area population of New York City in 2021 was 18,823,000, a 0.1% increase from 2020.\nThe metro area population of New York City in 2020 was 18,804,000, a 0.01% decline from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "3"}},
+    {"index": {"_index": index_name, "_id": "3"}},
     {"text": "Chart and table of population level and growth rate for the Chicago metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Chicago in 2023 is 8,937,000, a 0.4% increase from 2022.\nThe metro area population of Chicago in 2022 was 8,901,000, a 0.27% increase from 2021.\nThe metro area population of Chicago in 2021 was 8,877,000, a 0.14% increase from 2020.\nThe metro area population of Chicago in 2020 was 8,865,000, a 0.03% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "4"}},
+    {"index": {"_index": index_name, "_id": "4"}},
     {"text": "Chart and table of population level and growth rate for the Miami metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Miami in 2023 is 6,265,000, a 0.8% increase from 2022.\nThe metro area population of Miami in 2022 was 6,215,000, a 0.78% increase from 2021.\nThe metro area population of Miami in 2021 was 6,167,000, a 0.74% increase from 2020.\nThe metro area population of Miami in 2020 was 6,122,000, a 0.71% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "5"}},
+    {"index": {"_index": index_name, "_id": "5"}},
     {"text": "Chart and table of population level and growth rate for the Austin metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Austin in 2023 is 2,228,000, a 2.39% increase from 2022.\nThe metro area population of Austin in 2022 was 2,176,000, a 2.79% increase from 2021.\nThe metro area population of Austin in 2021 was 2,117,000, a 3.12% increase from 2020.\nThe metro area population of Austin in 2020 was 2,053,000, a 3.43% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "6"}},
+    {"index": {"_index": index_name, "_id": "6"}},
     {"text": "Chart and table of population level and growth rate for the Seattle metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Seattle in 2023 is 3,519,000, a 0.86% increase from 2022.\nThe metro area population of Seattle in 2022 was 3,489,000, a 0.81% increase from 2021.\nThe metro area population of Seattle in 2021 was 3,461,000, a 0.82% increase from 2020.\nThe metro area population of Seattle in 2020 was 3,433,000, a 0.79% increase from 2019."}
 ]
-client.bulk(body=bulk_body, index="my_test_data", pipeline="test-pipeline-local-model")
+client.bulk(body=bulk_body, index=index_name, pipeline="test-pipeline-local-model")
 
 print("Bulk indexing completed")
 
 # 11. Register model group
+model_group_name = f"embedding_model_group_{int(time.time())}"
 llm_model_group_body = {
-  "name": "openai_model_group",
+  "name": model_group_name,
   "description": "A model group for open ai models"
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=llm_model_group_body)
@@ -254,7 +264,7 @@ agent_register_body = {
       "type": "VectorDBTool",
       "parameters": {
         "model_id": embedding_model_id,
-        "index": "my_test_data",
+        "index": index_name,
         "embedding_field": "embedding",
         "source_field": [
           "text"
@@ -302,4 +312,14 @@ execute_body = {
 execute_response = client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body=execute_body)
 print("Agent executed:", execute_response)
 
+# Another query - expected response should be - not in context so should be "I don't know"
+
+execute_body = {
+  "parameters": {
+    "question": "What is a GPU?"
+  }
+}
+
+execute_response = client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body=execute_body)
+print("Agent executed:", execute_response)
 

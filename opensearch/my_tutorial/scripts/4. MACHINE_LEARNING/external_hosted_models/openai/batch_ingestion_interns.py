@@ -7,7 +7,7 @@ from helpers import opensearch_bulk_async, dataframe_to_actions
 from opensearchpy import OpenSearch, helpers
 
 # 1. Load environment variables from .env file
-load_dotenv("../../.env")
+load_dotenv("../../../.env")
 
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -15,10 +15,11 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 # 3. Connect to OpenSearch / Initialize the OpenSearch client
 IS_AUTH = True
 
+HOST = 'localhost'
 if IS_AUTH:
     # Initialize the OpenSearch client
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         http_auth=('admin', 'Developer@123'),  # Replace with your credentials
         use_ssl=True,
         verify_certs=False,
@@ -27,7 +28,7 @@ if IS_AUTH:
 else:
     # Initialize the OpenSearch client without authentication
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         use_ssl=False,
         verify_certs=False,
         ssl_assert_hostname = False,
@@ -44,8 +45,9 @@ response = client.cluster.put_settings(body=cluster_settings)
 print("Cluster settings updated:", response)
 
 # 5. Register model group
+model_group_name = f"remote_model_group_{int(time.time())}"
 model_group_body = {
-    "name": "remote_model_group",
+    "name": model_group_name,
     "description": "A model group for external models"
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=model_group_body)
@@ -194,7 +196,7 @@ response = client.indices.create(index="interns", body=index_body)
 print("Index created:", response)
 
 # 12: Load sample documents
-BASE_DIR = "../../../data"
+BASE_DIR = "../../../../data"
 df = pd.read_parquet(f"{BASE_DIR}/interns_sample.parquet")
 
 data = dataframe_to_actions(df.iloc[0:2], "interns")

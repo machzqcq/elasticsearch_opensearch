@@ -3,7 +3,7 @@ import os, time
 from dotenv import load_dotenv
 
 # 1. Load environment variables from .env file
-load_dotenv("../../.env")
+load_dotenv("../../../.env")
 
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -11,10 +11,11 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 # 3. Connect to OpenSearch / Initialize the OpenSearch client
 IS_AUTH = True
 
+HOST = 'localhost'
 if IS_AUTH:
     # Initialize the OpenSearch client
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         http_auth=('admin', 'Developer@123'),  # Replace with your credentials
         use_ssl=True,
         verify_certs=False,
@@ -23,7 +24,7 @@ if IS_AUTH:
 else:
     # Initialize the OpenSearch client without authentication
     client = OpenSearch(
-        hosts=[{'host': '192.168.0.111', 'port': 9200}],
+        hosts=[{'host': HOST, 'port': 9200}],
         use_ssl=False,
         verify_certs=False,
         ssl_assert_hostname = False,
@@ -39,12 +40,15 @@ cluster_settings = {
 client.cluster.put_settings(body=cluster_settings)
 
 # 5. Register model group
+model_group_name = f"remote_model_group_{int(time.time())}"
+print(f"Registering model group: {model_group_name}")
 model_group_body = {
-    "name": "remote_model_group",
+    "name": model_group_name,
     "description": "A model group for external models"
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=model_group_body)
 model_group_id = response['model_group_id']
+print(f"Registered model group with ID: {model_group_id}")
 
 # 6. Create connector
 connector_body = {
@@ -75,6 +79,7 @@ connector_body = {
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/connectors/_create', body=connector_body)
 connector_id = response['connector_id']
+print(f"Created connector with ID: {connector_id}")
 
 # 7. Register model
 model_body = {
@@ -86,6 +91,7 @@ model_body = {
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/models/_register', body=model_body)
 model_id = response['model_id']
+print(f"Registered model with ID: {model_id}")
 
 # 8. Deploy the model and wait for the status to become completed
 deploy_body = {
@@ -107,6 +113,7 @@ except Exception as e:
 # Wait for deployment to complete
 while True:
     status_response = client.transport.perform_request('GET', f'/_plugins/_ml/models/{model_id}')
+    print(f"Model status: {status_response['model_state']}")
     if status_response['model_state'] == 'DEPLOYED':
         break
     time.sleep(5)
@@ -137,30 +144,31 @@ pipeline_body = {
 client.ingest.put_pipeline(id="nlp-ingest-pipeline", body=pipeline_body)
 
 # 11. Create index
-client.indices.create(index="testindex")
+index_name = f"testindex_{int(time.time())}"
+client.indices.create(index=index_name)
 
 # 12. Bulk index documents
 bulk_body = [
-    {"create": {"_index": "testindex", "_id": "2"}},
+    {"create": {"_index": index_name, "_id": "2"}},
     {"passage_text": "hello world"},
-    {"create": {"_index": "testindex", "_id": "3"}},
+    {"create": {"_index": index_name, "_id": "3"}},
     {"passage_text": "big apple"},
-    {"create": {"_index": "testindex", "_id": "4"}},
+    {"create": {"_index": index_name, "_id": "4"}},
     {"passage_text": "golden gate bridge"},
-    {"create": {"_index": "testindex", "_id": "5"}},
+    {"create": {"_index": index_name, "_id": "5"}},
     {"passage_text": "fine tune"},
-    {"create": {"_index": "testindex", "_id": "6"}},
+    {"create": {"_index": index_name, "_id": "6"}},
     {"passage_text": "random test"},
-    {"create": {"_index": "testindex", "_id": "7"}},
+    {"create": {"_index": index_name, "_id": "7"}},
     {"passage_text": "sun and moon"},
-    {"create": {"_index": "testindex", "_id": "8"}},
+    {"create": {"_index": index_name, "_id": "8"}},
     {"passage_text": "windy"},
-    {"create": {"_index": "testindex", "_id": "9"}},
+    {"create": {"_index": index_name, "_id": "9"}},
     {"passage_text": "new york"},
-    {"create": {"_index": "testindex", "_id": "10"}},
+    {"create": {"_index": index_name, "_id": "10"}},
     {"passage_text": "fantastic"}
 ]
-client.bulk(body=bulk_body, index="testindex", pipeline="nlp-ingest-pipeline")
+client.bulk(body=bulk_body, index=index_name, pipeline="nlp-ingest-pipeline")
 
 time.sleep(5) # to allow index persistence
 
@@ -170,7 +178,7 @@ search_body = {
         "match_all": {}
     }
 }
-response = client.search(index="testindex", body=search_body)
+response = client.search(index=index_name, body=search_body)
 print(response)
 
 # 14. Delete ingestion pipeline

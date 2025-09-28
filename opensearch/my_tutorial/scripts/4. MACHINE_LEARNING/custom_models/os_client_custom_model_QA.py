@@ -33,7 +33,8 @@ def get_os_client(cluster_url=CLUSTER_URL, username='admin', password='Developer
         verify_certs=False,
         ssl_assert_hostname=False,
         ssl_show_warn=False,
-        use_ssl=True
+        use_ssl=True,
+        timeout=300  # Increased timeout to 300 seconds
     )
     return client
 

@@ -16,7 +16,7 @@ POST /_plugins/_ml/connectors/_create
     "model": "text-embedding-ada-002"
   },
   "credential": {
-    "openAI_key": "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"
+    "openAI_key": "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"
   },
   "actions": [
     {
@@ -38,14 +38,14 @@ POST /_plugins/_ml/models/_register
 {
     "name": "openAI-gpt-3.5-turbo",
     "function_name": "remote",
-    "model_group_id": "QqOjSpIB9XVjosYGow7b",
+    "model_group_id": "jrB9kZkBq9cOaFMLRo8a",
     "description": "test model",
-    "connector_id": "x6O-SpIB9XVjosYGhA4x"
+    "connector_id": "lbB-kZkBq9cOaFMLy4_z"
 }
 
-POST /_plugins/_ml/models/zKO-SpIB9XVjosYG8g42/_deploy
+POST /_plugins/_ml/models/mrB_kZkBq9cOaFMLDo8V/_deploy
 
-GET /_plugins/_ml/tasks/y6O-SpIB9XVjosYG8Q6-
+GET /_plugins/_ml/tasks/mbB_kZkBq9cOaFMLDY_v
 
 # Starting in OpenSearch version 2.13, externally hosted models are deployed automatically when you send a Predict API request for the first time. To disable automatic deployment for an externally hosted model, set plugins.ml_commons.model_auto_deploy.enable to false:
 PUT _cluster/settings
@@ -61,7 +61,7 @@ PUT /_ingest/pipeline/nlp-ingest-pipeline2
   "processors": [
     {
       "text_embedding": {
-        "model_id": "zKO-SpIB9XVjosYG8g42",
+        "model_id": "mrB_kZkBq9cOaFMLDo8V",
         "field_map": {
           "passage_text": "passage_embedding"
         },
@@ -73,7 +73,7 @@ PUT /_ingest/pipeline/nlp-ingest-pipeline2
 
 PUT testindex
 
-POST _bulk?batch_size=5&pipeline=nlp-ingest-pipeline2
+POST _bulk?pipeline=nlp-ingest-pipeline2
 { "create": { "_index": "testindex", "_id": "2" } }
 { "passage_text": "hello world" }
 { "create": { "_index": "testindex", "_id": "3" } }
