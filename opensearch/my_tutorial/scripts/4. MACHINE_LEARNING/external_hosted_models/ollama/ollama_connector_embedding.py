@@ -29,6 +29,7 @@ load_dotenv("../../../.env")
 
 # OpenSearch cluster configuration
 HOST = 'localhost'
+OLLAMA_URL = '192.168.0.151:11434'  # Change to your Ollama host if needed
 PORT = 9200
 CLUSTER_URL = {'host': HOST, 'port': PORT}
 DEFAULT_USERNAME = 'admin'
@@ -57,6 +58,8 @@ def get_os_client(cluster_url=CLUSTER_URL, username=DEFAULT_USERNAME, password=D
         ssl_assert_hostname=False,
         ssl_show_warn=False,
         use_ssl=True,
+        max_retries=10,
+        retry_on_timeout=True,
         timeout=300  # Increased timeout to 300 seconds
     )
 
@@ -101,9 +104,8 @@ def main():
     
     # Step 1: List Ollama models first
     print("Step 1: Listing available Ollama models from endpoint...")
-    ollama_url = os.getenv('OLLAMA_URL', 'http://localhost:11434').rstrip('/')
     try:
-        resp = requests.get(f"{ollama_url}/api/tags")
+        resp = requests.get(f"http://{OLLAMA_URL}/api/tags")
         resp.raise_for_status()
         models = resp.json().get('models', [])
         if not models:
@@ -116,20 +118,20 @@ def main():
         selected_model = "neural-chat:latest"
         print(f"Using model: {selected_model}\n")
     except Exception as e:
-        print(f"Could not list models from {ollama_url}: {e}")
+        print(f"Could not list models from {OLLAMA_URL}: {e}")
         return
 
     # Verify host reachability for connector creation
-    host = ollama_url.split('//')[-1].split('/')[0].split(':')[0]
-    try:
-        ip = ipaddress.ip_address(host)
-        if ip.is_private:
-            print(f"Detected Ollama host {host} is a private IP. OpenSearch may reject connectors to private IPs.")
-            print("Set the OLLAMA_URL to an address reachable by your OpenSearch cluster (public IP/DNS) or create an SSH tunnel.")
-            return
-    except ValueError:
-        # host is a hostname, assume reachable
-        pass
+    # host = ollama_url.split('//')[-1].split('/')[0].split(':')[0]
+    # try:
+    #     ip = ipaddress.ip_address(host)
+    #     if ip.is_private:
+    #         print(f"Detected Ollama host {host} is a private IP. OpenSearch may reject connectors to private IPs.")
+    #         print("Set the OLLAMA_URL to an address reachable by your OpenSearch cluster (public IP/DNS) or create an SSH tunnel.")
+    #         return
+    # except ValueError:
+    #     # host is a hostname, assume reachable
+    #     pass
 
     # Step 2: Initialize OpenSearch client and create model group
     print("Step 2: Initializing OpenSearch Client and Creating Model Group...")
@@ -142,32 +144,28 @@ def main():
 
     # Step 3: Create Ollama connector
     print("Step 3: Creating Ollama connector...")
-    # Use the full Ollama URL as the connector parameter so there is only one
-    # canonical endpoint value (e.g. http://192.168.0.219:11434)
-    connector_endpoint = ollama_url
+    # Use the proper Ollama API format with HTTP protocol
     connector_body = {
         "name": "ollama_connector",
         "description": "Connector for Ollama API",
         "version": 1,
         "protocol": "http",
         "parameters": {
-            "endpoint": "localhost:11434",
+            "endpoint": OLLAMA_URL,
             "model": selected_model
         },
         "credential": {
-        "openAI_key": "dummy"
-    },
+            "dummy_key": "dummy"
+        },
         "actions": [
             {
                 "action_type": "predict",
                 "method": "POST",
-                # Use the host parameter directly (already contains the scheme)
-                "url": "https://${parameters.endpoint}/v1/chat/completions",
+                "url": "http://${parameters.endpoint}/api/generate",
                 "headers": {
-                    "Content-Type": "application/json", 
-                    "Authorization": "Bearer ${credential.openAI_key}"
+                    "Content-Type": "application/json"
                 },
-                "request_body": "{ \"model\": \"${parameters.model}\", \"messages\": ${parameters.messages} }"
+                "request_body": "{ \"model\": \"${parameters.model}\", \"prompt\": \"${parameters.prompt}\", \"stream\": false }"
             }
         ]
     }
@@ -213,17 +211,8 @@ def main():
     # Step 5: Test model
     print("Step 5: Testing Model with Sample Data...")
     predict_body = {"parameters": {
-    "messages": [
-      {
-        "role": "system",
-        "content": "You are a helpful assistant."
-      },
-      {
-        "role": "user",
-        "content": "Why is the sky blue"
-      }
-    ]
-  }}
+        "prompt": "Why is the sky blue? Please explain in a simple way."
+    }}
     
     try:
         predict_response = client.transport.perform_request('POST', f'/_plugins/_ml/models/{model_id}/_predict', body=predict_body)
@@ -279,4 +268,5 @@ def cleanup_resources(client, model_id, connector_id, model_group_id):
 
 
 if __name__ == "__main__":
+    # Run main
     main()
