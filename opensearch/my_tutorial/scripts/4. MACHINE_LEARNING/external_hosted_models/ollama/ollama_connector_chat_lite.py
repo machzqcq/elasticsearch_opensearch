@@ -29,8 +29,8 @@ load_dotenv("../../../.env")
 
 # OpenSearch cluster configuration
 HOST = 'localhost'
-OLLAMA_IP_URL = '192.168.0.151:11435'  # Change to your Ollama host if needed. See README.md for more details.
-OLLAMA_MODEL = "embeddinggemma:latest" 
+OLLAMA_IP_URL = 'ollama:11434'  # Change to your Ollama host if needed. See README.md for more details.
+OLLAMA_MODEL = 'smollm2:135m'  # Change to your desired Ollama model if needed. See README.md for more details.
 PORT = 9200
 CLUSTER_URL = {'host': HOST, 'port': PORT}
 DEFAULT_USERNAME = 'admin'
@@ -103,62 +103,11 @@ def main():
     client.cluster.put_settings(body=cluster_settings)
     print("✓ Cluster settings configured successfully\n")
     
-    # Step 1: List Ollama models first
-    print("Step 1: Listing available Ollama models from endpoint...")
-    try:
-        resp = requests.get(f"http://{OLLAMA_IP_URL}/api/tags")
-        resp.raise_for_status()
-        models = resp.json().get('models', [])
-        if not models:
-            print("No models returned from Ollama endpoint.")
-            return
-        print("Available Ollama models:")
-        for i, m in enumerate(models, start=1):
-            print(f"  {i}. {m.get('name')}")
-    except Exception as e:
-        print(f"Could not list models from {OLLAMA_IP_URL}: {e}")
-        return
-    
-    # Download the model
-    try:
-        print(f"Downloading model: {OLLAMA_MODEL}\n")
-        payload = {
-            "name": OLLAMA_MODEL,
-            "stream": True # Set to True to stream the pull progress
-            }
-        headers = {"Content-Type": "application/json"}
-        # Send the POST request to pull the model
-        response = requests.post(f"http://{OLLAMA_IP_URL}/api/pull", headers=headers, data=json.dumps(payload), stream=True)
-        response.raise_for_status() # Raise an exception for bad status codes
-
-        print(f"Attempting to pull model: {OLLAMA_MODEL}")
-
-        # Process the streamed response
-        for chunk in response.iter_content(chunk_size=None):
-            if chunk:
-                try:
-                    # Decode and print each chunk of the response
-                    data = json.loads(chunk.decode('utf-8'))
-                    if "status" in data:
-                        print(f"Status: {data['status']}")
-                    if "total" in data and "completed" in data:
-                        progress = (data["completed"] / data["total"]) * 100
-                        print(f"Download Progress: {progress:.2f}%")
-                except json.JSONDecodeError:
-                    print(f"Received non-JSON chunk: {chunk.decode('utf-8')}")
-
-        print(f"Model '{OLLAMA_MODEL}' pull complete.")
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error pulling model: {e}")
-        if hasattr(e, 'response') and e.response is not None:
-            print(f"Response content: {e.response.text}")
-
     # Step 2: Initialize OpenSearch client and create model group
     print("Step 2: Initializing OpenSearch Client and Creating Model Group...")
     client = get_os_client()
     model_group_name = f"ollama_embedding_group_{int(time.time())}"
-    model_group_body = {"name": model_group_name, "description": "Model group for Ollama embeddings"}
+    model_group_body = {"name": model_group_name, "description": "Model group for Ollama chat"}
     model_group_response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=model_group_body)
     model_group_id = model_group_response['model_group_id']
     print(f"✓ Created model group '{model_group_name}' with ID: {model_group_id}\n")
@@ -182,11 +131,11 @@ def main():
             {
                 "action_type": "predict",
                 "method": "POST",
-                "url": "http://${parameters.endpoint}/v1/embeddings",
+                "url": "http://${parameters.endpoint}/api/generate",
                 "headers": {
                     "Content-Type": "application/json"
                 },
-                "request_body": "{ \"model\": \"${parameters.model}\", \"input\": \"${parameters.input}\", \"stream\": false }"
+                "request_body": "{ \"model\": \"${parameters.model}\", \"prompt\": \"${parameters.prompt}\", \"stream\": false }"
             }
         ]
     }
@@ -232,7 +181,7 @@ def main():
     # Step 5: Test model
     print("Step 5: Testing Model with Sample Data...")
     predict_body = {"parameters": {
-        "input": "Sky is blue"
+        "prompt": "Why is the sky blue? Please explain in a simple way."
     }}
     
     try:

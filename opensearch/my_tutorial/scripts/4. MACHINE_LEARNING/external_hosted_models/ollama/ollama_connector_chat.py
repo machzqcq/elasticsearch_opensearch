@@ -30,7 +30,7 @@ load_dotenv("../../../.env")
 # OpenSearch cluster configuration
 HOST = 'localhost'
 OLLAMA_IP_URL = '192.168.0.151:11435'  # Change to your Ollama host if needed. See README.md for more details.
-OLLAMA_MODEL = "embeddinggemma:latest" 
+OLLAMA_MODEL = "smollm2:135m" # neural-chat:latest if you have more memory on ollama_ip_url host
 PORT = 9200
 CLUSTER_URL = {'host': HOST, 'port': PORT}
 DEFAULT_USERNAME = 'admin'
@@ -158,7 +158,7 @@ def main():
     print("Step 2: Initializing OpenSearch Client and Creating Model Group...")
     client = get_os_client()
     model_group_name = f"ollama_embedding_group_{int(time.time())}"
-    model_group_body = {"name": model_group_name, "description": "Model group for Ollama embeddings"}
+    model_group_body = {"name": model_group_name, "description": "Model group for Ollama chat"}
     model_group_response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=model_group_body)
     model_group_id = model_group_response['model_group_id']
     print(f"✓ Created model group '{model_group_name}' with ID: {model_group_id}\n")
@@ -182,11 +182,11 @@ def main():
             {
                 "action_type": "predict",
                 "method": "POST",
-                "url": "http://${parameters.endpoint}/v1/embeddings",
+                "url": "http://${parameters.endpoint}/api/generate",
                 "headers": {
                     "Content-Type": "application/json"
                 },
-                "request_body": "{ \"model\": \"${parameters.model}\", \"input\": \"${parameters.input}\", \"stream\": false }"
+                "request_body": "{ \"model\": \"${parameters.model}\", \"prompt\": \"${parameters.prompt}\", \"stream\": false }"
             }
         ]
     }
@@ -232,7 +232,7 @@ def main():
     # Step 5: Test model
     print("Step 5: Testing Model with Sample Data...")
     predict_body = {"parameters": {
-        "input": "Sky is blue"
+        "prompt": "Why is the sky blue? Please explain in a simple way."
     }}
     
     try:
