@@ -10,7 +10,8 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 # 3. Connect to OpenSearch / Initialize the OpenSearch client
 IS_AUTH = True
-
+OLLAMA_IP_URL = '10.2.23.181:11434'  # Change to your Ollama host if needed. See README.md for more details.
+OLLAMA_MODEL = "smollm2:135m" # neural-chat:latest if you have more memory on ollama_ip_url host
 HOST = 'localhost'
 if IS_AUTH:
     # Initialize the OpenSearch client
@@ -35,7 +36,7 @@ else:
 # 4. Modify cluster settings to accept OpenAI as trusted connector endpoint
 cluster_settings = {
     "persistent": {
-        "plugins.ml_commons.trusted_connector_endpoints_regex": "^https://api\\.openai\\.com/.*$",
+        "plugins.ml_commons.trusted_connector_endpoints_regex": [".*"],
         "plugins.ml_commons.only_run_on_ml_node": "false",
         "plugins.ml_commons.memory_feature_enabled": "true"
     }
@@ -105,7 +106,9 @@ pipeline_body = {
         }
     ]
 }
-client.ingest.put_pipeline(id="test-pipeline-local-model", body=pipeline_body)
+
+pipeline_id = f"test-pipeline-local-model_{embedding_model_id}"
+client.ingest.put_pipeline(id=pipeline_id, body=pipeline_body)
 
 # 9: Create index - note that the dimension is 384
 index_body = {
@@ -126,30 +129,32 @@ index_body = {
   },
   "settings": {
     "index": {
-      "default_pipeline": "test-pipeline-local-model",
+      "default_pipeline": pipeline_id,
       "knn": "true"
     }
   }
 }
-response = client.indices.create(index="my_test_data", body=index_body)
+
+index_name = f"my_test_data_{int(time.time())}"
+response = client.indices.create(index=index_name, body=index_body)
 print("Index created:", response)
 
 # 10. Bulk index documents
 bulk_body = [
-    {"index": {"_index": "my_test_data", "_id": "1"}},
+    {"index": {"_index": index_name, "_id": "1"}},
     {"text": "Chart and table of population level and growth rate for the Ogden-Layton metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Ogden-Layton in 2023 is 750,000, a 1.63% increase from 2022.\nThe metro area population of Ogden-Layton in 2022 was 738,000, a 1.79% increase from 2021.\nThe metro area population of Ogden-Layton in 2021 was 725,000, a 1.97% increase from 2020.\nThe metro area population of Ogden-Layton in 2020 was 711,000, a 2.16% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "2"}},
+    {"index": {"_index": index_name, "_id": "2"}},
     {"text": "Chart and table of population level and growth rate for the New York City metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of New York City in 2023 is 18,937,000, a 0.37% increase from 2022.\nThe metro area population of New York City in 2022 was 18,867,000, a 0.23% increase from 2021.\nThe metro area population of New York City in 2021 was 18,823,000, a 0.1% increase from 2020.\nThe metro area population of New York City in 2020 was 18,804,000, a 0.01% decline from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "3"}},
+    {"index": {"_index": index_name, "_id": "3"}},
     {"text": "Chart and table of population level and growth rate for the Chicago metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Chicago in 2023 is 8,937,000, a 0.4% increase from 2022.\nThe metro area population of Chicago in 2022 was 8,901,000, a 0.27% increase from 2021.\nThe metro area population of Chicago in 2021 was 8,877,000, a 0.14% increase from 2020.\nThe metro area population of Chicago in 2020 was 8,865,000, a 0.03% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "4"}},
+    {"index": {"_index": index_name, "_id": "4"}},
     {"text": "Chart and table of population level and growth rate for the Miami metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Miami in 2023 is 6,265,000, a 0.8% increase from 2022.\nThe metro area population of Miami in 2022 was 6,215,000, a 0.78% increase from 2021.\nThe metro area population of Miami in 2021 was 6,167,000, a 0.74% increase from 2020.\nThe metro area population of Miami in 2020 was 6,122,000, a 0.71% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "5"}},
+    {"index": {"_index": index_name, "_id": "5"}},
     {"text": "Chart and table of population level and growth rate for the Austin metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Austin in 2023 is 2,228,000, a 2.39% increase from 2022.\nThe metro area population of Austin in 2022 was 2,176,000, a 2.79% increase from 2021.\nThe metro area population of Austin in 2021 was 2,117,000, a 3.12% increase from 2020.\nThe metro area population of Austin in 2020 was 2,053,000, a 3.43% increase from 2019."},
-    {"index": {"_index": "my_test_data", "_id": "6"}},
+    {"index": {"_index": index_name, "_id": "6"}},
     {"text": "Chart and table of population level and growth rate for the Seattle metro area from 1950 to 2023. United Nations population projections are also included through the year 2035.\nThe current metro area population of Seattle in 2023 is 3,519,000, a 0.86% increase from 2022.\nThe metro area population of Seattle in 2022 was 3,489,000, a 0.81% increase from 2021.\nThe metro area population of Seattle in 2021 was 3,461,000, a 0.82% increase from 2020.\nThe metro area population of Seattle in 2020 was 3,433,000, a 0.79% increase from 2019."}
 ]
-client.bulk(body=bulk_body, index="my_test_data", pipeline="test-pipeline-local-model")
+client.bulk(body=bulk_body, index=index_name, pipeline=pipeline_id)
 
 print("Bulk indexing completed")
 
@@ -164,33 +169,36 @@ print("Model group registered:", response)
 llm_model_group_id = response['model_group_id']
 
 # 12. Create connector
-llm_connector_body = {
-    "name": "OpenAI Chat Connector",
-    "description": "The connector to public OpenAI model service for GPT 3.5",
+print("Step 4: Creating Ollama connector...")
+# Use the proper Ollama API format with HTTP protocol
+connector_body = {
+    "name": "ollama_connector",
+    "description": "Connector for Ollama API",
     "version": 1,
     "protocol": "http",
     "parameters": {
-        "endpoint": "api.openai.com",
-        "model": "gpt-3.5-turbo"
+        "endpoint": OLLAMA_IP_URL,
+        "model": OLLAMA_MODEL
     },
     "credential": {
-        "openAI_key": OPENAI_API_KEY
+        "dummy_key": "dummy"
     },
     "actions": [
         {
             "action_type": "predict",
             "method": "POST",
-            "url": "https://${parameters.endpoint}/v1/chat/completions",
+            "url": "http://${parameters.endpoint}/api/generate",
             "headers": {
-                "Authorization": "Bearer ${credential.openAI_key}"
+                "Content-Type": "application/json"
             },
-            "request_body": "{ \"model\": \"${parameters.model}\", \"messages\": ${parameters.messages} }"
+            "request_body": "{ \"model\": \"${parameters.model}\", \"prompt\": \"${parameters.prompt}\", \"stream\": false }"
         }
     ]
 }
-response = client.transport.perform_request('POST', '/_plugins/_ml/connectors/_create', body=llm_connector_body)
-print("Connector created:", response)
-llm_connector_id = response['connector_id']
+connector_response = client.transport.perform_request('POST', '/_plugins/_ml/connectors/_create', body=connector_body)
+llm_connector_id = connector_response['connector_id']
+print(f"✓ Created Ollama connector with ID: {llm_connector_id}\n")
+
 
 # 13. Register model
 llm_model_body = {
@@ -233,18 +241,11 @@ while True:
 # 16. Test prediction
 test_llm_predict_body = {
   "parameters": {
-    "messages": [
-      {
-        "role": "system",
-        "content": "You are a helpful assistant."
-      },
-      {
-        "role": "user",
-        "content": "Hello!"
-      }
-    ]
+    "prompt": "Why is the sky blue?"
   }
 }
+
+
 predict_response = client.transport.perform_request(
     'POST',
     f'/_plugins/_ml/models/{llm_model_id}/_predict',
@@ -277,16 +278,7 @@ agent_register_body = {
       "description": "A general tool to answer any question",
       "parameters": {
         "model_id": llm_model_id,
-        "messages": [
-          {
-            "role": "system",
-            "content": "You are a professional data analyst. You will always answer a question based on the given context first. If the answer is not directly shown in the context, you will analyze the data and find the answer. If you don't know the answer, just say you don't know."
-          },
-          {
-            "role": "user",
-            "content": "Context:\n${parameters.VectorDBTool.output}\n\nQuestion:${parameters.question}\n\n"
-          }
-        ]
+        "prompt": "You are a professional data analyst. You will always answer a question based on the given context first. If the answer is not directly shown in the context, you will analyze the data and find the answer. If you don't know the answer, just say you don't know.\n\nContext:\n${parameters.VectorDBTool.output}\n\nQuestion: ${parameters.question}\n\nAnswer:"
       }
     }
   ]
