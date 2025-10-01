@@ -68,13 +68,13 @@ def get_os_client(cluster_url=CLUSTER_URL, username=DEFAULT_USERNAME, password=D
 
 def main():
     """
-    Main function to demonstrate OpenAI connector integration with OpenSearch.
+    Main function to demonstrate DeepSeek connector integration with OpenSearch.
     
     This function performs the following steps:
     1. Initialize OpenSearch client and configure cluster settings
     2. Create model group for organizing ML models
-    3. Create OpenAI connector for API communication
-    4. Register and deploy the embedding model
+    3. Create DeepSeek connector for API communication
+    4. Register and deploy the chat model
     5. Test the model with sample data
     6. Clean up resources
     """
@@ -98,18 +98,22 @@ def main():
     client.cluster.put_settings(body=cluster_settings)
     print("✓ Cluster settings configured successfully\n")
     
-    # Step 2: Initialize OpenSearch client and create model group
+    # ============================================================================
+    # STEP 2: CREATE MODEL GROUP
+    # ============================================================================
     print("Step 2: Initializing OpenSearch Client and Creating Model Group...")
     client = get_os_client()
-    model_group_name = f"deepseek_embedding_group_{int(time.time())}"
+    model_group_name = f"deepseek_chat_group_{int(time.time())}"
     model_group_body = {"name": model_group_name, "description": "Model group for deepseek chat"}
     model_group_response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=model_group_body)
     model_group_id = model_group_response['model_group_id']
     print(f"✓ Created model group '{model_group_name}' with ID: {model_group_id}\n")
 
-    # Step 3: Create deepseek connector
+    # ============================================================================
+    # STEP 3: CREATE DEEPSEEK CONNECTOR
+    # ============================================================================
     print("Step 3: Creating deepseek connector...")
-    # Use the proper deepseek API format with HTTP protocol
+    # Use the proper DeepSeek API format with HTTP protocol
     connector_body = {
         "name": "DeepSeek Chat",
         "description": "Connector for DeepSeek Chat API",
@@ -139,7 +143,9 @@ def main():
     connector_id = connector_response['connector_id']
     print(f"✓ Created deepseek connector with ID: {connector_id}\n")
 
-    # Step 4: Register remote model using the connector
+    # ============================================================================
+    # STEP 4: REGISTER AND DEPLOY MODEL
+    # ============================================================================
     print("Step 4: Registering and Deploying Model...")
     model_body = {
         "name": "deepseek_chat_model",
@@ -174,7 +180,9 @@ def main():
             return
         time.sleep(5)
 
-    # Step 5: Test model
+    # ============================================================================
+    # STEP 5: TEST MODEL WITH SAMPLE DATA
+    # ============================================================================
     print("Step 5: Testing Model with Sample Data...")
     predict_body = {"parameters": {
         "messages": [
@@ -190,7 +198,9 @@ def main():
     except Exception as e:
         print(f"⚠ Error during prediction: {e}\n")
 
-    # Step 6: Cleanup
+    # ============================================================================
+    # STEP 6: CLEANUP RESOURCES
+    # ============================================================================
     print("Step 6: Cleaning Up Resources...")
     cleanup_resources(client, model_id, connector_id, model_group_id)
 

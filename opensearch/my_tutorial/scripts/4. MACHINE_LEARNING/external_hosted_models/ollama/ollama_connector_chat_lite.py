@@ -72,18 +72,18 @@ def get_os_client(cluster_url=CLUSTER_URL, username=DEFAULT_USERNAME, password=D
 
 def main():
     """
-    Main function to demonstrate OpenAI connector integration with OpenSearch.
+    Main function to demonstrate Ollama connector integration with OpenSearch.
     
     This function performs the following steps:
     1. Initialize OpenSearch client and configure cluster settings
     2. Create model group for organizing ML models
-    3. Create OpenAI connector for API communication
-    4. Register and deploy the embedding model
+    3. Create Ollama connector for API communication
+    4. Register and deploy the chat model
     5. Test the model with sample data
     6. Clean up resources
     """
     
-    print("=== Ollama Embedding Model Integration with OpenSearch ===\n")
+    print("=== Ollama Chat Model Integration with OpenSearch ===\n")
     
     # ============================================================================
     # STEP 1: INITIALIZE CLIENT AND CONFIGURE CLUSTER
@@ -91,7 +91,7 @@ def main():
     print("Step 1: Initializing OpenSearch Client and Configuring Cluster...")
     client = get_os_client()
     
-    # Configure cluster settings to accept OpenAI as trusted connector endpoint
+    # Configure cluster settings to accept Ollama as trusted connector endpoint
     cluster_settings = {
         "persistent": {
             "plugins.ml_commons.trusted_connector_endpoints_regex": [".*"],
@@ -103,7 +103,9 @@ def main():
     client.cluster.put_settings(body=cluster_settings)
     print("✓ Cluster settings configured successfully\n")
     
-    # Step 2: Initialize OpenSearch client and create model group
+    # ============================================================================
+    # STEP 2: CREATE MODEL GROUP
+    # ============================================================================
     print("Step 2: Initializing OpenSearch Client and Creating Model Group...")
     client = get_os_client()
     model_group_name = f"ollama_embedding_group_{int(time.time())}"
@@ -112,7 +114,9 @@ def main():
     model_group_id = model_group_response['model_group_id']
     print(f"✓ Created model group '{model_group_name}' with ID: {model_group_id}\n")
 
-    # Step 3: Create Ollama connector
+    # ============================================================================
+    # STEP 3: CREATE OLLAMA CONNECTOR
+    # ============================================================================
     print("Step 3: Creating Ollama connector...")
     # Use the proper Ollama API format with HTTP protocol
     connector_body = {
@@ -143,7 +147,9 @@ def main():
     connector_id = connector_response['connector_id']
     print(f"✓ Created Ollama connector with ID: {connector_id}\n")
 
-    # Step 4: Register remote model using the connector
+    # ============================================================================
+    # STEP 4: REGISTER AND DEPLOY MODEL
+    # ============================================================================
     print("Step 4: Registering and Deploying Model...")
     model_body = {
         "name": "ollama_chat_model",
@@ -178,7 +184,9 @@ def main():
             return
         time.sleep(5)
 
-    # Step 5: Test model
+    # ============================================================================
+    # STEP 5: TEST MODEL WITH SAMPLE DATA
+    # ============================================================================
     print("Step 5: Testing Model with Sample Data...")
     predict_body = {"parameters": {
         "prompt": "Why is the sky blue? Please explain in a simple way."
@@ -191,7 +199,9 @@ def main():
     except Exception as e:
         print(f"⚠ Error during prediction: {e}\n")
 
-    # Step 6: Cleanup
+    # ============================================================================
+    # STEP 6: CLEANUP RESOURCES
+    # ============================================================================
     print("Step 6: Cleaning Up Resources...")
     cleanup_resources(client, model_id, connector_id, model_group_id)
 

@@ -72,15 +72,16 @@ def get_os_client(cluster_url=CLUSTER_URL, username=DEFAULT_USERNAME, password=D
 
 def main():
     """
-    Main function to demonstrate OpenAI connector integration with OpenSearch.
+    Main function to demonstrate Ollama connector integration with OpenSearch.
     
     This function performs the following steps:
     1. Initialize OpenSearch client and configure cluster settings
-    2. Create model group for organizing ML models
-    3. Create OpenAI connector for API communication
-    4. Register and deploy the embedding model
-    5. Test the model with sample data
-    6. Clean up resources
+    2. List available Ollama models and download the specified model
+    3. Create model group for organizing ML models
+    4. Create Ollama connector for API communication
+    5. Register and deploy the embedding model
+    6. Test the model with sample data
+    7. Clean up resources
     """
     
     print("=== Ollama Embedding Model Integration with OpenSearch ===\n")
@@ -91,7 +92,7 @@ def main():
     print("Step 1: Initializing OpenSearch Client and Configuring Cluster...")
     client = get_os_client()
     
-    # Configure cluster settings to accept OpenAI as trusted connector endpoint
+    # Configure cluster settings to accept Ollama as trusted connector endpoint
     cluster_settings = {
         "persistent": {
             "plugins.ml_commons.trusted_connector_endpoints_regex": [".*"],
@@ -103,8 +104,10 @@ def main():
     client.cluster.put_settings(body=cluster_settings)
     print("✓ Cluster settings configured successfully\n")
     
-    # Step 1: List Ollama models first
-    print("Step 1: Listing available Ollama models from endpoint...")
+    # ============================================================================
+    # STEP 2: LIST AVAILABLE MODELS AND DOWNLOAD SPECIFIED MODEL
+    # ============================================================================
+    print("Step 2: Listing available Ollama models from endpoint...")
     try:
         resp = requests.get(f"http://{OLLAMA_IP_URL}/api/tags")
         resp.raise_for_status()
@@ -154,8 +157,10 @@ def main():
         if hasattr(e, 'response') and e.response is not None:
             print(f"Response content: {e.response.text}")
 
-    # Step 2: Initialize OpenSearch client and create model group
-    print("Step 2: Initializing OpenSearch Client and Creating Model Group...")
+    # ============================================================================
+    # STEP 3: CREATE MODEL GROUP
+    # ============================================================================
+    print("Step 3: Initializing OpenSearch Client and Creating Model Group...")
     client = get_os_client()
     model_group_name = f"ollama_embedding_group_{int(time.time())}"
     model_group_body = {"name": model_group_name, "description": "Model group for Ollama embeddings"}
@@ -163,8 +168,10 @@ def main():
     model_group_id = model_group_response['model_group_id']
     print(f"✓ Created model group '{model_group_name}' with ID: {model_group_id}\n")
 
-    # Step 3: Create Ollama connector
-    print("Step 3: Creating Ollama connector...")
+    # ============================================================================
+    # STEP 4: CREATE OLLAMA CONNECTOR
+    # ============================================================================
+    print("Step 4: Creating Ollama connector...")
     # Use the proper Ollama API format with HTTP protocol
     connector_body = {
         "name": "ollama_connector",
@@ -194,7 +201,10 @@ def main():
     connector_id = connector_response['connector_id']
     print(f"✓ Created Ollama connector with ID: {connector_id}\n")
 
-    # Step 4: Register remote model using the connector
+    # ============================================================================
+    # STEP 5: REGISTER AND DEPLOY MODEL
+    # ============================================================================
+    print("Step 5: Registering and Deploying Model...")
     print("Step 4: Registering and Deploying Model...")
     model_body = {
         "name": "ollama_chat_model",
@@ -229,8 +239,10 @@ def main():
             return
         time.sleep(5)
 
-    # Step 5: Test model
-    print("Step 5: Testing Model with Sample Data...")
+    # ============================================================================
+    # STEP 6: TEST MODEL WITH SAMPLE DATA
+    # ============================================================================
+    print("Step 6: Testing Model with Sample Data...")
     predict_body = {"parameters": {
         "input": "Sky is blue"
     }}
@@ -242,8 +254,10 @@ def main():
     except Exception as e:
         print(f"⚠ Error during prediction: {e}\n")
 
-    # Step 6: Cleanup
-    print("Step 6: Cleaning Up Resources...")
+    # ============================================================================
+    # STEP 7: CLEANUP RESOURCES
+    # ============================================================================
+    print("Step 7: Cleaning Up Resources...")
     cleanup_resources(client, model_id, connector_id, model_group_id)
 
 

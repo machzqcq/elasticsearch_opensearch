@@ -39,5 +39,6 @@ dependencies = [
     "langchain-chroma==0.2.6",
     "beautifulsoup4",
     "plotly==6.3.0",
-    "mdutils==1.8.0"
+    "mdutils==1.8.0",
+    "anthropic==0.69.0"
 ]
