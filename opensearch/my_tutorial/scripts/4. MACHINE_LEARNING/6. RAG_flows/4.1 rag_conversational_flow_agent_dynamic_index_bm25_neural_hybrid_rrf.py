@@ -2,6 +2,8 @@ from opensearchpy import OpenSearch, RequestsHttpConnection, helpers
 import time, os
 from dotenv import load_dotenv
 import sys
+import pandas as pd
+import json
 
 sys.path.append("../../")
 from helpers import restore_interns_all_snapshot
@@ -17,9 +19,10 @@ load_dotenv("../../.env")
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+HOST = '192.168.1.192'
 # Initialize the OpenSearch client
 os_client = OpenSearch(
-    hosts=[{"host": "192.168.0.111", "port": 9200}],
+    hosts=[{"host": HOST, "port": 9200}],
     http_auth=("admin", "Developer@123"),  # Replace with your credentials
     use_ssl=True,
     verify_certs=False,
@@ -88,6 +91,13 @@ while True:
         break
     time.sleep(10)  # Wait for 10 seconds before checking again
 
+
+# Delete pipeline if exists before creating
+try:
+    os_client.ingest.delete_pipeline(id="test-pipeline-local-model")
+except Exception as e:
+    pass  # Ignore if pipeline does not exist
+
 # Create ingest pipeline
 ingest_pipeline_response = os_client.ingest.put_pipeline(
     id="test-pipeline-local-model",
@@ -106,6 +116,12 @@ ingest_pipeline_response = os_client.ingest.put_pipeline(
 
 print(f"Ingest pipeline ID: {ingest_pipeline_response}")
 
+# Delete index if exists before creating
+try:
+    os_client.indices.delete(index="my_test_data")
+except Exception:
+    pass  # Ignore if index does not exist
+
 # Create index with mappings and settings
 os_client.indices.create(
     index="my_test_data",
@@ -122,7 +138,6 @@ os_client.indices.create(
         },
         "settings": {
             "index": {
-                "knn.space_type": "cosinesimil",
                 "default_pipeline": "test-pipeline-local-model",
                 "knn": "true",
             }
@@ -181,12 +196,12 @@ helpers.bulk(
     ],
 )
 
-# Register model group
+model_group_name = f"openai_model_group1_{int(time.time())}"
 response_model_group = os_client.transport.perform_request(
     "POST",
     "/_plugins/_ml/model_groups/_register",
     body={
-        "name": "openai_model_group",
+        "name": model_group_name,
         "description": "A model group for open ai models",
     },
 )
@@ -309,13 +324,16 @@ print(agent_registration_response)
 # Retrieve agent ID
 agent_id = agent_registration_response["agent_id"]
 
+# Define common query for consistent comparison
+SEARCH_QUERY = "what's the population increase of Seattle from 2021 to 2023?"
+
 # Run BM25 query
 bm25_response = os_client.transport.perform_request(
     "POST",
     f"/_plugins/_ml/agents/{agent_id}/_execute",
     body={
         "parameters": {
-            "question": "what's the population increase of Seattle from 2021 to 2023?",
+            "question": SEARCH_QUERY,
             "index": "my_test_data",
             "query": {
                 "query": {"match": {"text": "${parameters.question}"}},
@@ -329,13 +347,12 @@ bm25_response = os_client.transport.perform_request(
 print(f"Bm25 response --> {bm25_response}")
 
 # Run neural search
-
 neural_response = os_client.transport.perform_request(
     "POST",
     f"/_plugins/_ml/agents/{agent_id}/_execute",
     body={
     "parameters": {
-        "question": "what's the population increase of Seattle from 2021 to 2023??",
+        "question": SEARCH_QUERY,
         "index": "my_test_data",
         "query": {
             "query": {
@@ -356,81 +373,170 @@ neural_response = os_client.transport.perform_request(
 
 print(f"Neural response --> {neural_response}")
 
-# Hybrid Query
+# Hybrid Query with RRF (Reciprocal Rank Fusion)
 
-# Normalization processor to assign weights to the search and neural results
-# Run BM25 query
-hybrid_normalizer = os_client.transport.perform_request(
+# RRF processor to combine BM25 and neural search results using correct OpenSearch syntax
+hybrid_rrf_pipeline = os_client.transport.perform_request(
     "PUT",
-    f"/_search/pipeline/nlp-search-pipeline",
+    f"/_search/pipeline/rrf-search-pipeline",
     body={
-    "description": "Post processor for hybrid search",
-    "phase_results_processors": [
-      {
-        "normalization-processor": {
-          "normalization": {
-            "technique": "min_max"
-          },
-          "combination": {
-            "technique": "arithmetic_mean",
-            "parameters": {
-              "weights": [
-                0.3,
-                0.7
-              ]
+        "description": "Post processor for hybrid RRF search",
+        "phase_results_processors": [
+            {
+                "score-ranker-processor": {
+                    "combination": {
+                        "technique": "rrf",
+                        "rank_constant": 40,
+                        "parameters": {
+                            "weights": [
+                                0.7,  # Weight for BM25 query (first query)
+                                0.3   # Weight for Neural query (second query)
+                            ]
+                        }
+                    }
+                }
             }
-          }
-        }
-      }
-    ]
-  }
+        ]
+    }
 )
 
-print(f"Hybrid normalizer --> {hybrid_normalizer}")
+print(f"Hybrid RRF pipeline --> {hybrid_rrf_pipeline}")
 
-# Run hybrid query
-hybrid_response = os_client.transport.perform_request(
-    "POST",
-    f"/_plugins/_ml/agents/{agent_id}/_execute",
+# Alternative RRF pipeline with equal weights and default rank_constant
+hybrid_rrf_pipeline_equal = os_client.transport.perform_request(
+    "PUT",
+    f"/_search/pipeline/rrf-equal-search-pipeline",
     body={
-    "parameters": {
-        "question": "what's the population increase of Seattle from 2021 to 2023??",
-        "index": "my_test_data",
+        "description": "Post processor for hybrid RRF search with equal weights",
+        "phase_results_processors": [
+            {
+                "score-ranker-processor": {
+                    "combination": {
+                        "technique": "rrf",
+                        "rank_constant": 60  # Default value
+                        # No weights parameter means equal weights (1.0, 1.0)
+                    }
+                }
+            }
+        ]
+    }
+)
+
+print(f"Hybrid RRF Equal pipeline --> {hybrid_rrf_pipeline_equal}")
+
+# Run hybrid query with RRF
+hybrid_response = os_client.transport.perform_request(
+    "GET",
+    "/my_test_data/_search?search_pipeline=rrf-search-pipeline",
+    body={
+        "_source": {
+            "exclude": [
+                "embedding"
+            ]
+        },
+        "size": 2,
         "query": {
-            "_source": {
-                "exclude": [
-                    "embedding"
-                ]
-            },
-            "size": 2,
-            "query": {
-                "hybrid": {
-                    "queries": [
-                        {
-                            "match": {
-                                "text": {
-                                    "query": "${parameters.question}"
-                                }
-                            }
-                        },
-                        {
-                            "neural": {
-                                "embedding": {
-                                    "query_text": "${parameters.question}",
-                                    "model_id": embedding_model_id,
-                                    "k": 10
-                                }
+            "hybrid": {
+                "queries": [
+                    {
+                        "match": {
+                            "text": {
+                                "query": SEARCH_QUERY
                             }
                         }
-                    ]
-                }
+                    },
+                    {
+                        "neural": {
+                            "embedding": {
+                                "query_text": SEARCH_QUERY,
+                                "model_id": embedding_model_id,
+                                "k": 10
+                            }
+                        }
+                    }
+                ]
             }
         }
     }
-},
 )
 
 print(f"Hybrid response --> {hybrid_response}")
+
+# Run hybrid query with RRF (Equal Weights)
+hybrid_rrf_equal_response = os_client.transport.perform_request(
+    "GET",
+    "/my_test_data/_search?search_pipeline=rrf-equal-search-pipeline",
+    body={
+        "_source": {
+            "exclude": [
+                "embedding"
+            ]
+        },
+        "size": 2,
+        "query": {
+            "hybrid": {
+                "queries": [
+                    {
+                        "match": {
+                            "text": {
+                                "query": SEARCH_QUERY
+                            }
+                        }
+                    },
+                    {
+                        "neural": {
+                            "embedding": {
+                                "query_text": SEARCH_QUERY,
+                                "model_id": embedding_model_id,
+                                "k": 10
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+)
+
+print(f"Hybrid RRF Equal response --> {hybrid_rrf_equal_response}")
+
+# Direct BM25 Search (without agent)
+direct_bm25_response = os_client.transport.perform_request(
+    "GET",
+    "/my_test_data/_search",
+    body={
+        "query": {
+            "match": {
+                "text": SEARCH_QUERY
+            }
+        },
+        "size": 2,
+        "_source": ["text"]
+    }
+)
+
+print(f"Direct BM25 response --> {direct_bm25_response}")
+
+# Direct Neural Search (without agent)
+direct_neural_response = os_client.transport.perform_request(
+    "GET",
+    "/my_test_data/_search",
+    body={
+        "query": {
+            "neural": {
+                "embedding": {
+                    "query_text": SEARCH_QUERY,
+                    "model_id": embedding_model_id,
+                    "k": 10
+                }
+            }
+        },
+        "size": 2,
+        "_source": ["text"]
+    }
+)
+
+print(f"Direct Neural response --> {direct_neural_response}")
 
 # Expose only `question` parameter to the user query
 agent_registration_response_dynamic = os_client.transport.perform_request(
@@ -483,7 +589,7 @@ neural_response_dynamic = os_client.transport.perform_request(
     f"/_plugins/_ml/agents/{agent_id1}/_execute",
     body={
     "parameters": {
-        "question": "what's the population increase of Seattle from 2021 to 2023??",
+        "question": SEARCH_QUERY,
         "index": "my_test_data",
         "query": {
             "query": {
@@ -505,5 +611,119 @@ neural_response_dynamic = os_client.transport.perform_request(
 print(f"Neural response dynamic --> {neural_response_dynamic}")
 
 
+def extract_search_results(response, query_type):
+    """Extract relevant information from search response."""
+    try:
+        if query_type == "agent":
+            # For agent responses, extract from inference_results
+            if 'inference_results' in response and len(response['inference_results']) > 0:
+                outputs = response['inference_results'][0]['output']
+                
+                # Look for MLModelTool result which contains the actual response
+                for output in outputs:
+                    if output.get('name') == 'MLModelTool':
+                        # Parse the JSON string in the result
+                        ml_result = json.loads(output['result'])
+                        if 'choices' in ml_result and len(ml_result['choices']) > 0:
+                            content = ml_result['choices'][0]['message']['content']
+                            # Clean up the content but don't truncate
+                            content = content.replace('\\n', '\n').replace('\\u0027', "'").replace('\\u003d', '=')
+                            return content
+                
+                # Fallback to first result if MLModelTool not found
+                return f"Agent response: {outputs[0]['result']}"
+        else:
+            # For direct search responses
+            if 'hits' in response and 'hits' in response['hits']:
+                hits = response['hits']['hits']
+                if hits:
+                    # Get top result
+                    top_hit = hits[0]
+                    score = top_hit.get('_score', 'N/A')
+                    source = top_hit.get('_source', {})
+                    text = source.get('text', 'No text found')
+                    # Return full text without truncation
+                    return f"Score: {score}, Text: {text}"
+            return "No results found"
+    except Exception as e:
+        return f"Error extracting results: {str(e)}"
 
 
+def create_results_table():
+    """Create a comparison table of different search approaches."""
+    
+    # Extract results from each search type
+    bm25_agent_result = extract_search_results(bm25_response, "agent")
+    neural_agent_result = extract_search_results(neural_response, "agent")
+    hybrid_rrf_result = extract_search_results(hybrid_response, "direct")
+    hybrid_rrf_equal_result = extract_search_results(hybrid_rrf_equal_response, "direct")
+    direct_bm25_result = extract_search_results(direct_bm25_response, "direct")
+    direct_neural_result = extract_search_results(direct_neural_response, "direct")
+    agent_result = extract_search_results(neural_response_dynamic, "agent")
+    
+    # Create table data
+    table_data = [
+        ["BM25 Agent Search", bm25_agent_result],
+        ["Neural Agent Search", neural_agent_result],
+        ["Direct BM25 Search", direct_bm25_result],
+        ["Direct Neural Search", direct_neural_result],
+        ["Hybrid RRF Weighted (0.7/0.3)", hybrid_rrf_result],
+        ["Hybrid RRF Equal Weights", hybrid_rrf_equal_result],
+        ["Dynamic Agent Response", agent_result]
+    ]
+    
+    # Print table
+    print("\n" + "="*160)
+    print("SEARCH RESULTS COMPARISON TABLE")
+    print("="*160)
+    print(f"Input Query: {SEARCH_QUERY}")
+    print("-"*160)
+    print(f"{'Search Type':<30} | {'Response/Result'}")
+    print("-"*160)
+    
+    for search_type, result in table_data:
+        print(f"{search_type:<30} | {result}")
+    
+    print("="*160)
+    
+    # Also create a pandas DataFrame for better formatting
+    try:
+        import pandas as pd
+        df = pd.DataFrame(table_data, columns=['Search Type', 'Response/Result'])
+        df['Input Query'] = SEARCH_QUERY
+        df = df[['Input Query', 'Search Type', 'Response/Result']]  # Reorder columns
+        
+        print("\nPANDAS DATAFRAME VIEW:")
+        print("-"*160)
+        pd.set_option('display.max_columns', None)
+        pd.set_option('display.max_colwidth', 120)
+        pd.set_option('display.width', None)
+        print(df.to_string(index=False))
+        
+        # Save to CSV
+        df.to_csv('search_comparison_results.csv', index=False)
+        print(f"\nResults saved to: search_comparison_results.csv")
+        
+    except ImportError:
+        print("\nPandas not available for DataFrame view")
+    
+    # Print detailed comparison summary
+    print("\n" + "="*160)
+    print("SEARCH COMPARISON SUMMARY")
+    print("="*160)
+    print("• BM25 Agent Search: Uses agent framework with BM25 matching")
+    print("• Neural Agent Search: Uses agent framework with semantic vector search")
+    print("• Direct BM25 Search: Raw BM25 keyword matching without agent")
+    print("• Direct Neural Search: Raw semantic vector search without agent")
+    print("• Hybrid RRF Weighted (0.7/0.3): Combines BM25 + Neural using RRF with 70% BM25 / 30% Neural weighting")
+    print("• Hybrid RRF Equal Weights: Combines BM25 + Neural using RRF with equal 50/50 weighting")
+    print("• Dynamic Agent Response: Agent with dynamic indexing capabilities")
+    print("")
+    print("RRF CONFIGURATION DETAILS:")
+    print("• Weighted RRF: rank_constant=40, weights=[0.7, 0.3] (favors BM25)")
+    print("• Equal RRF: rank_constant=60, weights=[1.0, 1.0] (equal treatment)")
+    print("="*160)
+
+
+# Generate the comparison table
+create_results_table()

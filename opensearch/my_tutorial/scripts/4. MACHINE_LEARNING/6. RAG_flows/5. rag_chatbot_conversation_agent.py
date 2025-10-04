@@ -17,9 +17,10 @@ load_dotenv("../../.env")
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+HOST = '192.168.1.192'
 # Initialize the OpenSearch client
 os_client = OpenSearch(
-    hosts=[{"host": "192.168.0.111", "port": 9200}],
+    hosts=[{"host": HOST, "port": 9200}],
     http_auth=("admin", "Developer@123"),  # Replace with your credentials
     use_ssl=True,
     verify_certs=False,
@@ -112,6 +113,10 @@ ingest_pipeline_response = os_client.ingest.put_pipeline(
 
 print(f"Ingest pipeline ID: {ingest_pipeline_response}")
 
+# Delete index if exists before creating
+if os_client.indices.exists(index="population_data_knowledge_base"):
+    os_client.indices.delete(index="population_data_knowledge_base")
+
 # Create index with mappings and settings
 os_client.indices.create(
     index="population_data_knowledge_base",
@@ -128,7 +133,6 @@ os_client.indices.create(
         },
         "settings": {
             "index": {
-                "knn.space_type": "cosinesimil",
                 "default_pipeline": "test-pipeline-local-model",
                 "knn": "true",
             }
@@ -189,6 +193,10 @@ helpers.bulk(
     ],
 )
 
+# Delete index if exists before creating
+if os_client.indices.exists(index="test_tech_news"):
+    os_client.indices.delete(index="test_tech_news")
+
 # Create index with mappings and settings
 os_client.indices.create(
     index="test_tech_news",
@@ -205,7 +213,6 @@ os_client.indices.create(
         },
         "settings": {
             "index": {
-                "knn.space_type": "cosinesimil",
                 "default_pipeline": "test-pipeline-local-model",
                 "knn": "true",
             }
@@ -245,8 +252,9 @@ helpers.bulk(
 )
 
 # Register model group
+model_group_name = f"openai_model_group_{int(time.time())}"
 response_model_group = os_client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body={
-    "name": "openai_model_group",
+    "name": model_group_name,
     "description": "A model group for open ai models"
 })
 
@@ -331,7 +339,7 @@ print(sample_predict_response)
 # Register conversational agent
 
 # - "max_iteration": 5: The agent runs the LLM a maximum of five times.
-# - "response_filter": "$.completion": Needed to retrieve the LLM answer from the Amazon Bedrock Claude model response.
+# - "response_filter": "$.completion": Needed to retrieve the LLM answer from the model response.
 # - "doc_size": 3 (in population_data_knowledge_base): Specifies to return the top three documents.
 
 agent_registration_response = os_client.transport.perform_request('POST', '/_plugins/_ml/agents/_register', body={

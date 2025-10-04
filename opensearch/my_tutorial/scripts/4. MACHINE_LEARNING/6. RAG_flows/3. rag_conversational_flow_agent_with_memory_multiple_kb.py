@@ -11,9 +11,10 @@ load_dotenv("../../.env")
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
+HOST = '192.168.1.192'
 # Initialize the OpenSearch client
 os_client = OpenSearch(
-    hosts=[{'host': '192.168.0.111', 'port': 9200}],
+    hosts=[{'host': HOST, 'port': 9200}],
     http_auth=('admin', 'Developer@123'),  # Replace with your credentials
     use_ssl=True,
     verify_certs=False,
@@ -93,7 +94,10 @@ ingest_pipeline_response = os_client.ingest.put_pipeline(id='test-pipeline-local
 
 print(f"Ingest pipeline ID: {ingest_pipeline_response}")
 
-# Create index with mappings and settings
+# Delete index if it exists, then create it
+if os_client.indices.exists(index='my_test_data'):
+    os_client.indices.delete(index='my_test_data')
+
 os_client.indices.create(index='my_test_data', body={
     "mappings": {
         "properties": {
@@ -113,7 +117,6 @@ os_client.indices.create(index='my_test_data', body={
     },
     "settings": {
         "index": {
-            "knn.space_type": "cosinesimil",
             "default_pipeline": "test-pipeline-local-model",
             "knn": "true"
         }
@@ -133,8 +136,9 @@ helpers.bulk(os_client, actions=[
 ])
 
 # Register model group
+model_group_name = f"openai_model_group_{int(time.time())}"
 response_model_group = os_client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body={
-    "name": "openai_model_group",
+    "name": model_group_name,
     "description": "A model group for open ai models"
 })
 

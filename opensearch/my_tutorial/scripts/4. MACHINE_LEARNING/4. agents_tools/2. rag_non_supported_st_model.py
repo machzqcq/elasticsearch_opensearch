@@ -1,3 +1,4 @@
+# Section 1: Imports
 from opensearchpy import OpenSearch
 import os, time, json
 from dotenv import load_dotenv
@@ -5,30 +6,34 @@ from dotenv import load_dotenv
 from opensearch_py_ml.ml_commons import MLCommonClient
 from opensearch_py_ml.ml_models import SentenceTransformerModel
 import warnings
+
+# Suppress warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', category=FutureWarning)
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 warnings.filterwarnings("ignore", message="using SSL with verify_certs=False is insecure.")
 
+# Section 2: Load Environment Variables
 # 1. Load environment variables from .env file
 load_dotenv("../../.env")
 
 # 2. Retrieve the OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
-HOST = 'localhost' # Opensearch host
+# Section 3: OpenSearch Client Setup
+HOST = '192.168.1.192'  # Opensearch host
 CLUSTER_URL = {'host': HOST, 'port': 9200}
 
-def get_os_client(cluster_url = CLUSTER_URL,
+def get_os_client(cluster_url=CLUSTER_URL,
                   username='admin',
                   password='Developer@123'):
-    '''
+    """
     Get OpenSearch client
     :param cluster_url: cluster URL like https://ml-te-netwo-1s12ba42br23v-ff1736fa7db98ff2.elb.us-west-2.amazonaws.com:443
     :return: OpenSearch client
-    '''
+    """
     client = OpenSearch(
-        hosts=[cluster_url], #[cluster_url], # {'host': '192.168.0.111', 'port': 9200}
+        hosts=[cluster_url],  # [cluster_url], # {'host': '192.168.0.111', 'port': 9200}
         http_auth=(username, password),
         verify_certs=False,
         use_ssl=True,
@@ -40,13 +45,14 @@ client = get_os_client()
 # 3. Connect to ml_common client with OpenSearch client
 ml_client = MLCommonClient(client)
 
+# Section 4: Modify Cluster Settings
 # 4. Modify cluster settings
 cluster_settings = {
-  "persistent": {
-    "plugins.ml_commons.trusted_connector_endpoints_regex": "^https://api\\.openai\\.com/.*$",
-    "plugins.ml_commons.only_run_on_ml_node": "false",
-    "plugins.ml_commons.memory_feature_enabled": "true",
-    "plugins": {
+    "persistent": {
+        "plugins.ml_commons.trusted_connector_endpoints_regex": "^https://api\\.openai\\.com/.*$",
+        "plugins.ml_commons.only_run_on_ml_node": "false",
+        "plugins.ml_commons.memory_feature_enabled": "true",
+        "plugins": {
             "ml_commons": {
                 "allow_registering_model_via_url": "true",
                 "allow_registering_model_via_local_file": "true",
@@ -55,10 +61,11 @@ cluster_settings = {
                 "native_memory_threshold": "99"
             }
         }
-  }
+    }
 }
 client.cluster.put_settings(body=cluster_settings)
 
+# Section 5: Register and Deploy Custom Embedding Model
 ####*************** Below is because we want to use msmarco-distilbert-base-v2, which is not default supported opensearch**************####
 
 # 5. Use the SentenceTransformerModel class to register a model to OpenSearch Cluster
@@ -87,6 +94,7 @@ embedding_model_id = ml_client.register_model(model_path_onnx, model_config_path
 
 print(f"Model {embedding_model_id} registered successfully")
 
+# Section 6: Create Ingest Pipeline
 # 8. Create ingest pipeline
 pipeline_body = {
     "description": "A text embedding pipeline",
@@ -103,29 +111,30 @@ pipeline_body = {
 }
 client.ingest.put_pipeline(id="test-pipeline-local-model", body=pipeline_body)
 
+# Section 7: Create Index
 # 9: Create index - note that the dimension is 768 for the msmarco-distilbert-base-v2 model
 index_body = {
-  "mappings": {
-    "properties": {
-      "text": {
-        "type": "text"
-      },
-      "embedding": {
-        "type": "knn_vector",
-        "dimension": 768,
-        "method": {
-              "name": "hnsw",
-              "engine": "lucene"
+    "mappings": {
+        "properties": {
+            "text": {
+                "type": "text"
+            },
+            "embedding": {
+                "type": "knn_vector",
+                "dimension": 768,
+                "method": {
+                    "name": "hnsw",
+                    "engine": "lucene"
+                }
             }
-      }
+        }
+    },
+    "settings": {
+        "index": {
+            "default_pipeline": "test-pipeline-local-model",
+            "knn": "true"
+        }
     }
-  },
-  "settings": {
-    "index": {
-      "default_pipeline": "test-pipeline-local-model",
-      "knn": "true"
-    }
-  }
 }
 
 index_name = f"my_test_data_{int(time.time())}"
@@ -133,7 +142,7 @@ index_name = f"my_test_data_{int(time.time())}"
 response = client.indices.create(index=index_name, body=index_body)
 print("Index created:", response)
 
-
+# Section 8: Bulk Index Documents
 # 10. Bulk index documents
 bulk_body = [
     {"index": {"_index": index_name, "_id": "1"}},
@@ -153,16 +162,18 @@ client.bulk(body=bulk_body, index=index_name, pipeline="test-pipeline-local-mode
 
 print("Bulk indexing completed")
 
+# Section 9: Register Model Group
 # 11. Register model group
 model_group_name = f"embedding_model_group_{int(time.time())}"
 llm_model_group_body = {
-  "name": model_group_name,
-  "description": "A model group for open ai models"
+    "name": model_group_name,
+    "description": "A model group for open ai models"
 }
 response = client.transport.perform_request('POST', '/_plugins/_ml/model_groups/_register', body=llm_model_group_body)
 print("Model group registered:", response)
 llm_model_group_id = response['model_group_id']
 
+# Section 10: Create Connector
 # 12. Create connector
 llm_connector_body = {
     "name": "OpenAI Chat Connector",
@@ -192,6 +203,7 @@ response = client.transport.perform_request('POST', '/_plugins/_ml/connectors/_c
 print("Connector created:", response)
 llm_connector_id = response['connector_id']
 
+# Section 11: Register and Deploy LLM Model
 # 13. Register model
 llm_model_body = {
     "name": "openAI-gpt-3.5-turbo",
@@ -215,8 +227,8 @@ llm_deploy_body = {
 }
 
 try:
-    response = client.transport.perform_request('POST', 
-                                                f'/_plugins/_ml/models/{llm_model_id}/_deploy', 
+    response = client.transport.perform_request('POST',
+                                                f'/_plugins/_ml/models/{llm_model_id}/_deploy',
                                                 body=llm_deploy_body)
     print("Model deployment initiated:", response)
 except Exception as e:
@@ -230,20 +242,21 @@ while True:
         break
     time.sleep(5)
 
+# Section 12: Test Prediction
 # 16. Test prediction
 test_llm_predict_body = {
-  "parameters": {
-    "messages": [
-      {
-        "role": "system",
-        "content": "You are a helpful assistant."
-      },
-      {
-        "role": "user",
-        "content": "Hello!"
-      }
-    ]
-  }
+    "parameters": {
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant."
+            },
+            {
+                "role": "user",
+                "content": "Hello!"
+            }
+        ]
+    }
 }
 predict_response = client.transport.perform_request(
     'POST',
@@ -253,43 +266,43 @@ predict_response = client.transport.perform_request(
 
 print(json.dumps(predict_response, indent=2))
 
+# Section 13: Register and Execute Agent
 # 17. Register an Agent
-
 agent_register_body = {
-  "name": "Test_Agent_For_RAG",
-  "type": "flow",
-  "description": "this is a test agent",
-  "tools": [
-    {
-      "type": "VectorDBTool",
-      "parameters": {
-        "model_id": embedding_model_id,
-        "index": index_name,
-        "embedding_field": "embedding",
-        "source_field": [
-          "text"
-        ],
-        "input": "${parameters.question}"
-      }
-    },
-    {
-      "type": "MLModelTool",
-      "description": "A general tool to answer any question",
-      "parameters": {
-        "model_id": llm_model_id,
-        "messages": [
-          {
-            "role": "system",
-            "content": "You are a professional data analyst. You will always answer a question based on the given context first. If the answer is not directly shown in the context, you will analyze the data and find the answer. If you don't know the answer, just say you don't know."
-          },
-          {
-            "role": "user",
-            "content": "Context:\n${parameters.VectorDBTool.output}\n\nQuestion:${parameters.question}\n\n"
-          }
-        ]
-      }
-    }
-  ]
+    "name": "Test_Agent_For_RAG",
+    "type": "flow",
+    "description": "this is a test agent",
+    "tools": [
+        {
+            "type": "VectorDBTool",
+            "parameters": {
+                "model_id": embedding_model_id,
+                "index": index_name,
+                "embedding_field": "embedding",
+                "source_field": [
+                    "text"
+                ],
+                "input": "${parameters.question}"
+            }
+        },
+        {
+            "type": "MLModelTool",
+            "description": "A general tool to answer any question",
+            "parameters": {
+                "model_id": llm_model_id,
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a professional data analyst. You will always answer a question based on the given context first. If the answer is not directly shown in the context, you will analyze the data and find the answer. If you don't know the answer, just say you don't know."
+                    },
+                    {
+                        "role": "user",
+                        "content": "Context:\n${parameters.VectorDBTool.output}\n\nQuestion:${parameters.question}\n\n"
+                    }
+                ]
+            }
+        }
+    ]
 }
 
 agent_response = client.transport.perform_request('POST', '/_plugins/_ml/agents/_register', body=agent_register_body)
@@ -297,27 +310,24 @@ print("Agent registered:", agent_response)
 agent_id = agent_response['agent_id']
 
 # 18. inspect agent
-
 inspect_response = client.transport.perform_request('GET', f'/_plugins/_ml/agents/{agent_id}')
 print("Agent inspected:", inspect_response)
 
 # 19. Execute agent
-
 execute_body = {
-  "parameters": {
-    "question": "what's the population increase of Seattle from 2021 to 2023"
-  }
+    "parameters": {
+        "question": "what's the population increase of Seattle from 2021 to 2023"
+    }
 }
 
 execute_response = client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body=execute_body)
 print("Agent executed:", execute_response)
 
 # Another query - expected response should be - not in context so should be "I don't know"
-
 execute_body = {
-  "parameters": {
-    "question": "What is a GPU?"
-  }
+    "parameters": {
+        "question": "What is a GPU?"
+    }
 }
 
 execute_response = client.transport.perform_request('POST', f'/_plugins/_ml/agents/{agent_id}/_execute', body=execute_body)
