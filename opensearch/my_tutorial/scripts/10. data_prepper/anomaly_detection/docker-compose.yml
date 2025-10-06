@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   data-prepper:
-    image: opensearchproject/data-prepper:2.10.1
+    image: opensearchproject/data-prepper:2.12.1
     ports:
       - "2020:2020"  # HTTP input port
       - "2021:2021"
