@@ -1,4 +1,3 @@
-version: '3'
 services:
   fluent-bit:
     container_name: fluent-bit

@@ -32,7 +32,6 @@ dependencies = [
     "opentelemetry-api==1.27.0",
     "opentelemetry-sdk==1.27.0",
     "opentelemetry-exporter-otlp==1.27.0",
-    "Faker==30.8.1",
     "langchain==0.3.27",
     "chromadb==1.1.0",
     "langchain-openai==0.3.33",
@@ -40,5 +39,6 @@ dependencies = [
     "beautifulsoup4",
     "plotly==6.3.0",
     "mdutils==1.8.0",
-    "anthropic==0.69.0"
+    "anthropic==0.69.0",
+    "Faker==37.11.0"
 ]

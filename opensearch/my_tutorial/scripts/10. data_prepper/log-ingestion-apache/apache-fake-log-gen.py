@@ -27,6 +27,6 @@ def append_logs_to_file(file_path, num_logs):
             time.sleep(0.1)  # Sleep for a short duration if needed
 
 # Example usage
-log_file_path = 'test.log'  # Path to your existing log file
+log_file_path = './test.log'  # Path to your existing log file
 number_of_logs_to_generate = 10  # Number of logs you want to append
 append_logs_to_file(log_file_path, number_of_logs_to_generate)
