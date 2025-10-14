@@ -4,8 +4,6 @@ This is a guide that will walk users through setting up a sample Data Prepper pi
 This guide will go through the steps required to create a simple log ingestion pipeline from \
 Fluent Bit → Data Prepper → OpenSearch. This log ingestion flow is shown in the diagram below.
 
-![](../../docs/images/Log_Ingestion_FluentBit_DataPrepper_OpenSearch.jpg)
-
 ## List of Components
 
 - An OpenSearch domain running through Docker.

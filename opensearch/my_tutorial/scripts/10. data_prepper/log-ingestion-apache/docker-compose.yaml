@@ -10,11 +10,11 @@ services:
       - opensearch-net
   opensearch:
     container_name: opensearch
-    image: docker.io/opensearchproject/opensearch:latest
+    image: docker.io/opensearchproject/opensearch:3.2.0
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - "OPENSEARCH_JAVA_OPTS=-Xms4096m -Xmx4096m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=Developer@123"
     ulimits:
       memlock:
@@ -42,7 +42,7 @@ services:
     networks:
       - opensearch-net
   data-prepper:
-    image: opensearchproject/data-prepper:2.10.1
+    image: opensearchproject/data-prepper:2.12.1
     container_name: data-prepper
     volumes:
       - ./log_pipeline.yaml:/usr/share/data-prepper/pipelines/log_pipeline.yaml
