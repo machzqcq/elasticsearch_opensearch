@@ -13,7 +13,7 @@ services:
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
-      - "OPENSEARCH_JAVA_OPTS=-Xms2096m -Xmx2096m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - "OPENSEARCH_JAVA_OPTS=-Xms4096m -Xmx4096m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=Developer@123"
     ulimits:
       memlock:
@@ -28,7 +28,7 @@ services:
     networks:
       - opensearch-net
   dashboards:
-    image: docker.io/opensearchproject/opensearch-dashboards:3.2.0
+    image: docker.io/opensearchproject/opensearch-dashboards:latest
     container_name: opensearch-dashboards
     ports:
       - 5601:5601

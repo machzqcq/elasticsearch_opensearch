@@ -16,8 +16,8 @@ app = Flask(__name__)
 # Set up logging to a file with a timestamped filename
 current_time = datetime.now().strftime("%Y%m%d")
 # make directory sample_logs if not exists using pathlib
-Path("sample_logs").mkdir(parents=True, exist_ok=True)
-log_filename = f"sample_logs/log_{current_time}.log"
+# Path("sample_logs").mkdir(parents=True, exist_ok=True)
+log_filename = "./test.log"
 
 # Configure logging to write to a file
 logging.basicConfig(level=logging.DEBUG, 
