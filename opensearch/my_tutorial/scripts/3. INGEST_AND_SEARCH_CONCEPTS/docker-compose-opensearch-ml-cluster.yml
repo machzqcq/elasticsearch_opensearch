@@ -22,8 +22,8 @@ services:
         soft: -1 # Set memlock to unlimited (no soft or hard limit)
         hard: -1
       nofile:
-        soft: 65536 # For production workloads  set to atleast 262144
-        hard: 65536
+        soft: 262144 # For production workloads  set to atleast 262144
+        hard: 262144
     volumes:
       - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
       - ../../data/snapshots_interns_all:/usr/share/opensearch/snapshots # Mounts the snapshots directory to the container
