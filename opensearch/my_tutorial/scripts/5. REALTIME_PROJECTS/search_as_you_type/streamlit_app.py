@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 import time
 import os
 from pathlib import Path
+from datetime import datetime
 
 # Load environment variables
 try:
@@ -17,6 +18,7 @@ except ImportError:
 
 # Configuration
 API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+DEBOUNCE_DELAY = 0.5  # seconds
 
 # Page configuration
 st.set_page_config(
@@ -162,6 +164,12 @@ def display_product(hit: Dict[str, Any], index: int):
 def main():
     """Main Streamlit application."""
     
+    # Initialize session state
+    if 'search_results' not in st.session_state:
+        st.session_state.search_results = None
+    if 'last_executed_query' not in st.session_state:
+        st.session_state.last_executed_query = ""
+    
     # Header
     st.title("🔍 E-commerce Product Search")
     st.markdown("**Real-time search with autocomplete functionality**")
@@ -208,25 +216,38 @@ def main():
         st.warning("⚠️ Please select at least one search field from the sidebar.")
         return
     
-    # Search input
-    col1, col2 = st.columns([6, 1])
-    with col1:
-        search_query = st.text_input(
-            "Search products",
-            placeholder="Start typing to search... (e.g., 'shirt', 'boots', 'jacket')",
-            key="search_input",
-            label_visibility="collapsed"
-        )
-    with col2:
-        search_button = st.button("Search", use_container_width=True, type="primary")
+    # Search input - automatic search on every input change
+    search_query = st.text_input(
+        "Search products",
+        placeholder="Start typing to search... (e.g., 'shirt', 'boots', 'jacket')",
+        key="search_input",
+        label_visibility="collapsed"
+    )
     
-    # Perform search
+    # Perform search automatically when query changes
     if search_query and len(search_query.strip()) > 0:
-        # Show loading spinner
-        with st.spinner("Searching..."):
-            start_time = time.time()
-            results = search_products(search_query, fields, num_results)
-            elapsed_time = time.time() - start_time
+        # Only search if query is different from last executed query
+        if search_query != st.session_state.last_executed_query:
+            with st.spinner("Searching..."):
+                start_time = time.time()
+                results = search_products(search_query, fields, num_results)
+                elapsed_time = time.time() - start_time
+            
+            st.session_state.search_results = {
+                'results': results,
+                'elapsed_time': elapsed_time
+            }
+            st.session_state.last_executed_query = search_query
+    else:
+        # Clear results when search query is empty
+        if st.session_state.last_executed_query != "":
+            st.session_state.search_results = None
+            st.session_state.last_executed_query = ""
+    
+    # Display results
+    if st.session_state.search_results:
+        results = st.session_state.search_results['results']
+        elapsed_time = st.session_state.search_results['elapsed_time']
         
         if results:
             total = results.get("total", 0)

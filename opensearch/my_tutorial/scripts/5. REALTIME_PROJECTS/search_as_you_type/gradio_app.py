@@ -230,7 +230,21 @@ def create_interface():
                     **Frontend**: Gradio
                     """)
         
-        # Event handlers
+        # Event handlers - real-time search on input change with debouncing
+        search_input.change(
+            fn=search_products,
+            inputs=[
+                search_input,
+                search_product_name,
+                search_category,
+                search_manufacturer,
+                num_results
+            ],
+            outputs=[status_output, results_output],
+            trigger_mode="always_last"  # Real-time with automatic debouncing
+        )
+        
+        # Also handle button click for explicit search
         search_btn.click(
             fn=search_products,
             inputs=[
