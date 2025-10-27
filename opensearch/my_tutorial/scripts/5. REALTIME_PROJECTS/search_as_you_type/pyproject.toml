@@ -1,0 +1,21 @@
+[project]
+name = "search-as-you-type"
+version = "1.0.0"
+description = "Search-as-you-type application with multiple frontend implementations (Streamlit, Gradio, React) and FastAPI backend"
+authors = [
+    {name = "Pradeep Macharla", email = "pradeep@automationpractice.com"}
+]
+readme = "README.md"
+requires-python = "==3.12.11"
+dependencies = [
+    "fastapi==0.120.0",
+    "uvicorn[standard]==0.38.0",
+    "opensearch-py==3.0.0",
+    "streamlit==1.50.0",
+    "gradio==5.49.1",
+    "pydantic==2.11.10",
+    "pydantic-settings==2.11.0",
+    "python-dotenv==1.2.1",
+    "httpx==0.28.1",
+    "python-multipart==0.0.20",
+]
