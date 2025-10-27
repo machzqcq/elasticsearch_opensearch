@@ -1,0 +1,15 @@
+[project]
+name = "geospatial-learning-app"
+version = "0.1.0"
+description = "Interactive Gradio app for learning OpenSearch Geospatial queries"
+readme = "README.md"
+requires-python = "==3.12.11"
+dependencies = [
+    "gradio==5.49.1",
+    "opensearch-py==3.0.0",
+    "pandas==2.2.3",
+    "folium==0.20.0",
+    "plotly==6.3.0",
+    "chardet==5.2.0"
+]
+
