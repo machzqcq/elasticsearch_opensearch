@@ -22,4 +22,5 @@
 **/tokenizer
 **/.env
 *.bak
+*.xlsx
 
