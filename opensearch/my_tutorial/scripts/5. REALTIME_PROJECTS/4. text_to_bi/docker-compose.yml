@@ -1,0 +1,45 @@
+services:
+  mssql-server:
+    build:
+      context: .
+      dockerfile: mssql_server_adventureworks.dockerfile
+    container_name: mssql-adventureworks
+    environment:
+      - SA_PASSWORD=Welcome@123
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+    ports:
+      - "1434:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+      - mssql_log:/var/opt/mssql/log
+      - mssql_secrets:/var/opt/mssql/secrets
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Welcome@123' -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - mssql-network
+
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8091:8080
+    networks:
+      - mssql-network
+
+volumes:
+  mssql_data:
+    driver: local
+  mssql_log:
+    driver: local
+  mssql_secrets:
+    driver: local
+
+networks:
+  mssql-network:
+    driver: bridge

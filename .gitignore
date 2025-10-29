@@ -20,4 +20,6 @@
 **/mermaid_diagrams
 **/mermaid_images
 **/tokenizer
+**/.env
+*.bak
 

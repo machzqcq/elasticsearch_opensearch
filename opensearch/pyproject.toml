@@ -43,4 +43,5 @@ dependencies = [
     "anthropic==0.69.0",
     "Faker==37.11.0",
     "seaborn>=0.13.2",
+    "jupyter-resource-usage==1.2.0"
 ]
