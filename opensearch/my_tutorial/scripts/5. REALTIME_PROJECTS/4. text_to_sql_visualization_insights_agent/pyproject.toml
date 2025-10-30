@@ -30,4 +30,6 @@ dependencies = [
     "opensearch-py[async]==3.0.0",
     "opensearch-py-ml==1.3.0",
     "scipy==1.16.3",
+    "SQLAlchemy==2.0.42",
+    "psycopg2-binary==2.9.11"
 ]
