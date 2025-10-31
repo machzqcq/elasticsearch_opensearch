@@ -91,7 +91,9 @@ global_state = {
     'pipeline_name': 'metadata_embedding_pipeline',
     'last_query_result': None,
     'last_sql': None,
-    'last_dataframe': None
+    'last_dataframe': None,
+    'last_query': None,
+    'last_metadata_context': None
 }
 
 # ============================================================================
@@ -138,7 +140,24 @@ class PostgreSQLConnector:
                 result = pd.read_sql_query(text(query), self.connection)
             return result
         except Exception as e:
-            print(f"Query execution error: {str(e)}")
+            error_msg = str(e)
+            print(f"Query execution error: {error_msg}")
+            
+            # If transaction is aborted, try to rollback and retry once
+            if "transaction is aborted" in error_msg or "InFailedSqlTransaction" in error_msg:
+                print("Attempting to rollback and retry...")
+                try:
+                    self.connection.rollback()
+                    # Retry the query
+                    if params:
+                        result = pd.read_sql_query(text(query), self.connection, params=params)
+                    else:
+                        result = pd.read_sql_query(text(query), self.connection)
+                    return result
+                except Exception as retry_error:
+                    print(f"Retry failed: {str(retry_error)}")
+                    return None
+            
             return None
     
     def get_tables(self):
@@ -222,13 +241,46 @@ def initialize_opensearch():
         return False, f"❌ OpenSearch initialization failed: {str(e)}", None, None
 
 def register_embedding_model(ml_client):
-    """Register and deploy sentence transformer model"""
+    """Register and deploy sentence transformer model, or reuse existing one"""
     try:
         model_name = "huggingface/sentence-transformers/all-MiniLM-L12-v2"
         model_version = "1.0.1"
         model_format = "TORCH_SCRIPT"
         
-        # Register model
+        # Check for existing deployed models using ML plugin API
+        try:
+            # Get the os_client from global state to use the ML search endpoint
+            os_client = global_state.get('os_client')
+            if os_client:
+                # Search for models using the ML plugin API
+                response = os_client.transport.perform_request(
+                    'GET',
+                    '/_plugins/_ml/models/_search',
+                    body={
+                        "query": {
+                            "bool": {
+                                "must": [
+                                    {"term": {"name.keyword": model_name}},
+                                    {"term": {"model_state": "DEPLOYED"}}
+                                ]
+                            }
+                        },
+                        "size": 1
+                    }
+                )
+                
+                if response and response.get('hits', {}).get('total', {}).get('value', 0) > 0:
+                    hit = response['hits']['hits'][0]
+                    existing_model_id = hit['_id']
+                    model_info = hit.get('_source', {})
+                    print(f"DEBUG: Found existing deployed model: {existing_model_id} (state: {model_info.get('model_state')})")
+                    return True, f"🔄 Reusing existing model (ID: {existing_model_id}) - No deployment needed!", existing_model_id
+        except Exception as check_error:
+            print(f"DEBUG: Error checking existing models: {check_error}")
+            # Continue to register new model if check fails
+        
+        # No existing model found, register a new one
+        print(f"DEBUG: No existing deployed model found. Registering new model...")
         model_id = ml_client.register_pretrained_model(
             model_name=model_name,
             model_version=model_version,
@@ -237,7 +289,7 @@ def register_embedding_model(ml_client):
             wait_until_deployed=True
         )
         
-        return True, f"✅ Model registered and deployed: {model_id}", model_id
+        return True, f"🆕 New model created and deployed (ID: {model_id})", model_id
     except Exception as e:
         return False, f"❌ Model registration failed: {str(e)}", None
 
@@ -776,9 +828,12 @@ Available Database Schema:
 
 Instructions:
 - Generate ONLY the SQL query, no explanations
-- Use proper PostgreSQL syntax
-- Use schema.table notation
+- Use proper PostgreSQL syntax with EXACT column names from the schema above
+- PostgreSQL is case-sensitive: use double quotes for mixed-case identifiers (e.g., "CustomerID", "LineTotal")
+- Use schema.table notation (e.g., sales.customer)
 - Include appropriate JOINs if needed
+- CRITICAL: Use ONLY the exact column names shown in the schema above - do not guess or modify column names
+- If a column uses CamelCase (like CustomerID), preserve the exact casing with double quotes
 - Return ONLY the SQL query
 
 SQL Query:"""
@@ -885,41 +940,114 @@ def analyze_dataframe(df):
     return "\n".join(analysis)
 
 def create_visualizations(df):
-    """Create visualizations based on DataFrame content"""
+    """Create multiple visualizations based on DataFrame content"""
     if df is None or df.empty:
-        return None, "No data to visualize"
+        return None, None, None, None, "No data to visualize"
     
     try:
         numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
         cat_cols = df.select_dtypes(include=['object']).columns.tolist()
         
-        # Determine best visualization
+        charts = []
+        chart_descriptions = []
+        
+        # Chart 1: Primary visualization based on data type
         if len(numeric_cols) >= 2:
-            # Create scatter plot
-            fig = px.scatter(df, x=numeric_cols[0], y=numeric_cols[1], 
-                           title=f"{numeric_cols[1]} vs {numeric_cols[0]}")
+            # Scatter plot for numeric correlations
+            fig1 = px.scatter(df, x=numeric_cols[0], y=numeric_cols[1], 
+                           title=f"Correlation: {numeric_cols[1]} vs {numeric_cols[0]}",
+                           height=400)
+            charts.append(fig1)
+            chart_descriptions.append(f"Scatter plot showing relationship between {numeric_cols[0]} and {numeric_cols[1]}")
+            
+            # Box plot if we have a categorical column
+            if len(cat_cols) >= 1 and len(df) < 1000:
+                fig2 = px.box(df, x=cat_cols[0], y=numeric_cols[0],
+                            title=f"Distribution of {numeric_cols[0]} by {cat_cols[0]}",
+                            height=400)
+                charts.append(fig2)
+                chart_descriptions.append(f"Box plot showing distribution across categories")
+                
         elif len(numeric_cols) == 1 and len(cat_cols) >= 1:
-            # Create bar chart
-            fig = px.bar(df, x=cat_cols[0], y=numeric_cols[0],
-                        title=f"{numeric_cols[0]} by {cat_cols[0]}")
+            # Bar chart
+            fig1 = px.bar(df, x=cat_cols[0], y=numeric_cols[0],
+                        title=f"{numeric_cols[0]} by {cat_cols[0]}",
+                        height=400)
+            charts.append(fig1)
+            chart_descriptions.append(f"Bar chart comparing {numeric_cols[0]} across {cat_cols[0]}")
+            
+            # Pie chart if reasonable number of categories
+            if df[cat_cols[0]].nunique() <= 10:
+                fig2 = px.pie(df, values=numeric_cols[0], names=cat_cols[0],
+                            title=f"Proportion of {numeric_cols[0]} by {cat_cols[0]}",
+                            height=400)
+                charts.append(fig2)
+                chart_descriptions.append(f"Pie chart showing proportional distribution")
+                
         elif len(numeric_cols) == 1:
-            # Create histogram
-            fig = px.histogram(df, x=numeric_cols[0],
-                             title=f"Distribution of {numeric_cols[0]}")
+            # Histogram
+            fig1 = px.histogram(df, x=numeric_cols[0],
+                             title=f"Distribution of {numeric_cols[0]}",
+                             nbins=30, height=400)
+            charts.append(fig1)
+            chart_descriptions.append(f"Histogram showing frequency distribution")
+            
+            # Box plot
+            fig2 = px.box(df, y=numeric_cols[0],
+                        title=f"Statistical Summary of {numeric_cols[0]}",
+                        height=400)
+            charts.append(fig2)
+            chart_descriptions.append(f"Box plot showing quartiles and outliers")
+            
         elif len(cat_cols) >= 1:
-            # Create value counts bar chart
+            # Value counts bar chart
             value_counts = df[cat_cols[0]].value_counts().reset_index()
             value_counts.columns = [cat_cols[0], 'count']
-            fig = px.bar(value_counts, x=cat_cols[0], y='count',
-                        title=f"Count by {cat_cols[0]}")
-        else:
-            return None, "Unable to determine appropriate visualization"
+            fig1 = px.bar(value_counts, x=cat_cols[0], y='count',
+                        title=f"Count by {cat_cols[0]}",
+                        height=400)
+            charts.append(fig1)
+            chart_descriptions.append(f"Bar chart of counts per category")
+            
+            # Pie chart if reasonable number of categories
+            if len(value_counts) <= 10:
+                fig2 = px.pie(value_counts, values='count', names=cat_cols[0],
+                            title=f"Distribution by {cat_cols[0]}",
+                            height=400)
+                charts.append(fig2)
+                chart_descriptions.append(f"Pie chart showing percentage distribution")
         
-        fig.update_layout(height=500)
-        return fig, None
+        # Additional charts for multi-numeric data
+        if len(numeric_cols) >= 3:
+            # Correlation heatmap for all numeric columns (limit to first 10)
+            corr_cols = numeric_cols[:10]
+            corr_matrix = df[corr_cols].corr()
+            fig_corr = px.imshow(corr_matrix, 
+                               title="Correlation Heatmap",
+                               labels=dict(color="Correlation"),
+                               height=400,
+                               color_continuous_scale='RdBu_r')
+            charts.append(fig_corr)
+            chart_descriptions.append(f"Heatmap showing correlations between numeric variables")
+        
+        # Line chart if data looks time-series-like (has increasing index or numeric column)
+        if len(numeric_cols) >= 1 and len(df) > 2:
+            fig_line = px.line(df.head(100), y=numeric_cols[0],
+                             title=f"Trend: {numeric_cols[0]}",
+                             height=400)
+            charts.append(fig_line)
+            chart_descriptions.append(f"Line chart showing trend over records")
+        
+        # Pad with None if we have fewer than 4 charts
+        while len(charts) < 4:
+            charts.append(None)
+            chart_descriptions.append("")
+        
+        status = f"✅ Created {sum(1 for c in charts if c is not None)} visualizations"
+        return charts[0], charts[1], charts[2], charts[3], status
         
     except Exception as e:
-        return None, f"Visualization error: {str(e)}"
+        return None, None, None, None, f"Visualization error: {str(e)}"
 
 def generate_business_insights(df, original_query, sql_query, analysis_results):
     """Generate business insights using LLM"""
@@ -1014,13 +1142,14 @@ def setup_opensearch(progress=gr.Progress()):
         status_updates.append(f"✅ Step 1/2: {message}")
         
         # Step 2: Register embedding model
-        progress(0.7, desc="📦 Registering embedding model...")
+        progress(0.7, desc="📦 Checking/Registering embedding model...")
         success, msg, model_id = register_embedding_model(ml_client)
         if not success:
             return f"{status_updates[0]}\n❌ Step 2/2: {msg}"
         
         global_state['model_id'] = model_id
-        status_updates.append(f"✅ Step 2/2: {msg}")
+        status_updates.append(f"\n📋 Step 2/2: Embedding Model Status")
+        status_updates.append(f"   {msg}")
         
         progress(1.0, desc="✅ OpenSearch setup complete!")
         status_updates.append(f"\n💡 Embedding pipeline will be created during ingestion (Tab 5)")
@@ -1246,6 +1375,7 @@ def generate_sql_ui(query_text):
         
         global_state['last_sql'] = sql_query
         global_state['last_query'] = query_text
+        global_state['last_metadata_context'] = metadata_context
         
         return "✅ SQL generated successfully", sql_query
         
@@ -1255,46 +1385,47 @@ def generate_sql_ui(query_text):
 def execute_sql_ui(sql_query):
     """Execute SQL query"""
     db_connector = global_state.get('db_connector')
+    metadata_context = global_state.get('last_metadata_context', '')
     
     if not db_connector:
-        return "❌ Database not connected", None, ""
+        return "❌ Database not connected", None, "", ""
     
     if not sql_query or sql_query.strip() == "":
-        return "❌ No SQL query to execute", None, ""
+        return "❌ No SQL query to execute", None, "", ""
     
     try:
         df, error = execute_sql_query(db_connector, sql_query)
         
         if error:
-            return f"❌ {error}", None, ""
+            return f"❌ {error}", None, "", metadata_context or "No metadata context available"
         
         global_state['last_dataframe'] = df
         
         # Analyze data
         analysis = analyze_dataframe(df)
         
-        return f"✅ Query executed: {len(df)} rows returned", df.head(50), analysis
+        # Prepare metadata context display
+        context_display = metadata_context if metadata_context else "No metadata context available (SQL may have been manually entered)"
+        
+        return f"✅ Query executed: {len(df)} rows returned", df.head(50), analysis, context_display
         
     except Exception as e:
-        return f"❌ Error: {str(e)}", None, ""
+        return f"❌ Error: {str(e)}", None, "", metadata_context or "No metadata context available"
 
 def visualize_data_ui():
-    """Create visualization from query results"""
+    """Create visualizations from query results"""
     df = global_state.get('last_dataframe')
     
     if df is None:
-        return None, "❌ No data available for visualization"
+        return None, None, None, None, "❌ No data available for visualization"
     
     try:
-        fig, error = create_visualizations(df)
+        fig1, fig2, fig3, fig4, status = create_visualizations(df)
         
-        if error:
-            return None, error
-        
-        return fig, "✅ Visualization created"
+        return fig1, fig2, fig3, fig4, status
         
     except Exception as e:
-        return None, f"❌ Error: {str(e)}"
+        return None, None, None, None, f"❌ Error: {str(e)}"
 
 def generate_insights_ui():
     """Generate business insights"""
@@ -1486,7 +1617,7 @@ def create_gradio_interface():
                 with gr.Row():
                     query_input = gr.Textbox(
                         label="Enter your business question",
-                        placeholder="Example: What are the top 10 products by sales revenue?",
+                        placeholder="Example: Segment customers based on their order values and frequency into high, medium, and low value segments.",
                         lines=3
                     )
                 
@@ -1521,6 +1652,7 @@ def create_gradio_interface():
                 exec_status = gr.Textbox(label="Execution Status", lines=2)
                 results_df = gr.Dataframe(label="Query Results (first 50 rows)")
                 analysis_output = gr.Textbox(label="Statistical Analysis", lines=10)
+                metadata_context_output = gr.Textbox(label="📚 Metadata Context Used for SQL Generation", lines=15)
                 
                 # Auto-populate SQL from previous step
                 sql_output.change(lambda x: x, inputs=sql_output, outputs=sql_to_execute)
@@ -1528,27 +1660,39 @@ def create_gradio_interface():
                 execute_btn.click(
                     execute_sql_ui,
                     inputs=sql_to_execute,
-                    outputs=[exec_status, results_df, analysis_output]
+                    outputs=[exec_status, results_df, analysis_output, metadata_context_output]
                 )
             
             # ===== TAB 8: Visualize =====
             with gr.Tab("8️⃣ Visualize"):
                 gr.Markdown("## Data Visualization")
                 gr.Markdown("""
-                **Step 8**: Automatically create visualizations from query results.
+                **Step 8**: Automatically create multiple visualizations from query results.
                 
-                - System intelligently selects appropriate chart type
+                - System intelligently creates multiple chart types
+                - Includes bar charts, scatter plots, histograms, pie charts, correlations, and trends
                 - Creates interactive Plotly visualizations
                 - Adapts to different data types and structures
                 """)
                 
-                viz_btn = gr.Button("📊 Create Visualization", variant="primary")
+                viz_btn = gr.Button("📊 Create Visualizations", variant="primary")
                 viz_status = gr.Textbox(label="Status", lines=2)
-                viz_plot = gr.Plot(label="Visualization")
+                
+                with gr.Row():
+                    with gr.Column():
+                        viz_plot1 = gr.Plot(label="Chart 1")
+                    with gr.Column():
+                        viz_plot2 = gr.Plot(label="Chart 2")
+                
+                with gr.Row():
+                    with gr.Column():
+                        viz_plot3 = gr.Plot(label="Chart 3")
+                    with gr.Column():
+                        viz_plot4 = gr.Plot(label="Chart 4")
                 
                 viz_btn.click(
                     visualize_data_ui,
-                    outputs=[viz_plot, viz_status]
+                    outputs=[viz_plot1, viz_plot2, viz_plot3, viz_plot4, viz_status]
                 )
             
             # ===== TAB 9: Business Insights =====
@@ -1570,7 +1714,7 @@ def create_gradio_interface():
                 """)
                 
                 insights_btn = gr.Button("🧠 Generate Business Insights", variant="primary")
-                insights_output = gr.Markdown(label="Business Intelligence Report")
+                insights_output = gr.Textbox(label="Business Intelligence Report", lines=20, show_copy_button=True)
                 
                 insights_btn.click(
                     generate_insights_ui,
