@@ -37,12 +37,12 @@ geo_spatial/
 
 ### Dependencies
 ```toml
-gradio = ">=4.44.0"
-opensearch-py = ">=2.4.0"
-pandas = ">=2.0.0"
-folium = ">=0.15.0"
-plotly = ">=5.18.0"
-chardet = ">=5.0.0"
+    "gradio==5.49.1",
+    "opensearch-py==3.0.0",
+    "pandas==2.2.3",
+    "folium==0.20.0",
+    "plotly==6.3.0",
+    "chardet==5.2.0"
 ```
 
 ## 🚀 Quick Start
