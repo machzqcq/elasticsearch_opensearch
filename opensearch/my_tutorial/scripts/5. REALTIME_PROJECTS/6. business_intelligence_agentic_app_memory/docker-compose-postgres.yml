@@ -1,0 +1,26 @@
+version: '2'
+services:
+  db:
+    build:
+      context: ./
+      dockerfile: postgres_server_adventureworks.dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - postgres-network
+
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8091:8080
+    networks:
+      - postgres-network
+
+
+networks:
+  postgres-network:
+    driver: bridge
