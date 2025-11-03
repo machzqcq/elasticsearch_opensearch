@@ -1,6 +1,6 @@
 from opensearchpy import OpenSearch
 
-IS_AUTH = False
+IS_AUTH = True
 HOST = 'localhost'
 if IS_AUTH:
     # Initialize the OpenSearch client
@@ -32,7 +32,7 @@ repository_body = {
 
 # Create the snapshot repository
 repository_name = "my_backup_repo"
-client.snapshot.create_repository(repository_name, body=repository_body)
+client.snapshot.create_repository(repository=repository_name, body=repository_body)
 
 # Create a snapshot
 snapshot_name = "interns_snapshot"
@@ -43,14 +43,14 @@ snapshot_body = {
 }
 
 # Check if the snapshot already exists
-# snapshots = client.snapshot.get(repository_name, '_all')['snapshots']
-# snapshot_exists = any(snap['snapshot'] == snapshot_name for snap in snapshots)
+snapshots = client.snapshot.get(repository=repository_name, snapshot='_all')['snapshots']
+snapshot_exists = any(snap['snapshot'] == snapshot_name for snap in snapshots)
 
 # Delete the snapshot if it already exists
-# if snapshot_exists:
-#     client.snapshot.delete(repository_name, snapshot_name)
+if snapshot_exists:
+    client.snapshot.delete(repository=repository_name, snapshot=snapshot_name)
 
 # Create the snapshot
-client.snapshot.create(repository_name, snapshot_name, body=snapshot_body, wait_for_completion=True)
+client.snapshot.create(repository=repository_name, snapshot=snapshot_name, body=snapshot_body)
 
 print(f"Snapshot {snapshot_name} created successfully in repository {repository_name}.")
