@@ -33,6 +33,7 @@ The following table lists all supported search request processors.
 
 | Processor | Description | Earliest available version |
 |-----------|-------------|----------------------------|
+| agentic_query_translator | Translates agentic queries into OpenSearch query domain-specific language (DSL) and executes an agent to process the query. | 3.2 |
 | filter_query | Adds a filtering query that is used to filter requests. | 2.8 |
 | ml_inference | Invokes registered machine learning (ML) models in order to rewrite queries. | 2.16 |
 | neural_query_enricher | Sets a default model for neural search and neural sparse search at the index or field level. | 2.11 (neural), 2.13 (neural sparse) |
@@ -48,6 +49,7 @@ The following table lists all supported search response processors.
 
 | Processor | Description | Earliest available version |
 |-----------|-------------|----------------------------|
+| agentic_context | Returns the agent summary, generated query, and memory ID for an agentic query. | 3.3 |
 | collapse | Deduplicates search hits based on a field value, similarly to collapse in a search request. | 2.12 |
 | hybrid_score_explanation | Adds detailed scoring information to search results when the explain parameter is enabled, providing information about score normalization, combination techniques, and individual score calculations in hybrid queries. | 2.19 |
 | ml_inference | Invokes registered machine learning (ML) models in order to incorporate model output as additional search response fields. | 2.16 |
