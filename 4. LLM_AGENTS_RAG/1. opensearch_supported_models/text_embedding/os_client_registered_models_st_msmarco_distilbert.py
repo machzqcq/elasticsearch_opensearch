@@ -49,7 +49,7 @@ register_response = client.transport.perform_request(
     method='POST',
     url='/_plugins/_ml/models/_register',
     body={
-        "name": "huggingface/sentence-transformers/msmarco-distilbert-base-tas-b",
+        "name": "huggingface/sentence-transformers/all-MiniLM-L6-v2",
         "version": "1.0.2",
         "model_group_id": model_group_id,
         "model_format": "TORCH_SCRIPT",
