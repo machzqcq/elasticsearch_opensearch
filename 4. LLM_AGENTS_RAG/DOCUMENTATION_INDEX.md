@@ -1,388 +1,724 @@
-# 📖 Complete Documentation Index
+# 📖 LLM Agents & RAG - Complete Learning Guide
 
 ## 🎯 Quick Navigation
 
 ### For Students - Where to Start?
 
-**I'm new to ML/embeddings** → Start here:
-1. Read: `opensearch/my_tutorial/scripts/4. LLM_AGENTS_RAG/1. opensearch_supported_models/README_OPENSEARCH_MODELS.md`
-2. Then: `opensearch/my_tutorial/scripts/4. LLM_AGENTS_RAG/README_LLM_AGENTS_RAG_OVERVIEW.md`
-3. Then: Learn a specific topic below
+**I'm new to embeddings and LLMs** → Start here:
+1. Review the main architecture diagrams below
+2. Explore folder 1: OpenSearch Supported Models
+3. Then: Explore folder 2: Custom Models
+4. Then: Explore a specific topic below
 
 **I want to build RAG systems** → Follow this path:
 ```
-1. embeddings (1. opensearch_supported_models/)
+1. Embeddings & Vector Search (1. opensearch_supported_models/)
    ↓
-2. basic RAG (2. custom_models/)
+2. Model Integration (2. custom_models/)
    ↓
-3. conversational RAG (6. RAG_flows/)
+3. Advanced RAG (6. RAG_flows/)
    ↓
-4. advanced systems (5. REALTIME_PROJECTS/agents_tools/)
+4. Multi-step Systems (4. agents_tools/)
 ```
 
 **I want to use external LLMs** → Go here:
-- `3. external_hosted_models/README_EXTERNAL_MODELS.md`
-- Choose provider (OpenAI, Anthropic, etc.)
+- Start with: `3. external_hosted_models/README_EXTERNAL_MODELS.md`
+- Choose your provider: OpenAI, Anthropic, DeepSeek, or Ollama
+
+---
+
+## 🏗️ Learning Path Overview
+
+```mermaid
+graph TD
+    Start["🚀 START HERE<br/>OpenSearch + LLM Basics"] --> M1["Module 1<br/>Vector Embeddings<br/>& Models"]
+    Start --> M2["Module 2<br/>Custom Models<br/>Integration"]
+    Start --> M3["Module 3<br/>External LLMs<br/>Integration"]
+    
+    M1 --> S["Subfolders:<br/>text_embedding/<br/>sparse_encoding/<br/>cross_encoder/"]
+    M2 --> C["Files:<br/>QA Models<br/>Pipelines<br/>Integration"]
+    M3 --> E["Providers:<br/>OpenAI<br/>Anthropic<br/>DeepSeek<br/>Ollama"]
+    
+    M1 --> M4["Module 4<br/>Agents & Tools<br/>Multi-step Reasoning"]
+    M2 --> M5["Module 5<br/>Result Reranking<br/>Relevance"]
+    M3 --> M6["Module 6<br/>Complete RAG<br/>End-to-End"]
+    
+    M4 --> Advanced["🎓 ADVANCED<br/>Production RAG Systems"]
+    M5 --> Advanced
+    M6 --> Advanced
+    
+    classDef start fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000
+    classDef module fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef sub fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    classDef adv fill:#f8bbd0,stroke:#c2185b,stroke-width:3px,color:#000
+    
+    class Start start
+    class M1,M2,M3,M4,M5,M6 module
+    class S,C,E sub
+    class Advanced adv
+```
 
 ---
 
 ## 📁 Folder Structure
 
 ### 1. opensearch_supported_models/
-**Purpose:** Learn OpenSearch's built-in ML models
+**Purpose:** Learn OpenSearch's built-in ML models and vector capabilities
 
-| File | Topic | Level |
-|------|-------|-------|
-| `os_client_custom_models_st_msmarco_distilbert.md` | Custom embeddings | ⭐⭐ |
-| `os_client_registered_models_st_msmarco_distilbert.md` | Pre-registered embeddings | ⭐⭐ |
-| `os_mlclient_st_local_model_not_registered_deploy_onnx.md` | ONNX local models | ⭐⭐⭐ |
-| `os_mlclient_st_local_model_registered_deploy_onnx.md` | ONNX registered | ⭐⭐⭐ |
-| `os_mlclient_st_pretrained_model_register_deploy_torch.py` | TorchScript optimization | ⭐⭐⭐ |
-| `os_client_registered_models_os_neural_sparse_v2.md` | Sparse encoding | ⭐⭐⭐ |
-| `os_client_registered_models_st_msmarco_distilbert.md` | Cross-encoder ranking | ⭐⭐⭐ |
-| `os_client_custom_model_semantic_highlight.md` | Semantic highlighting | ⭐⭐⭐ |
+**Subfolders:**
+- `text_embedding/` - Vector embeddings and semantic search
+- `sparse_encoding/` - Sparse neural encoding techniques
+- `cross_encoder/` - Cross-encoder models for ranking
+- `semantic_highlighting/` - Semantic highlighting capabilities
 
-**Time to complete:** 4-6 hours  
-**Prerequisites:** None  
-**Skills gained:** Vector embeddings, model deployment, vector indexing
+**Key Topics Covered:**
+- Sentence-Transformers integration (ST)
+- ONNX model deployment
+- TorchScript optimization
+- Vector indexing strategies
+- Semantic search implementations
 
 ---
 
 ### 2. custom_models/
-**Purpose:** Build custom ML models from scratch
+**Purpose:** Build and integrate custom ML models from scratch
 
-| File | Topic | Level |
-|------|-------|-------|
-| `os_client_custom_model_QA.md` | Build QA models | ⭐⭐⭐ |
-| `os_client_custom_model_QA_ingest_pipeline.md` | Complete RAG pipeline | ⭐⭐⭐⭐ |
+**Files:**
+- `os_client_custom_model_QA.md` - Build Question-Answering models
+- `os_client_custom_model_QA.py` - Complete QA implementation
+- `os_client_custom_model_QA_ingest_pipeline.md` - Full RAG pipeline documentation
+- `os_client_custom_model_QA_ingest_pipeline.py` - RAG pipeline code
 
-**Time to complete:** 3-4 hours  
-**Prerequisites:** 1. opensearch_supported_models  
-**Skills gained:** Model preparation, RAG systems, inference pipelines
+**Key Topics Covered:**
+- Custom model preparation
+- RAG system architecture
+- Inference pipeline setup
+- Integration patterns
 
 ---
 
 ### 3. external_hosted_models/
-**Purpose:** Integrate external LLMs
+**Purpose:** Integrate external LLM providers with OpenSearch
 
-| Provider | File | Level |
-|----------|------|-------|
-| Overview | `README_EXTERNAL_MODELS.md` | ⭐ |
-| OpenAI | `openai/README_OPENAI.md` | ⭐⭐ |
-| Anthropic | `anthropic/anthropic_connector_chat.md` | ⭐⭐ |
-| DeepSeek | `deepseek/README_DEEPSEEK.md` | ⭐⭐ |
-| Ollama | `ollama/README_OLLAMA.md` | ⭐⭐⭐ |
+**Providers:**
+- `README_EXTERNAL_MODELS.md` - Overview and comparison
+- `openai/` - OpenAI integration (GPT-4, GPT-3.5)
+- `anthropic/` - Anthropic Claude integration
+- `deepseek/` - DeepSeek model integration
+- `ollama/` - Local Ollama model support
 
-**Time to complete:** 2-3 hours  
-**Prerequisites:** None (but helpful with 1-2)  
-**Skills gained:** API integration, connector creation, LLM selection
+**Key Topics Covered:**
+- API connector creation
+- Model comparison and selection
+- Cost optimization
+- Context window management
 
 ---
 
 ### 4. agents_tools/
-**Purpose:** Build multi-step reasoning systems
+**Purpose:** Build multi-step reasoning systems with agents
 
-| File | Topic | Level |
-|------|-------|-------|
-| `README_AGENTS_TOOLS.md` | Agent frameworks | ⭐⭐⭐⭐ |
+**Files:**
+- `README_AGENTS_TOOLS.md` - Agent framework overview
+- `1. rag_ollama_connector.py` - Ollama agent connector
+- `2. rag_non_supported_st_model.py` - Non-supported model integration
+- `sentence_transformer_model_files/` - Pre-trained model storage
 
-**Time to complete:** 2-3 hours  
-**Prerequisites:** 1, 2, 3  
-**Skills gained:** Agent design, tool chaining, multi-step reasoning
+**Key Topics Covered:**
+- Agent architecture and loops
+- Tool definition and execution
+- Multi-step reasoning
+- Memory management
+- Error handling and recovery
 
 ---
 
 ### 5. reranking/
-**Purpose:** Improve search result relevance
+**Purpose:** Improve search result relevance with reranking
 
-| File | Topic | Level |
-|------|-------|-------|
-| `1. reranking_cross_encoder_msmarco.md` | Cross-encoder reranking | ⭐⭐⭐ |
+**Files:**
+- `1. reranking_cross_encoder_msmarco.md` - Cross-encoder guide
+- `1. reranking_cross_encoder_msmarco.py` - Implementation code
+- `1. reranking_cross_encoder_msmarco.sh` - Shell script execution
 
-**Time to complete:** 1-2 hours  
-**Prerequisites:** 1. opensearch_supported_models  
-**Skills gained:** Result reranking, relevance optimization
+**Key Topics Covered:**
+- MS-MARCO cross-encoder model
+- Result reranking workflow
+- Search pipeline integration
+- Relevance scoring
 
 ---
 
 ### 6. RAG_flows/
-**Purpose:** Advanced RAG implementations
+**Purpose:** Complete end-to-end RAG implementations
 
-| File | Topic | Level |
-|------|-------|-------|
-| `README_RAG_FLOWS.md` | RAG overview | ⭐ |
-| `2. rag_conversational_flow_agent_with_memory.md` | Conversational RAG | ⭐⭐⭐ |
-| `3. rag_conversational_flow_agent_with_memory_multiple_kb.md` | Multi-KB RAG | ⭐⭐⭐⭐ |
-| `4. rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid.md` | Hybrid search | ⭐⭐⭐⭐ |
-| `4.1 rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid_rrf.md` | Hybrid + RRF | ⭐⭐⭐⭐⭐ |
-| `5. rag_chatbot_conversation_agent.md` | Advanced chatbot | ⭐⭐⭐⭐⭐ |
+**Files:**
+- `README_RAG_FLOWS.md` - RAG architecture overview
+- `OS-RAG-ARCHITECTURE.md` - Detailed architecture documentation
+- `2. rag_conversational_flow_agent_with_memory.md` - Conversational RAG guide
+- `2. rag_conversational_flow_agent_with_memory.py` - Implementation code
+- `3. rag_conversational_flow_agent_with_memory_multiple_kb.md` - Multi-KB systems
+- `3. rag_conversational_flow_agent_with_memory_multiple_kb.py` - Multi-KB code
+- `4. rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid.md` - Hybrid search guide
+- `4. rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid.py` - Hybrid code
+- `4.1 rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid_rrf.md` - RRF guide
+- `4.1 rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid_rrf.py` - RRF code
+- `5. rag_chatbot_conversation_agent.md` - Advanced chatbot guide
+- `5. rag_chatbot_conversation_agent.py` - Full chatbot implementation
+- `docs/` - Additional documentation resources
 
-**Time to complete:** 6-8 hours  
-**Prerequisites:** All previous  
-**Skills gained:** Advanced RAG, multi-turn dialogue, optimization
+**Key Topics Covered:**
+- Basic RAG workflows
+- Conversational RAG with memory
+- Multi-knowledge base systems
+- Dynamic index selection
+- Hybrid search (BM25 + Neural)
+- Reciprocal Rank Fusion (RRF)
+- Full conversational agents
 
 ---
 
-## 🎓 Learning Paths
+## 🎓 Learning Progression
 
-### Path 1: Complete Beginner (Start Here!)
-**Duration:** 15-20 hours  
+```mermaid
+graph TD
+    A["Foundation<br/>Module 1<br/>Vector Embeddings"] --> B["Integration<br/>Module 2 & 3<br/>Custom + External Models"]
+    
+    B --> C["Enhancement<br/>Module 5<br/>Reranking"]
+    
+    B --> D["Production<br/>Module 6<br/>RAG Flows"]
+    
+    C --> E["Advanced<br/>Module 4<br/>Agents & Tools"]
+    D --> E
+    
+    E --> F["Mastery<br/>🏆 Build Production<br/>RAG Systems"]
+    
+    classDef f fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
+    classDef i fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef e fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    classDef p fill:#ffe0b2,stroke:#e65100,stroke-width:2px,color:#000
+    classDef a fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef m fill:#ce93d8,stroke:#6a1b9a,stroke-width:3px,color:#fff
+    
+    class A f
+    class B i
+    class C e
+    class D p
+    class E a
+    class F m
+```
+
+---
+
+## 🔄 What You Can Build
+
+```mermaid
+graph LR
+    A["After Module 1"] --> A1["🔍 Semantic Search<br/>Find similar content"]
+    
+    B["After Module 2"] --> B1["📚 Basic RAG<br/>Q&A from documents"]
+    
+    C["After Module 3"] --> C1["🤖 Powered Search<br/>ChatGPT-like search"]
+    
+    D["After Module 5"] --> D1["⚡ Ranked Results<br/>Better relevance"]
+    
+    E["After Module 6"] --> E1["💬 Conversational AI<br/>Multi-turn dialogue"]
+    
+    F["After Module 4"] --> F1["🧠 Smart Agents<br/>Multi-step reasoning"]
+    
+    A1 --> Master["🏆 Production Systems"]
+    B1 --> Master
+    C1 --> Master
+    D1 --> Master
+    E1 --> Master
+    F1 --> Master
+    
+    classDef m1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef m2 fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef m3 fill:#fff3e0,stroke:#d84315,stroke-width:2px,color:#000
+    classDef m5 fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef m6 fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000
+    classDef m4 fill:#e0f2f1,stroke:#00796b,stroke-width:2px,color:#000
+    classDef master fill:#f1f8e9,stroke:#558b2f,stroke-width:3px,color:#000
+    
+    class A1 m1
+    class B1 m2
+    class C1 m3
+    class D1 m5
+    class E1 m6
+    class F1 m4
+    class Master master
+```
+
+---
+
+## 🏛️ Architecture Overview
+
+```mermaid
+graph TB
+    subgraph "OpenSearch Cluster"
+        OS["OpenSearch<br/>Search Engine"]
+    end
+    
+    subgraph "Embedding Models"
+        EM["Vector Embeddings<br/>Semantic search"]
+        SM["Sparse Models<br/>Keyword search"]
+        CE["Cross-Encoders<br/>Result ranking"]
+    end
+    
+    subgraph "External LLMs"
+        OAI["OpenAI<br/>GPT-4"]
+        AN["Anthropic<br/>Claude"]
+        DS["DeepSeek<br/>Models"]
+        OL["Ollama<br/>Local"]
+    end
+    
+    subgraph "Your Application"
+        RAG["RAG System<br/>Retrieval & Generation"]
+        AGENT["Agent System<br/>Multi-step reasoning"]
+        UI["User Interface<br/>Chat/Search"]
+    end
+    
+    EM --> OS
+    SM --> OS
+    CE --> OS
+    
+    OS --> RAG
+    OS --> AGENT
+    
+    OAI --> RAG
+    OAI --> AGENT
+    AN --> RAG
+    AN --> AGENT
+    DS --> AGENT
+    OL --> RAG
+    OL --> AGENT
+    
+    RAG --> UI
+    AGENT --> UI
+    UI --> User["👤 User"]
+    
+    classDef cluster fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef models fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000
+    classDef llm fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef app fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef user fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    
+    class OS,EMSystem cluster
+    class EM,SM,CE models
+    class OAI,AN,DS,OL llm
+    class RAG,AGENT,UI app
+    class User user
+```
+
+---
+
+## 📚 Complete Topic Map
+
+```mermaid
+graph TD
+    ROOT["LLM + RAG Mastery"]
+    
+    ROOT --> VECTORS["Vector Technology"]
+    VECTORS --> VE["Vector Embeddings<br/>Semantic Search"]
+    VECTORS --> SE["Sparse Encoding<br/>Keyword Search"]
+    VECTORS --> HYB["Hybrid Search<br/>Combined"]
+    
+    ROOT --> MODELS["Model Integration"]
+    MODELS --> CUSTOM["Custom Models<br/>Your own ML"]
+    MODELS --> EXTERNAL["External LLMs<br/>OpenAI/Claude"]
+    
+    ROOT --> RANK["Relevance"]
+    RANK --> CE["Cross-Encoder<br/>Reranking"]
+    RANK --> RRF["Result Fusion<br/>RRF"]
+    
+    ROOT --> RAG["RAG Systems"]
+    RAG --> BASICRAG["Basic RAG<br/>Simple Q&A"]
+    RAG --> CONVRAG["Conversational<br/>Multi-turn"]
+    RAG --> MULTIRAG["Multi-KB<br/>Multiple Sources"]
+    RAG --> ADVRAG["Advanced RAG<br/>Dynamic Index"]
+    
+    ROOT --> AGENTS["Agents"]
+    AGENTS --> TOOL["Tool Use<br/>Function Calling"]
+    AGENTS --> REASON["Multi-step<br/>Reasoning"]
+    AGENTS --> MEM["Memory<br/>Conversation"]
+    
+    classDef v fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef m fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000
+    classDef r fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef g fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef a fill:#fff3e0,stroke:#d84315,stroke-width:2px,color:#000
+    classDef root fill:#ffebee,stroke:#b71c1c,stroke-width:3px,color:#000
+    
+    class VE,SE,HYB v
+    class CUSTOM,EXTERNAL m
+    class CE,RRF r
+    class BASICRAG,CONVRAG,MULTIRAG,ADVRAG g
+    class TOOL,REASON,MEM a
+    class ROOT root
+```
+
+---
+
+## 📁 Folder Structure
+
+---
+
+## 🎯 Learning Paths
+
+### Path 1: RAG Fundamentals
 **Goal:** Build your first RAG system
 
-1. Start with `README_LLM_AGENTS_RAG_OVERVIEW.md`
-2. Study embeddings basics (2 hours)
-3. Learn vector search (1.5 hours)
-4. Build simple model (1 hour)
-5. Integrate external LLM (1 hour)
-6. Create basic RAG (2 hours)
-7. Add conversational memory (2 hours)
-8. Optimize and troubleshoot (1 hour)
+**Modules to complete:**
+1. Module 1 - Vector embeddings and models
+2. Module 2 - Custom model integration
+3. Module 6 - Basic RAG flows (start with file 2)
 
-### Path 2: RAG Specialist (Advanced)
-**Duration:** 20-25 hours  
-**Goal:** Master advanced RAG techniques
+**What you'll build:** A simple question-answering system over documents
 
-1. Complete Path 1
-2. Study hybrid search (2 hours)
-3. Implement RRF fusion (1.5 hours)
-4. Multi-KB routing (2 hours)
-5. Agent systems (3 hours)
-6. Production optimization (2 hours)
-7. Build production system (3 hours)
+---
 
-### Path 3: LLM Integration Focus (4 hours)
+### Path 2: Advanced RAG Specialist
+**Goal:** Master sophisticated RAG techniques
+
+**Modules to complete:**
+1. Complete Path 1 first
+2. Module 5 - Result reranking
+3. Module 6 - All RAG flow implementations (files 2-4.1)
+4. Module 4 - Agent systems
+
+**What you'll build:** Production-grade conversational AI with hybrid search
+
+---
+
+### Path 3: LLM Integration Expert
 **Goal:** Master external LLM integration
 
-1. `README_EXTERNAL_MODELS.md` (0.5 hours)
-2. Choose provider (OpenAI/Anthropic) (0.5 hours)
-3. Study integration guide (1.5 hours)
-4. Create connector (1.5 hours)
+**Modules to complete:**
+1. Module 3 - External hosted models
+2. Pick your provider: OpenAI, Anthropic, DeepSeek, or Ollama
+3. Module 2 - Custom model integration
+4. Module 4 - Build agents with external LLMs
 
-### Path 4: Optimization Focus (8 hours)
-**Goal:** Make systems fast and cheap
-
-1. Understand performance metrics (1 hour)
-2. Learn hybrid search benefits (1 hour)
-3. Study reranking (1 hour)
-4. Implement caching (1 hour)
-5. Optimize embeddings (1 hour)
-6. Batch processing (1 hour)
-7. Cost optimization (1 hour)
+**What you'll build:** Systems powered by ChatGPT, Claude, or other LLMs
 
 ---
 
-## 🔍 Find Documentation by Topic
+### Path 4: Search Optimization
+**Goal:** Build fast, relevant search systems
 
-### Vector Embeddings
-- `1. opensearch_supported_models/os_mlclient_st_pretrained_model_register_deploy_torch.md`
-- `1. opensearch_supported_models/os_client_custom_models_st_msmarco_distilbert.md`
+**Modules to complete:**
+1. Module 1 - Vector embeddings
+2. Module 5 - Reranking techniques
+3. Module 6 - Hybrid search implementations (files 4 and 4.1)
 
-### Vector Search
-- `1. opensearch_supported_models/os_client_registered_models_st_msmarco_distilbert.md`
-- `1. opensearch_supported_models/os_client_registered_models_os_neural_sparse_v2.md`
+**What you'll build:** High-performance search combining BM25 and semantic search
 
-### Question Answering
-- `2. custom_models/os_client_custom_model_QA.md`
+---
 
-### Basic RAG
-- `2. custom_models/os_client_custom_model_QA_ingest_pipeline.md`
-- `6. RAG_flows/README_RAG_FLOWS.md`
+## 🔍 Find Resources by Topic
 
-### Conversational AI
-- `6. RAG_flows/2. rag_conversational_flow_agent_with_memory.md`
+### Vector Embeddings & Search
+- **Module 1**: Folder `1. opensearch_supported_models/`
+  - `text_embedding/` - Semantic search basics
+  - `sparse_encoding/` - Keyword-based search
+  - `cross_encoder/` - Relevance ranking
 
-### Multi-KB Systems
-- `6. RAG_flows/3. rag_conversational_flow_agent_with_memory_multiple_kb.md`
+### Question Answering Systems
+- **Module 2**: `os_client_custom_model_QA.md` and related files
+- **Module 6**: `2. rag_conversational_flow_agent_with_memory.md`
 
-### Hybrid Search
-- `6. RAG_flows/4. rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid.md`
-- `6. RAG_flows/4.1 rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid_rrf.md`
+### Conversational RAG
+- **Module 6**: 
+  - `2. rag_conversational_flow_agent_with_memory.md` - Basic multi-turn
+  - `3. rag_conversational_flow_agent_with_memory_multiple_kb.md` - Multiple knowledge bases
 
-### External LLMs
-- `3. external_hosted_models/README_EXTERNAL_MODELS.md`
-- `3. external_hosted_models/openai/README_OPENAI.md`
-- `3. external_hosted_models/anthropic/anthropic_connector_chat.md`
+### Hybrid & Advanced Search
+- **Module 6**:
+  - `4. rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid.md` - BM25 + Neural
+  - `4.1 rag_conversational_flow_agent_dynamic_index_bm25_neural_hybrid_rrf.md` - RRF fusion
+
+### External LLM Integration
+- **Module 3**: `3. external_hosted_models/README_EXTERNAL_MODELS.md`
+  - `openai/` - GPT models
+  - `anthropic/` - Claude models
+  - `deepseek/` - DeepSeek models
+  - `ollama/` - Local models
 
 ### Agent Systems
-- `5. REALTIME_PROJECTS/agents_tools/README_AGENTS_TOOLS.md`
+- **Module 4**: `README_AGENTS_TOOLS.md` and implementation files
 
 ### Result Reranking
-- `reranking/1. reranking_cross_encoder_msmarco.md`
+- **Module 5**: `1. reranking_cross_encoder_msmarco.md` and related files
 
 ---
 
-## 📊 At-a-Glance Guide
+## � Quick Reference Guide
 
-### Time Investment
+### By Learning Style
 
-| Topic | Time | Result |
-|-------|------|--------|
-| Vector embeddings | 2h | Understand how text becomes vectors |
-| Vector search | 1h | Search similar documents |
-| Basic RAG | 2h | Answer questions from docs |
-| Conversational RAG | 2h | Multi-turn Q&A |
-| Hybrid search | 2h | Combine keyword + semantic |
-| External LLMs | 1h | Use ChatGPT/Claude |
-| Agents | 3h | Multi-step reasoning |
-| Full system | 3h | Production RAG |
+**Prefer Diagrams & Visuals?**
+- Start with: README files in each module
+- They contain Mermaid diagrams and architecture overviews
 
-### Total Learning Time
-- **Foundations:** 3-4 hours
-- **Intermediate:** 4-6 hours  
-- **Advanced:** 6-8 hours
-- **Production:** 4-6 hours
-- **Total:** 15-25 hours
+**Prefer Step-by-Step Code?**
+- Start with: `.md` files with implementation walkthroughs
+- Then examine: Corresponding `.py` files
 
----
+**Prefer Learning by Building?**
+- Pick a learning path above
+- Run the `.py` files in order
+- Modify and experiment
 
-## 🚀 Quick Start Templates
+### By Scope
 
-### 5-Minute: "What is RAG?"
-1. Read: `README_RAG_FLOWS.md` architecture section
-2. Watch diagram in your head
-3. Done!
+**Quick Overview:**
+- Module 1 README
+- Module 6 `README_RAG_FLOWS.md`
 
-### 1-Hour: "Build Basic RAG"
-1. Read: `2. custom_models/os_client_custom_model_QA_ingest_pipeline.md`
-2. Follow "Step-by-step implementation"
-3. Understand the 10 steps
-4. Done!
+**Comprehensive Learning:**
+- One complete module at a time
+- 6 modules total for complete coverage
 
-### 4-Hour: "Build Production RAG"
-1. Understand embeddings (1h)
-2. Understand RAG flow (1h)
-3. Study hybrid search (1h)
-4. Learn memory management (1h)
-
-### 8-Hour: "Master Advanced RAG"
-1. Complete 4-hour path
-2. Study agent systems (2h)
-3. Learn optimization (1h)
-4. Study troubleshooting (1h)
+**Production-Ready System:**
+- Path 2 or Path 4 (depending on goals)
+- Includes all essential modules with practical examples
 
 ---
 
 ## ❓ FAQ
 
 **Q: Which file should I start with?**
-A: Start with `README_OPENSEARCH_MODELS.md` to understand embeddings
+A: Start with Module 1 README in `1. opensearch_supported_models/` to understand vector embeddings
 
-**Q: How long will it take to learn all this?**
-A: 15-25 hours for complete coverage, 4-6 hours for basics
-
-**Q: Can I skip some topics?**
-A: Yes, follow the learning paths that match your goal
+**Q: Can I skip some modules?**
+A: Choose a learning path that matches your goal. Each path builds progressively.
 
 **Q: Where are the code examples?**
-A: Every markdown file has 4-8 working code examples
+A: Every `.md` file has working code examples. Corresponding `.py` files have complete implementations.
 
 **Q: Can I run the code?**
-A: Yes! All examples are production-ready (need OpenSearch cluster)
+A: Yes! All examples are production-ready. You'll need a running OpenSearch cluster.
 
 **Q: Do I need prior ML knowledge?**
-A: No, concepts explained from first principles
+A: No, concepts are explained from first principles in each module.
 
 **Q: What if I get stuck?**
-A: Check troubleshooting section in any file
+A: Check the troubleshooting sections in README files and markdown guides.
 
 **Q: How do I build my own system?**
-A: Follow the learning paths then combine concepts
+A: Follow a learning path, then combine concepts from multiple modules.
 
 ---
 
 ## 📞 Document Types
 
 ### README Files (Start Here!)
-Overview documents that explain concepts:
-- Easy to understand
-- Visual diagrams
-- Good for orientation
-- 5-10 minute read
+Overview and orientation documents:
+- Easy to understand narrative flow
+- Visual Mermaid diagrams
+- Good for getting oriented
+- General reading pace
 
 ### Technical Guides (Deep Dive)
-Detailed implementation files:
-- Step-by-step code
-- Best practices
-- Troubleshooting
-- 30-60 minute read
+Detailed implementation files (.md):
+- Step-by-step code walkthroughs
+- Best practices and patterns
+- Troubleshooting sections
+- More detailed reading
 
-### Reference Docs (Quick Lookup)
-Provider-specific integration:
-- API details
-- Configuration
-- Examples
-- 15-30 minute read
+### Implementation Files (.py)
+Complete working code:
+- Production-ready code
+- Comments and explanations
+- Run directly with OpenSearch
+- Executable examples
+
+### Shell Scripts (.sh)
+Quick execution wrappers:
+- Bash implementations
+- Easy execution
+- Useful for automation
 
 ---
 
 ## 🎯 Success Path
 
+```mermaid
+graph TD
+    A["📖 Read Overview<br/>Module README"] --> B["📊 Study Diagrams<br/>Understand Architecture"]
+    B --> C["💻 Review Code<br/>Module Guides"]
+    C --> D["🚀 Run Examples<br/>Module .py Files"]
+    D --> E["🧪 Experiment<br/>Modify Parameters"]
+    E --> F["🏗️ Build Your Project<br/>Combine Concepts"]
+    F --> G["✨ Deploy<br/>Production System"]
+    
+    classDef step1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef step2 fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef step3 fill:#fff3e0,stroke:#d84315,stroke-width:2px,color:#000
+    classDef step4 fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef step5 fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000
+    classDef step6 fill:#e0f2f1,stroke:#00796b,stroke-width:2px,color:#000
+    classDef step7 fill:#f1f8e9,stroke:#558b2f,stroke-width:2px,color:#000
+    
+    class A step1
+    class B step2
+    class C step3
+    class D step4
+    class E step5
+    class F step6
+    class G step7
 ```
-Start Here
-    ↓
-Choose Your Goal
-    ├─→ Learn RAG basics → Path 1
-    ├─→ Build advanced system → Path 2
-    ├─→ Master LLMs → Path 3
-    └─→ Optimize performance → Path 4
-    ↓
-Study Recommended Files
-    ↓
-Run Code Examples
-    ↓
-Build Your Own System
-    ↓
-Deploy to Production
-    ↓
-Success! 🎉
+
+---
+
+## � Getting Started Now
+
+### Step 1: Orient Yourself
+1. Read this document completely
+2. Review the architecture diagrams above
+3. Choose a learning path that matches your goals
+
+### Step 2: Start with Module 1
+1. Navigate to `1. opensearch_supported_models/`
+2. Read the README for that section
+3. Study the subfolders: text_embedding, sparse_encoding, cross_encoder
+
+### Step 3: Progress Through Your Chosen Path
+- Follow the learning path you selected
+- Read each module's README first
+- Study the `.md` implementation guides
+- Run and modify the `.py` code examples
+
+### Step 4: Build Your System
+- Combine concepts from multiple modules
+- Use the examples as templates
+- Customize for your specific use case
+
+---
+
+## 🎓 What Each Module Teaches
+
+**Module 1: Vector Embeddings**
+- How to transform text into vectors
+- Semantic vs. sparse search
+- Model deployment and optimization
+
+**Module 2: Custom Models**
+- Building question-answering systems
+- Creating inference pipelines
+- Integrating models with search
+
+**Module 3: External LLMs**
+- Connecting to ChatGPT, Claude, DeepSeek
+- Cost comparison across providers
+- Creating custom connectors
+
+**Module 4: Agent Systems**
+- Building systems that reason and plan
+- Multi-step task execution
+- Tool definition and calling
+
+**Module 5: Reranking**
+- Improving search relevance
+- Cross-encoder models
+- Ranking pipeline integration
+
+**Module 6: Complete RAG**
+- End-to-end retrieval systems
+- Conversational memory management
+- Advanced hybrid search
+- Production architectures
+
+---
+
+## 🔗 Key Concepts Across Modules
+
+```mermaid
+graph TD
+    subgraph Core["Core Concepts"]
+        A["Vector Embeddings"] 
+        B["Semantic Search"]
+        C["Retrieval"]
+        D["LLM Integration"]
+    end
+    
+    subgraph Intermediate["Building Blocks"]
+        E["RAG Architecture"]
+        F["Conversational Memory"]
+        G["Hybrid Search"]
+        H["Result Ranking"]
+    end
+    
+    subgraph Advanced["Advanced Patterns"]
+        I["Agent Systems"]
+        J["Multi-KB Routing"]
+        K["Dynamic Index Selection"]
+        L["Production Optimization"]
+    end
+    
+    A --> E
+    B --> E
+    C --> E
+    D --> E
+    
+    E --> I
+    F --> I
+    G --> J
+    H --> K
+    
+    E -.->F
+    E -.->G
+    E -.->H
+    
+    classDef core fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef inter fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef adv fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    
+    class A,B,C,D core
+    class E,F,G,H inter
+    class I,J,K,L adv
 ```
 
 ---
 
-## 📚 Additional Resources
+## 📚 Additional Resources Within This Folder
 
-### Within Documentation
-- **Mermaid diagrams** in every file (50+ total)
-- **Code examples** in every file (200+ total)
-- **Troubleshooting guides** in technical files
-- **Best practices** highlighted throughout
-- **Cross-references** for related topics
+### Configuration Files
+- `docker-compose-opensearch-single.yml` - Single-node OpenSearch setup
+- `docker-compose-opensearch-ml-cluster.yml` - Multi-node with ML plugins
+- `docker-compose-opensearch-single-ollama.yml` - With Ollama integration
+- `docker-compose-opensearch-single-ollama-lite.yml` - Lightweight Ollama setup
 
-### Key Concepts to Master
-1. Vector embeddings
-2. Semantic search
-3. RAG architecture
-4. Multi-turn memory
-5. Hybrid search
-6. Agent systems
-7. Result reranking
-8. Performance optimization
+### Supporting Files
+- `ollama-entrypoint.sh` - Ollama initialization script
+
+### Using Docker Compose
+Each docker-compose file sets up a complete environment. Use:
+```bash
+docker-compose -f docker-compose-opensearch-ml-cluster.yml up
+```
 
 ---
 
-## ✨ Final Tips
+## ✨ Tips for Success
 
-1. **Start simple:** Begin with embeddings, progress to agents
-2. **Use diagrams:** Study Mermaid visualizations carefully
-3. **Run examples:** Type them out, don't just read
-4. **Experiment:** Modify parameters and observe changes
-5. **Ask questions:** Refer to troubleshooting sections
-6. **Build projects:** Combine concepts into real systems
-7. **Check references:** Use cross-links to explore deeply
-8. **Have fun:** ML and RAG are exciting!
-
----
-
-## 🏁 Your Journey Starts Now!
-
-Choose a learning path and start with the first recommended file. In 15-25 hours, you'll master modern RAG systems!
-
-**Happy learning!** 🚀
+1. **Start Simple:** Begin with Module 1, progress systematically
+2. **Read Diagrams Carefully:** Visual representations encode key concepts
+3. **Run Examples:** Type code yourself, observe what changes
+4. **Experiment:** Modify parameters, see effects
+5. **Reference Others:** Use cross-links to explore related topics
+6. **Build Projects:** Combine concepts into real applications
+7. **Join Community:** Look for OpenSearch forums and discussions
+8. **Have Fun:** This is exciting technology!
 
 ---
 
-**Last Updated:** 2024
-**Total Documentation:** 50+ files
-**Total Content:** 150,000+ words
-**Status:** ✅ Complete and ready for learning
+## 🏁 Your Learning Journey
+
+This folder contains everything you need to go from zero to building production-grade RAG systems powered by OpenSearch and LLMs.
+
+**Choose your path, start with Module 1, and begin building!**
+
+**Your future RAG systems await! 🚀**
 
