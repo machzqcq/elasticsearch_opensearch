@@ -45,11 +45,12 @@ model_group_id = model_group_response['model_group_id']
 print(f"Model group ID: {model_group_id}")
 
 # Register a model
+# huggingface/sentence-transformers/all-MiniLM-L6-v2
 register_response = client.transport.perform_request(
     method='POST',
     url='/_plugins/_ml/models/_register',
     body={
-        "name": "huggingface/sentence-transformers/all-MiniLM-L6-v2",
+        "name": "huggingface/sentence-transformers/msmarco-distilbert-base-tas-b",
         "version": "1.0.2",
         "model_group_id": model_group_id,
         "model_format": "TORCH_SCRIPT",
