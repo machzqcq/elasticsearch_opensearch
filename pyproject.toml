@@ -44,5 +44,7 @@ dependencies = [
     "Faker==37.11.0",
     "seaborn>=0.13.2",
     "jupyter-resource-usage==1.2.0",
-    "huggingface-hub==0.34.4"
+    "huggingface-hub==0.34.4",
+    "fastmcp==2.2.0",
+    "asyncio==4.0.0",
 ]

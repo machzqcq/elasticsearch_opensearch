@@ -113,6 +113,130 @@ def wait_for_model_deployment(client, model_id, timeout=300, check_interval=5):
             time.sleep(check_interval)
 
 
+def create_embedding_model(client):
+    # ============================================================================
+    # STEP 2: SETUP EMBEDDING MODEL FOR SEMANTIC SEARCH
+    # ============================================================================
+    
+    print("STEP 2: Setting up Embedding Model (Semantic Search)...")
+    print("   Registering HuggingFace sentence-transformers model...")
+    
+    embedding_model_body = {
+        "name": "huggingface/sentence-transformers/all-MiniLM-L6-v2",
+        "version": "1.0.1",
+        "model_format": "TORCH_SCRIPT"
+    }
+    embedding_response = client.transport.perform_request(
+        'POST', 
+        '/_plugins/_ml/models/_register?deploy=true', 
+        body=embedding_model_body
+    )
+    embedding_task_id = embedding_response['task_id']
+    print(f"   Task ID: {embedding_task_id}")
+    
+    # Wait until the status becomes completed
+    print("   ⏳ Waiting for embedding model registration to complete...")
+    while True:
+        embedding_model_status = client.transport.perform_request(
+            method='GET',
+            url=f'/_plugins/_ml/tasks/{embedding_task_id}'
+        )
+        status_state = embedding_model_status['state']
+        print(f"      Registration status: {status_state}")
+        if status_state == 'COMPLETED':
+            embedding_model_id = embedding_model_status['model_id']
+            print(f"   ✓ Embedding model registered with ID: {embedding_model_id}")
+            break
+        time.sleep(10)
+    
+    # Deploy the embedding model
+    print("\n   Deploying embedding model...")
+    deploy_body = {
+        "deployment_plan": [
+            {
+                "model_id": embedding_model_id,
+                "workers": 1
+            }
+        ]
+    }
+    
+    try:
+        client.transport.perform_request(
+            'POST', 
+            f'/_plugins/_ml/models/{embedding_model_id}/_deploy', 
+            body=deploy_body
+        )
+    except Exception as e:
+        print(f"   ⚠ Error deploying model: {e}")
+
+    # Wait for deployment to complete
+    print("   ⏳ Waiting for embedding model deployment...")
+    wait_for_model_deployment(client, embedding_model_id)
+    return embedding_model_id
+    
+
+def create_ingest_pipeline_and_index(client, embedding_model_id, bulk_body):
+    # ============================================================================
+    # STEP 3: CREATE INGEST PIPELINE AND INDEX
+    # ============================================================================
+    
+    print("STEP 3: Creating Ingest Pipeline and Index...")
+    
+    # Create ingest pipeline
+    pipeline_body = {
+        "description": "A text embedding pipeline using HuggingFace model",
+        "processors": [
+            {
+                "text_embedding": {
+                    "model_id": embedding_model_id,
+                    "field_map": {
+                        "text": "embedding"
+                    }
+                }
+            }
+        ]
+    }
+    
+    pipeline_id = f"openai-agent-pipeline_{int(time.time())}"
+    client.ingest.put_pipeline(id=pipeline_id, body=pipeline_body)
+    print(f"   ✓ Ingest pipeline created with ID: {pipeline_id}")
+    
+    # Create index with vector field for semantic search
+    print("   Creating index with vector field for semantic search...")
+    index_body = {
+        "mappings": {
+            "properties": {
+                "text": {
+                    "type": "text"
+                },
+                "embedding": {
+                    "type": "knn_vector",
+                    "dimension": 384,
+                    "method": {
+                        "name": "hnsw",
+                        "engine": "lucene"
+                    }
+                }
+            }
+        },
+        "settings": {
+            "index": {
+                "default_pipeline": pipeline_id,
+                "knn": "true"
+            }
+        }
+    }
+    
+    index_name = f"openai_agent_data_{int(time.time())}"
+    client.indices.create(index=index_name, body=index_body)
+    print(f"   ✓ Index created with name: {index_name}\n")
+    
+    client.bulk(body=bulk_body, index=index_name, pipeline=pipeline_id)
+    print(f"   ✓ {len(bulk_body) // 2} documents indexed successfully\n")
+    
+    return index_name
+
+
 def create_openai_connector(client, model_name=OPENAI_MODEL):
     """
     Create an OpenAI connector for chat completions.
