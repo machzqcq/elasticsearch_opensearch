@@ -3,16 +3,16 @@ name = "opensearch-mcp-server-app"
 version = "1.0.0"
 description = "Educational Gradio app for OpenSearch MCP Server demonstrations"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = "==3.12.11"
 dependencies = [
-    "gradio>=4.44.0",
-    "opensearch-mcp-server-py>=0.4.0",
-    "langchain>=0.3.27",
-    "langchain-mcp-adapters>=0.1.12",
-    "langchain-openai>=0.3.33",
-    "opensearch-py>=2.3.0",
-    "python-dotenv>=1.0.0",
-    "pydantic>=2.0.0",
-    "pydantic-settings>=2.0.0",
+    "gradio==5.49.1",
+    "opensearch-mcp-server-py==0.4.0",
+    "langchain==1.0.5",
+    "langchain-mcp-adapters==0.1.12",
+    "langchain-openai==1.0.2",
+    "opensearch-py==3.0.0",
+    "python-dotenv==1.2.1",
+    "pydantic==2.11.0",
+    "pydantic-settings==2.12.0",
 ]
 
