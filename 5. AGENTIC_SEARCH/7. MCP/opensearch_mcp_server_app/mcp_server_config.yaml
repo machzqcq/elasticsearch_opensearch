@@ -1,0 +1,13 @@
+# MCP Server Configuration for OpenSearch
+# This config file provides connection details to the MCP server
+
+opensearch:
+  url: https://localhost:9200
+  username: admin
+  password: Developer@123
+  ssl_verify: false
+
+# Optional: AWS configuration if using AWS OpenSearch
+# aws:
+#   region: us-east-1
+#   profile: default
