@@ -47,4 +47,5 @@ dependencies = [
     "huggingface-hub==0.34.4",
     "fastmcp==2.2.0",
     "asyncio==4.0.0",
+    "opensearch-mcp-server-py==0.4.0",
 ]
