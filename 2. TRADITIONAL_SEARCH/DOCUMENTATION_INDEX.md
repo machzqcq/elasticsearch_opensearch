@@ -562,6 +562,3 @@ This folder contains everything you need to master traditional text search with 
 
 ---
 
-**Repository**: elasticsearch_opensearch  
-**Branch**: os-3.2.0  
-**Status**: ✅ Ready for learning and practice

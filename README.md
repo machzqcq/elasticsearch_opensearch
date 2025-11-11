@@ -1,9 +1,9 @@
-# OPENSEARCH COURSE
+# OPENSEARCH (INTERMEDIATE) COURSE
 ![alt text](image.png)  
-This repo contains tutorials, code, documentation that drives my opensearch course content. Throughout the course: `OS=opensearch` & `ES=elasticsearch`
+This repo contains tutorials, code, documentation that drives my opensearch course content at intermediate. Throughout the course: `OS=opensearch` & `ES=elasticsearch`
 
 # UDEMY
-The udemy course is published here:
+The previous course (BASIC level) is published here:
 [![alt text](image-4.png)](https://www.udemy.com/course/ai-ml-search-with-opensearch/)
 
 # COURSE MODULES
@@ -33,11 +33,6 @@ The udemy course is published here:
   - Basics of server/client tech
 - **Machine Resources**: See below
 
-# WHY ELASTICSEARCH REFERENCES
-- The repo name contains `elasticsearch` because opensearch started as a fork of elasticsearch (> 7.x version) platform 
-- As of today (November 2024), elasticsearch is one of the most used enterprise search platform in its segment - though my guess OS will take significant market share , especially as AI/ML gains more prominence
-- If you have ES experience / background, very high probability that you will be considered a top candidate for OS jobs and projects that involve `migration from elasticsearch to opensearch`
-
 # MOTIVATION FOR THE COURSE
 - There are many ES courses online and it is a pretty mature platform in startups, mid-level or enterprise contexts. 
 - Just search for `List top 25 enterprise companies using elasticsearch` on google/perplexity (also search for `top 25 using OpenSearch`). In the search results, note that `Oracle` switched from ES > OS for their PeopleSoft's search capabilities
@@ -49,38 +44,31 @@ The udemy course is published here:
 - Many more (follow the course) 
 
 # ORGANIZATION OF THE COURSE
-- Two high level folders: [opensearch](./opensearch/) & [elasticsearch_for_relative_context](./elasticsearch_for_relative_context/)
-- **Elasticsearch**: [elasticsearch_for_relative_context](./elasticsearch_for_relative_context/) folder contains content related to elasticsearch. I provide this to draw parallels between ES and OS and how similar they are.
 - **Tutorial**: In each of the main folder, there is subfolder [my_tutorial](./opensearch/my_tutorial/), that contains the majority of what I instruct. 
 - **Code**: All code is inside [scripts](./opensearch/my_tutorial/scripts/) subfolder and [notebook](./opensearch/my_tutorial/notebooks/) subfolder. Contains python, shell, docker compose files etc.
-- **Data**: subfolder [data](./opensearch/my_tutorial/data/) contains all datasets used for this course. The main sources are `ecommerce` dataset (provided by opensearch team), `interns_sample` dataset (real jobs dataset that I provide), `uscities` dataset for geospatial analysis etc. All data is provided as separate links
+- **Data**: subfolder **[0. DATA](./0.%20DATA/)** contains all datasets used for this course. All data is provided as separate link to download (because we cannot check in data into repo)
 - **Documentation**: 
-All documentation in various forms can be `auto-generated` from this git repo (except the powerpoint presentations, because I had to manually create those for the course)  
+  - `No PPTs for this course`
+  - **I have used ONLY Markdown files for explaining the concepts that are fully documented as close as possible to the code** (That means if you checkout this repo and follow the videos - you probably don't need any other resources. Less switching time > less switching context > more memory retained) 
 
-  - Presentations / pdfs that I provide as part of the course (not included in this git repo)
-  - [docs](./opensearch/my_tutorial/docs/) subfolder with markdown files that has very detailed content and can be used as reference or search when applying concepts in real world (most of it comes from the horses mouth aka. opensearch documentation, but I vetted every word, sentence, token etc. :) ). The   - [docs](./opensearch/my_tutorial/docs/) subfolder with markdown files that has very detailed content and can be used as reference or search when applying concepts in real world (most of it comes from the horses mouth aka. opensearch documentation, but I vetted every word, sentence, token etc. :) ). The `docs` folder can also be served as a static content website locally if you prefer that way (instructions [here](./opensearch/my_tutorial/README.md)) ![alt text](image-2.png)
- folder can also be served as a static content website locally if you prefer that way (instructions [here](./opensearch/my_tutorial/README.md)) ![alt text](image-2.png)
-  - `docs_pdf_weasyprint` - contains the pdf version of all the markdown files (you can auto-generate all the pdfs using the script [here](./opensearch/my_tutorial/generate_md_to_pdf_weasyprint.py)) 
-  - `mermaid diagrams`: Mermaid diagrams can draw diagrams using code. It is very helpful, when you want to visually talk, express or share concepts BEFORE getting into the nitty-grittys. My script [here](./opensearch/my_tutorial/generate_mermaid_diagrams.py) reads the markdown files, and converts headings into flow diagrams. Feel free to run and generate your own or modify the auto-generate script for e.g. maybe you prefer diagram flow to be LR (left-to-right flow) instead of TD (top-down flow) ![alt text](image-1.png)
-  - `mermaid images`: Mermaid diagrams get rendered with specific mermaid plugin/module/extension etc. But sometimes you might just want an image in png/svg/jpeg, so you are not dependent on any services/software. The script [here](./opensearch/my_tutorial/generate_mermaid_images.py) will generate all images.
 
 # HARDWARE, TOOLS & SOFTWARE
-- **HARDWARE**: Bare metal or virtual OS as long as you have at least 8GB RAM, 4 CPUs and 50GB storage (I executed on 16gb ram, 4 cpu)
-- **MAIN** OPENSEARCH (of course) 2.17 & 2.16 & ELASTICSEARCH (trial version 8.15.0)
+- **HARDWARE**: Bare metal or virtual OS as long as you have at least 16GB RAM, 4 CPUs and 50GB storage (8gb bare metal RAM was sufficient for BASIC course, however YMMV if you use 8GB for this course)
+- **MAIN** OPENSEARCH (of course) 3.3.3
 - **SERVER OPERATING SYSTEM**: Linux (ubuntu 20.04 or 22.04). This is where we launch opensearch server and execute scripts
 - **CLIENT OPERATING SYSTEM**: This is where we launch the IDE and our primary interface for the course. This can be `windows` or `linux` or `mac`
-- **DOCKER**: Docker version 27.2.0, build 3ab4256
-- **PROGRAMMING LANGUAGES**: Python 3.8.10 (or greater) and modules, shell, SQL/DQL (comes with opensearch)
-- **IDE**: VS CODE 1.95.3 (primarily) and extensions, Jupyter
+- **DOCKER**: Docker version 28.4.0, build d8eb465 (frankly any latest version should work)
+- **PROGRAMMING LANGUAGES**: Python 3.12.11 (or greater) and modules, shell, SQL/DQL (comes with opensearch)
+- **IDE**: VS CODE 1.105.1 (primarily) and extensions, Jupyter
 
 # STUDENT ENVIRONMENT
 There are many ways to align infrastructure to do this course, however the below diagram is what we will be conforming to:  
 ![environment](./environment.svg)
 
 # WHY NOT WINDOWS SERVER
-Entire course execution is mostly inside docker, so as long as you have docker runtime it doesn't matter - windows can also work totally. I have executed about 50% of scripts with opensearch server running successfully on windows docker desktop (100% on ubuntu OS and hence I recommend opensearch server on ubuntu), but you are welcome to reach out by emailing me directly [here](pradeep@automationpractice.com) if you run into real issues with running opensearch server on windows OS 
+Entire course execution is mostly inside docker, so as long as you have docker runtime it doesn't matter - windows can also work totally. I recommend *nix operating system if you push me to make a choice. Anyways you are welcome to reach out by emailing me directly [here](pradeep@automationpractice.com) if you run into real issues on windows OS 
 
-> **Btw** - your client operating system can be any of [windows, max, *nix]
+> **Btw** - your client operating system can be any of [windows, max, *nix]. Wherever you launch your IDE
 
 # VS CODE EXTENSIONS
 - All the vscode extensions I used are in the [file](./vscode-extensions.txt)

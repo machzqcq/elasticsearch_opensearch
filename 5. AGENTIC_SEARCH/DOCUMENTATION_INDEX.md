@@ -43,7 +43,12 @@ graph TD
     M2 --> M5["Module 5<br/>Result Reranking<br/>Relevance"]
     M3 --> M6["Module 6<br/>Complete RAG<br/>End-to-End"]
     
-    M4 --> Advanced["🎓 ADVANCED<br/>Production RAG Systems"]
+    M4 --> M7["Module 7<br/>MCP<br/>Protocol Integration"]
+    M5 --> M7
+    M6 --> M7
+    
+    M7 --> Advanced["🎓 ADVANCED<br/>Production RAG Systems"]
+    M4 --> Advanced
     M5 --> Advanced
     M6 --> Advanced
     
@@ -175,6 +180,34 @@ graph TD
 - Hybrid search (BM25 + Neural)
 - Reciprocal Rank Fusion (RRF)
 - Full conversational agents
+
+---
+
+### 7. MCP/
+**Purpose:** Model Context Protocol integration for agent interoperability
+
+**Files:**
+- `1. inbuilt_mcp_server_NOT_WORKING.ipynb` - Experimental MCP server implementation
+- `opensearch_mcp_complete_demo.ipynb` - Complete MCP demonstration
+
+**Key Topics Covered:**
+- Model Context Protocol (MCP) basics
+- Agent-to-agent communication
+- Protocol standards and integration
+- OpenSearch MCP server setup
+- Interoperability patterns
+
+**What You'll Learn:**
+- Understanding the Model Context Protocol
+- Building MCP-compatible agents
+- Protocol-based agent communication
+- Cross-platform agent integration
+
+**Use Cases:**
+- Multi-agent systems
+- Agent interoperability
+- Standardized tool calling
+- Cross-platform AI integration
 
 ---
 
@@ -629,6 +662,12 @@ graph TD
 - Conversational memory management
 - Advanced hybrid search
 - Production architectures
+
+**Module 7: MCP Integration**
+- Model Context Protocol fundamentals
+- Agent interoperability standards
+- Cross-platform communication
+- Protocol-based tool calling
 
 ---
 

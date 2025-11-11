@@ -35,11 +35,12 @@ graph TD
     P4 --> P5["Project 5<br/>Agentic App<br/>Multi-step"]
     P5 --> P6["Project 6<br/>With Memory<br/>Conversation"]
     P6 --> P7["Project 7<br/>Long-term Memory<br/>Context"]
+    P7 --> P8["Project 8<br/>MCP Server<br/>Protocol Integration"]
     
     P1 --> Advanced["🎓 ADVANCED<br/>Production Apps"]
     P2 --> Advanced
     P3 --> Advanced
-    P7 --> Advanced
+    P8 --> Advanced
     
     classDef start fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000
     classDef project fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
@@ -48,7 +49,7 @@ graph TD
     
     class Start start
     class P1,P2,P3,P4 project
-    class P5,P6,P7 chain
+    class P5,P6,P7,P8 chain
     class Advanced adv
 ```
 
@@ -290,6 +291,55 @@ graph TD
 
 ---
 
+### 8. opensearch_mcp_server_app/
+**Status**: Model Context Protocol (MCP) server implementation
+
+**Purpose:** Full-featured MCP server for OpenSearch integration with agent ecosystems
+
+**Key Features:**
+- Complete MCP server implementation
+- OpenSearch tool integration
+- Protocol-compliant endpoints
+- Multi-agent system support
+- Standardized tool calling
+- Cross-platform compatibility
+
+**Technology Stack:**
+- **Protocol**: Model Context Protocol (MCP)
+- **Backend**: Python MCP server
+- **Search**: OpenSearch integration
+- **Client**: MCP client demonstration
+- **Tools**: Search, indexing, analytics
+
+**Key Files:**
+- `README.md` - Project overview
+- `MCP_SERVER_SETUP.md` - Setup and configuration
+- `app.py` - Main application
+- `mcp_server_config.yaml` - Server configuration
+- `start_mcp_server.py` - Server startup
+- `mcp_client.py` - Client demonstration
+- `config.py` - Configuration management
+- `docs/` - Additional documentation
+- `.env.example` - Environment template
+
+**What You'll Learn:**
+- Model Context Protocol implementation
+- Agent-to-agent communication standards
+- Tool definition and registration
+- Protocol-based integrations
+- Cross-platform agent systems
+- Server/client architecture
+- MCP ecosystem integration
+
+**Use Cases:**
+- Multi-agent orchestration
+- Standardized tool calling
+- Cross-platform AI integration
+- Agent interoperability
+- Enterprise agent systems
+
+---
+
 ## 🎓 Project Progression
 
 ```mermaid
@@ -306,20 +356,22 @@ graph TD
     
     F --> G["Project 7<br/>LTM<br/>Long-term Memory"]
     
-    G --> Advanced4["🏆 Enterprise<br/>BI Systems"]
+    G --> H["Project 8<br/>MCP Server<br/>Protocol Integration"]
+    
+    H --> Advanced4["🏆 Enterprise<br/>BI Systems"]
     
     classDef p1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
     classDef p2 fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000
     classDef p3 fill:#fff3e0,stroke:#d84315,stroke-width:2px,color:#000
     classDef p4 fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
-    classDef p567 fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000
+    classDef p5678 fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000
     classDef adv fill:#f1f8e9,stroke:#558b2f,stroke-width:3px,color:#000
     
     class A p1
     class B p2
     class C p3
     class D p4
-    class E,F,G p567
+    class E,F,G,H p5678
     class Advanced1,Advanced2,Advanced3,Advanced4 adv
 ```
 
@@ -338,6 +390,7 @@ graph TD
     Goal -->|Advanced BI Agent| P5["Project 5<br/>Agentic App"]
     Goal -->|Remember Context| P6["Project 6<br/>With Memory"]
     Goal -->|Persistent Memory| P7["Project 7<br/>Long-term Memory"]
+    Goal -->|MCP Integration| P8["Project 8<br/>MCP Server"]
     
     P1 --> Use1["🎯 Use This!"]
     P2 --> Use2["🎯 Use This!"]
@@ -346,6 +399,7 @@ graph TD
     P5 --> Use5["🎯 Use This!"]
     P6 --> Use6["🎯 Use This!"]
     P7 --> Use7["🎯 Use This!"]
+    P8 --> Use8["🎯 Use This!"]
     
     classDef p1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
     classDef p2 fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000
@@ -354,6 +408,7 @@ graph TD
     classDef p5 fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000
     classDef p6 fill:#e0f2f1,stroke:#00796b,stroke-width:2px,color:#000
     classDef p7 fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    classDef p8 fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
     classDef use fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
     
     class P1 p1
@@ -363,7 +418,8 @@ graph TD
     class P5 p5
     class P6 p6
     class P7 p7
-    class Use1,Use2,Use3,Use4,Use5,Use6,Use7 use
+    class P8 p8
+    class Use1,Use2,Use3,Use4,Use5,Use6,Use7,Use8 use
 ```
 
 ---
@@ -502,6 +558,12 @@ graph TB
 - **6**: Conversational context management
 - **7**: Long-term knowledge persistence
 
+### Project 8: MCP Server
+- Model Context Protocol implementation
+- Agent interoperability standards
+- Tool registration and calling
+- Cross-platform integration
+
 ---
 
 ## 🚀 Quick Start Paths
@@ -536,6 +598,14 @@ graph TB
 2. Learn: Geographic queries
 3. Integrate: With Project 1
 4. Deploy: Location search UI
+```
+
+### Path 5: Agent Protocol Specialist
+```
+1. Start: Project 8 (MCP Server)
+2. Study: MCP_SERVER_SETUP.md
+3. Build: Custom MCP tools
+4. Integrate: With agent ecosystems
 ```
 
 ---
@@ -598,6 +668,9 @@ A: Yes, but watch resource usage. Each needs OpenSearch and potentially a databa
 **Q: What's the difference between Projects 4, 5, 6, 7?**
 A: Progressively add multi-step reasoning, memory, and long-term context persistence.
 
+**Q: What is Project 8 for?**
+A: MCP server enables agent interoperability using Model Context Protocol for standardized tool calling.
+
 **Q: How do I customize these projects?**
 A: Each is designed to be modified. Study the code structure and adapt for your data.
 
@@ -639,10 +712,18 @@ A: Each project folder has README.md, QUICKSTART.md, and detailed documentation 
 │   ├── app.py
 │   ├── CONVERSATIONAL_MEMORY_IMPLEMENTATION.md
 │   └── QUICKSTART.md
-└── 7. business_intelligence_agentic_app_ltm/
+├── 7. business_intelligence_agentic_app_ltm/
+│   ├── app.py
+│   ├── LTM_IMPLEMENTATION.md
+│   └── README.md
+└── 8. opensearch_mcp_server_app/
     ├── app.py
-    ├── LTM_IMPLEMENTATION.md
-    └── README.md
+    ├── MCP_SERVER_SETUP.md
+    ├── start_mcp_server.py
+    ├── mcp_client.py
+    ├── config.py
+    ├── README.md
+    └── docs/
 ```
 
 ---
@@ -661,6 +742,7 @@ After exploring these projects, you'll understand:
 8. **Database Integration**: LLM and database interaction
 9. **Full-stack Development**: From UI to backend to data
 10. **Production Patterns**: Real-world deployment considerations
+11. **Protocol Standards**: MCP for agent interoperability
 
 ---
 
@@ -670,6 +752,7 @@ After exploring these projects, you'll understand:
 - **Project 2**: Benchmarking, comparison, optimization insights
 - **Project 3**: Geographic indexing, distance queries, location features
 - **Projects 4-7**: Progressive complexity, RAG, agents, memory, persistence
+- **Project 8**: MCP protocol, agent interoperability, standardized tools
 
 ---
 
@@ -682,7 +765,3 @@ Choose a project matching your interests and dive in!
 **Start building, learning, and creating value! 🚀**
 
 ---
-
-**Repository**: elasticsearch_opensearch  
-**Branch**: os-3.2.0  
-**Status**: ✅ Ready for learning and production deployment

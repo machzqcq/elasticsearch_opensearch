@@ -640,6 +640,3 @@ This folder contains everything needed to master modern data ingestion and searc
 
 ---
 
-**Repository**: elasticsearch_opensearch  
-**Branch**: os-3.2.0  
-**Status**: ✅ Ready for learning and production use
